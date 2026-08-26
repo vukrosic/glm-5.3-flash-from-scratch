@@ -1,0 +1,225 @@
+{
+  "architecture": {
+    "active_parameters_per_token_estimate": 9805344,
+    "attention_pattern": "3 linear : 1 gathered sparse",
+    "experts": 8,
+    "layers": 12,
+    "residual_streams": 4,
+    "top_k": 2,
+    "total_parameters": 25730592
+  },
+  "experiment": "GLM-5.3-Flash From Scratch: executable-reward coding RL",
+  "limitations": [
+    "The confirmation tasks use unseen function identities but the same eight operation families and prompt templates.",
+    "RL clearly learned increment and double, but not even.",
+    "Non-target sampled accuracy regressed for square and list_sum, showing interference.",
+    "This is a scaled educational implementation, not a reproduction of the 320B multimodal model."
+  ],
+  "pretraining": {
+    "full_run_seconds": 63.093,
+    "full_run_tokens": 1381760,
+    "peak_vram_gib": 2.139,
+    "selected_checkpoint_step": 100,
+    "tokens_at_selected_checkpoint": 345995
+  },
+  "reinforcement_learning": {
+    "algorithm": "RLOO",
+    "exact_training_rollouts": 417,
+    "families": [
+      "increment",
+      "double",
+      "even"
+    ],
+    "group_size": 16,
+    "groups": 96,
+    "peak_vram_gib": 0.936,
+    "rollouts": 1536,
+    "seconds": 155.482,
+    "selected_checkpoint_group": 96,
+    "updates": 73
+  },
+  "statistics": {
+    "greedy_exact_mcnemar_p": 3.0517578125e-05,
+    "greedy_paired_gains": 16,
+    "greedy_paired_losses": 0,
+    "sampled_target_absolute_gain": 0.390625,
+    "sampled_target_task_bootstrap_95_percent": [
+      0.25,
+      0.53125
+    ]
+  },
+  "untouched_confirmation": {
+    "all_families_after": {
+      "exact_rollout_rate": 0.353515625,
+      "exact_rollouts": 181,
+      "pass_at_k": 0.53125,
+      "rollouts_total": 512,
+      "tasks_solved_at_k": 34,
+      "tasks_total": 64,
+      "test_accuracy": 0.359375,
+      "tests_passed": 552,
+      "tests_total": 1536,
+      "token_cap_hits": 14,
+      "valid_rollouts": 210
+    },
+    "all_families_before": {
+      "exact_rollout_rate": 0.24609375,
+      "exact_rollouts": 126,
+      "pass_at_k": 0.390625,
+      "rollouts_total": 512,
+      "tasks_solved_at_k": 25,
+      "tasks_total": 64,
+      "test_accuracy": 0.2565104166666667,
+      "tests_passed": 394,
+      "tests_total": 1536,
+      "token_cap_hits": 29,
+      "valid_rollouts": 188
+    },
+    "by_family_after": {
+      "absolute": {
+        "exact_rollouts": 0,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 0,
+        "valid_rollouts": 1
+      },
+      "double": {
+        "exact_rollouts": 45,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 8,
+        "valid_rollouts": 50
+      },
+      "even": {
+        "exact_rollouts": 3,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 3,
+        "valid_rollouts": 4
+      },
+      "increment": {
+        "exact_rollouts": 40,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 8,
+        "valid_rollouts": 55
+      },
+      "list_sum": {
+        "exact_rollouts": 56,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 7,
+        "valid_rollouts": 56
+      },
+      "nonnegative": {
+        "exact_rollouts": 0,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 0,
+        "valid_rollouts": 0
+      },
+      "reverse": {
+        "exact_rollouts": 0,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 0,
+        "valid_rollouts": 4
+      },
+      "square": {
+        "exact_rollouts": 37,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 8,
+        "valid_rollouts": 40
+      }
+    },
+    "by_family_before": {
+      "absolute": {
+        "exact_rollouts": 0,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 0,
+        "valid_rollouts": 0
+      },
+      "double": {
+        "exact_rollouts": 4,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 2,
+        "valid_rollouts": 18
+      },
+      "even": {
+        "exact_rollouts": 3,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 2,
+        "valid_rollouts": 5
+      },
+      "increment": {
+        "exact_rollouts": 6,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 5,
+        "valid_rollouts": 49
+      },
+      "list_sum": {
+        "exact_rollouts": 61,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 8,
+        "valid_rollouts": 61
+      },
+      "nonnegative": {
+        "exact_rollouts": 0,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 0,
+        "valid_rollouts": 0
+      },
+      "reverse": {
+        "exact_rollouts": 0,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 0,
+        "valid_rollouts": 3
+      },
+      "square": {
+        "exact_rollouts": 52,
+        "rollouts": 64,
+        "tasks": 8,
+        "tasks_solved_at_k": 8,
+        "valid_rollouts": 52
+      }
+    },
+    "targeted_greedy_after": {
+      "pass_at_1": 0.6666666666666666,
+      "tasks": 24,
+      "tasks_solved": 16,
+      "tests_passed": 48,
+      "tests_total": 72
+    },
+    "targeted_greedy_before": {
+      "pass_at_1": 0.0,
+      "tasks": 24,
+      "tasks_solved": 0,
+      "tests_passed": 2,
+      "tests_total": 72
+    },
+    "targeted_sampled_after": {
+      "exact_rollout_rate": 0.4583333333333333,
+      "exact_rollouts": 88,
+      "pass_at_8": 0.7916666666666666,
+      "rollouts": 192,
+      "tasks": 24,
+      "tasks_solved_at_8": 19
+    },
+    "targeted_sampled_before": {
+      "exact_rollout_rate": 0.06770833333333333,
+      "exact_rollouts": 13,
+      "pass_at_8": 0.375,
+      "rollouts": 192,
+      "tasks": 24,
+      "tasks_solved_at_8": 9
+    }
+  }
+}

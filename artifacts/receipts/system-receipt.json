@@ -1,0 +1,44 @@
+{
+  "attention_pattern": [
+    "linear",
+    "linear",
+    "linear",
+    "sparse",
+    "linear",
+    "linear",
+    "linear",
+    "sparse",
+    "linear",
+    "linear",
+    "linear",
+    "sparse"
+  ],
+  "captured_at_utc": "2026-08-26T19:13:33.534605+00:00",
+  "gpu": {
+    "driver": "535.309.01",
+    "memory_mib": 12288,
+    "name": "NVIDIA GeForce RTX 3080 Ti"
+  },
+  "model_config": {
+    "dim": 192,
+    "expert_hidden": 384,
+    "experts": 8,
+    "heads": 6,
+    "layers": 12,
+    "max_sequence_length": 192,
+    "sparse_stride": 32,
+    "sparse_window": 32,
+    "streams": 4,
+    "top_k": 2,
+    "vocab_size": 260
+  },
+  "parameter_counts": {
+    "active_per_token_estimate": 9805344,
+    "total": 25730592
+  },
+  "platform": "Linux-5.15.0-190-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "schema_version": "1.0",
+  "torch": "2.5.1+cu121",
+  "torch_cuda": "12.1"
+}

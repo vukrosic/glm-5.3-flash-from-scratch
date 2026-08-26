@@ -1,0 +1,4 @@
+torch==2.5.1
+numpy>=1.26
+matplotlib>=3.8
+pytest>=8.0

@@ -1,0 +1,5 @@
+{
+  "source_checkpoint": "runs/glm53-coding-pretrain-001/checkpoint-0100",
+  "source_sha256": "a5d34b0170ef589e4dec86e2eef90101b14a2d7b0242895f4725cd4b2bb40c01",
+  "stage": "pre_rl"
+}

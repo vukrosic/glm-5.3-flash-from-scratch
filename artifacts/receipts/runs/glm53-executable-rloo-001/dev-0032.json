@@ -1,0 +1,212 @@
+{
+  "by_family": {
+    "absolute": {
+      "solved": 0,
+      "tasks": 1,
+      "tests_passed": 0,
+      "tests_total": 3
+    },
+    "double": {
+      "solved": 0,
+      "tasks": 1,
+      "tests_passed": 0,
+      "tests_total": 3
+    },
+    "even": {
+      "solved": 0,
+      "tasks": 1,
+      "tests_passed": 0,
+      "tests_total": 3
+    },
+    "increment": {
+      "solved": 0,
+      "tasks": 1,
+      "tests_passed": 0,
+      "tests_total": 3
+    },
+    "list_sum": {
+      "solved": 0,
+      "tasks": 1,
+      "tests_passed": 0,
+      "tests_total": 3
+    },
+    "nonnegative": {
+      "solved": 0,
+      "tasks": 1,
+      "tests_passed": 0,
+      "tests_total": 3
+    },
+    "reverse": {
+      "solved": 0,
+      "tasks": 1,
+      "tests_passed": 0,
+      "tests_total": 3
+    },
+    "square": {
+      "solved": 0,
+      "tasks": 1,
+      "tests_passed": 0,
+      "tests_total": 3
+    }
+  },
+  "checkpoint": "runs/glm53-executable-rloo-001/checkpoint-0032",
+  "checkpoint_sha256": "389360284b2a162776f9135ad2a72a96ee985e412d721b707361b003889c897c",
+  "elapsed_seconds": 11.974,
+  "episodes": [
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n   return x x x x\n",
+      "generated_tokens": 20,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_axkyima(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "dev-increment-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x x x\n",
+      "generated_tokens": 19,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Double the input.\ndef double_hphcjzx(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "dev-double-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "square",
+      "generated_completion": "\n   return x x x\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x squared.\ndef square_niddeuw(x):",
+      "reference_completion": "\n    return x * x\n",
+      "task_id": "dev-square-000"
+    },
+    {
+      "evaluation": {
+        "message": "expected 'else' after 'if' expression (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "absolute",
+      "generated_completion": "\n    return x if x x x else x\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Make a negative x positive.\ndef absolute_tqedzon(x):",
+      "reference_completion": "\n    return -x if x < 0 else x\n",
+      "task_id": "dev-absolute-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "nonnegative",
+      "generated_completion": "\n    return x x x x 0 elselse x\n",
+      "generated_tokens": 33,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return zero when x is negative.\ndef nonnegative_daflyjn(x):",
+      "reference_completion": "\n    return x if x > 0 else 0\n",
+      "task_id": "dev-nonnegative-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x x x x 0\n",
+      "generated_tokens": 23,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_ybylgpa(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "dev-even-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "reverse",
+      "generated_completion": "\n    return xtextextextext[:::::::::::::::::::::",
+      "generated_tokens": 48,
+      "hit_token_cap": true,
+      "prompt": "# Complete this Python function.\n# Return text in reverse order.\ndef reverse_psddggh(text):",
+      "reference_completion": "\n    return text[::-1]\n",
+      "task_id": "dev-reverse-000"
+    },
+    {
+      "evaluation": {
+        "message": "unmatched ')' (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "list_sum",
+      "generated_completion": "\n   return suesuesss)\n",
+      "generated_tokens": 23,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return the sum of values.\ndef list_sum_myckbxp(values):",
+      "reference_completion": "\n    return sum(values)\n",
+      "task_id": "dev-list_sum-000"
+    }
+  ],
+  "inference": {
+    "greedy": true,
+    "max_new_tokens": 48,
+    "seed": 2026
+  },
+  "peak_vram_gib": 0.153,
+  "schema_version": "1.0",
+  "split": "dev",
+  "status": "complete",
+  "summary": {
+    "pass_at_1": 0.0,
+    "tasks_solved": 0,
+    "tasks_total": 8,
+    "test_accuracy": 0.0,
+    "tests_passed": 0,
+    "tests_total": 24,
+    "token_cap_hits": 1,
+    "valid_programs": 0
+  }
+}

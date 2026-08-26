@@ -1,0 +1,459 @@
+{
+  "by_family": {
+    "double": {
+      "solved": 0,
+      "tasks": 8,
+      "tests_passed": 2,
+      "tests_total": 24
+    },
+    "even": {
+      "solved": 0,
+      "tasks": 8,
+      "tests_passed": 0,
+      "tests_total": 24
+    },
+    "increment": {
+      "solved": 0,
+      "tasks": 8,
+      "tests_passed": 0,
+      "tests_total": 24
+    }
+  },
+  "checkpoint": "runs/glm53-coding-pretrain-001/checkpoint-0100",
+  "checkpoint_sha256": "a5d34b0170ef589e4dec86e2eef90101b14a2d7b0242895f4725cd4b2bb40c01",
+  "elapsed_seconds": 27.445,
+  "episodes": [
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_jgsmuqb(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "confirm-increment-000"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_qrdadnk(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "confirm-increment-001"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_tchagpt(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "confirm-increment-002"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x 1\n",
+      "generated_tokens": 17,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Increase x by one.\ndef increment_oiniavv(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "confirm-increment-003"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Increase x by one.\ndef increment_fbbmsqf(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "confirm-increment-004"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_hsxcgew(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "confirm-increment-005"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_ywxewsv(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "confirm-increment-006"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Increase x by one.\ndef increment_iuqltla(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "confirm-increment-007"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * * 0 0\n",
+      "generated_tokens": 23,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return two times x.\ndef double_ywkaoot(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "confirm-double-000"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.3333333333333333,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 1,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * x\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return two times x.\ndef double_kkgtrlz(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "confirm-double-001"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * * x\n",
+      "generated_tokens": 21,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return two times x.\ndef double_dmknzjt(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "confirm-double-002"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * * x\n",
+      "generated_tokens": 21,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Double the input.\ndef double_epionqr(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "confirm-double-003"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * * x\n",
+      "generated_tokens": 21,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Double the input.\ndef double_wflinfl(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "confirm-double-004"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.3333333333333333,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 1,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * x\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return two times x.\ndef double_jiydabf(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "confirm-double-005"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * * x\n",
+      "generated_tokens": 21,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Double the input.\ndef double_lscjpcu(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "confirm-double-006"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * * x\n",
+      "generated_tokens": 21,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Double the input.\ndef double_bzcbqij(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "confirm-double-007"
+    },
+    {
+      "evaluation": {
+        "message": "expected 'else' after 'if' expression (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x if x 2 0 else 0\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_aopbzqe(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "confirm-even-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x % 2 ======== 0\n",
+      "generated_tokens": 30,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_enkfcbp(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "confirm-even-001"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x 2 2 === 0\n",
+      "generated_tokens": 25,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Check divisibility by two.\ndef even_rpnrlxp(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "confirm-even-002"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n     return x 2 2 ====== elselselse x\n",
+      "generated_tokens": 40,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_rxopfvh(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "confirm-even-003"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x 2 2 x 0\n",
+      "generated_tokens": 23,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_sqgizlp(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "confirm-even-004"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x * 2 === 0\n",
+      "generated_tokens": 25,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Check divisibility by two.\ndef even_nrpzpla(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "confirm-even-005"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x 2 2 ==== else 0\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_brdwwwx(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "confirm-even-006"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x % 2 ======== 0\n",
+      "generated_tokens": 30,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_girwaeb(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "confirm-even-007"
+    }
+  ],
+  "inference": {
+    "families": [
+      "double",
+      "even",
+      "increment"
+    ],
+    "greedy": true,
+    "max_new_tokens": 48,
+    "seed": 2026
+  },
+  "peak_vram_gib": 0.152,
+  "schema_version": "1.0",
+  "split": "confirm",
+  "status": "complete",
+  "summary": {
+    "pass_at_1": 0.0,
+    "tasks_solved": 0,
+    "tasks_total": 24,
+    "test_accuracy": 0.027777777777777776,
+    "tests_passed": 2,
+    "tests_total": 72,
+    "token_cap_hits": 0,
+    "valid_programs": 9
+  }
+}

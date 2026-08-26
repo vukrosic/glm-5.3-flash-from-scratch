@@ -1,0 +1,10 @@
+{
+  "parameter_counts": {
+    "active_per_token_estimate": 9805344,
+    "total": 25730592
+  },
+  "seed": 42,
+  "stage": "coding_pretraining",
+  "step": 400,
+  "tokens_seen": 1381760
+}

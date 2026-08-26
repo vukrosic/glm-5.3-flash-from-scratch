@@ -1,0 +1,62 @@
+{
+  "batch_size": 32,
+  "checkpoints": [
+    {
+      "path": "runs/pretrain-pilot-001/checkpoint-0000",
+      "step": 0,
+      "weights_sha256": "deb6bdb926f4b529deccd0c9869c4f4b5ed9ae2bebf63d227b446e88b652f5b4"
+    },
+    {
+      "path": "runs/pretrain-pilot-001/checkpoint-0002",
+      "step": 2,
+      "weights_sha256": "9e20f2d018ec343bf9727eb7f46f78ceaffdc02791eee22bec5f52cd9e730b48"
+    }
+  ],
+  "config": {
+    "dim": 192,
+    "expert_hidden": 384,
+    "experts": 8,
+    "heads": 6,
+    "layers": 12,
+    "max_sequence_length": 192,
+    "sparse_stride": 32,
+    "sparse_window": 32,
+    "streams": 4,
+    "top_k": 2,
+    "vocab_size": 260
+  },
+  "elapsed_seconds": 1.266,
+  "learning_rate": 0.0003,
+  "parameter_counts": {
+    "active_per_token_estimate": 9805344,
+    "total": 25730592
+  },
+  "peak_vram_gib": 2.137,
+  "schema_version": "1.0",
+  "seed": 42,
+  "sequence_length": 128,
+  "stage": "coding_pretraining",
+  "status": "complete",
+  "steps": 2,
+  "tokens_seen": 6761,
+  "training_curve": [
+    {
+      "gradient_norm": 3.54286527633667,
+      "loss": 5.5511579513549805,
+      "router_balance_loss": 0.003778916783630848,
+      "seconds": 0.9551,
+      "step": 1,
+      "tokens": 3360,
+      "tokens_seen": 3360
+    },
+    {
+      "gradient_norm": 2.8684749603271484,
+      "loss": 4.946049690246582,
+      "router_balance_loss": 0.002885872032493353,
+      "seconds": 0.146,
+      "step": 2,
+      "tokens": 3401,
+      "tokens_seen": 6761
+    }
+  ]
+}

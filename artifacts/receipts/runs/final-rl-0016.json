@@ -1,0 +1,484 @@
+{
+  "by_family": {
+    "absolute": {
+      "solved": 0,
+      "tasks": 3,
+      "tests_passed": 0,
+      "tests_total": 9
+    },
+    "double": {
+      "solved": 0,
+      "tasks": 3,
+      "tests_passed": 2,
+      "tests_total": 9
+    },
+    "even": {
+      "solved": 0,
+      "tasks": 3,
+      "tests_passed": 0,
+      "tests_total": 9
+    },
+    "increment": {
+      "solved": 0,
+      "tasks": 3,
+      "tests_passed": 0,
+      "tests_total": 9
+    },
+    "list_sum": {
+      "solved": 3,
+      "tasks": 3,
+      "tests_passed": 9,
+      "tests_total": 9
+    },
+    "nonnegative": {
+      "solved": 0,
+      "tasks": 3,
+      "tests_passed": 0,
+      "tests_total": 9
+    },
+    "reverse": {
+      "solved": 0,
+      "tasks": 3,
+      "tests_passed": 0,
+      "tests_total": 9
+    },
+    "square": {
+      "solved": 3,
+      "tasks": 3,
+      "tests_passed": 9,
+      "tests_total": 9
+    }
+  },
+  "checkpoint": "runs/glm53-executable-rloo-focused-final-001/checkpoint-0016",
+  "checkpoint_sha256": "dd3ce49b4917ba336ae66cabda751f8b4da277bff77ab9da010cf08b67b1ac94",
+  "elapsed_seconds": 34.302,
+  "episodes": [
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_ltjnkay(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "final-increment-000"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_pppehdi(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "final-increment-001"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "increment",
+      "generated_completion": "\n    return x * 1\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x plus one.\ndef increment_vbuqrez(x):",
+      "reference_completion": "\n    return x + 1\n",
+      "task_id": "final-increment-002"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.3333333333333333,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 1,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * x\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return two times x.\ndef double_toaszzo(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "final-double-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * * 0 0\n",
+      "generated_tokens": 23,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Double the input.\ndef double_fhhkqoc(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "final-double-001"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 0.3333333333333333,
+        "passed": false,
+        "status": "failed",
+        "tests_passed": 1,
+        "tests_total": 3
+      },
+      "family": "double",
+      "generated_completion": "\n    return x * x\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Double the input.\ndef double_wxorapu(x):",
+      "reference_completion": "\n    return x * 2\n",
+      "task_id": "final-double-002"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 1.0,
+        "passed": true,
+        "status": "passed",
+        "tests_passed": 3,
+        "tests_total": 3
+      },
+      "family": "square",
+      "generated_completion": "\n    return x * x\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Multiply x by itself.\ndef square_jqyhkum(x):",
+      "reference_completion": "\n    return x * x\n",
+      "task_id": "final-square-000"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 1.0,
+        "passed": true,
+        "status": "passed",
+        "tests_passed": 3,
+        "tests_total": 3
+      },
+      "family": "square",
+      "generated_completion": "\n    return x * x\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x squared.\ndef square_kdziiwq(x):",
+      "reference_completion": "\n    return x * x\n",
+      "task_id": "final-square-001"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 1.0,
+        "passed": true,
+        "status": "passed",
+        "tests_passed": 3,
+        "tests_total": 3
+      },
+      "family": "square",
+      "generated_completion": "\n    return x * x\n",
+      "generated_tokens": 18,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return x squared.\ndef square_btorede(x):",
+      "reference_completion": "\n    return x * x\n",
+      "task_id": "final-square-002"
+    },
+    {
+      "evaluation": {
+        "message": "expected 'else' after 'if' expression (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "absolute",
+      "generated_completion": "\n     return x if x x 0 else x\n",
+      "generated_tokens": 32,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return the absolute value of x.\ndef absolute_aotoncl(x):",
+      "reference_completion": "\n    return -x if x < 0 else x\n",
+      "task_id": "final-absolute-000"
+    },
+    {
+      "evaluation": {
+        "message": "expected 'else' after 'if' expression (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "absolute",
+      "generated_completion": "\n    return x if x x x else x\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Make a negative x positive.\ndef absolute_dbeitgo(x):",
+      "reference_completion": "\n    return -x if x < 0 else x\n",
+      "task_id": "final-absolute-001"
+    },
+    {
+      "evaluation": {
+        "message": "expected 'else' after 'if' expression (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "absolute",
+      "generated_completion": "\n    return x if x x 0 else x\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Make a negative x positive.\ndef absolute_wasshix(x):",
+      "reference_completion": "\n    return -x if x < 0 else x\n",
+      "task_id": "final-absolute-002"
+    },
+    {
+      "evaluation": {
+        "message": "expected 'else' after 'if' expression (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "nonnegative",
+      "generated_completion": "\n    return x if x x 0 else x\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return zero when x is negative.\ndef nonnegative_akivjfg(x):",
+      "reference_completion": "\n    return x if x > 0 else 0\n",
+      "task_id": "final-nonnegative-000"
+    },
+    {
+      "evaluation": {
+        "message": "expected 'else' after 'if' expression (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "nonnegative",
+      "generated_completion": "\n    return x if x x 0 else x\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Clamp x to at least zero.\ndef nonnegative_dsaeeoi(x):",
+      "reference_completion": "\n    return x if x > 0 else 0\n",
+      "task_id": "final-nonnegative-001"
+    },
+    {
+      "evaluation": {
+        "message": "expected 'else' after 'if' expression (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "nonnegative",
+      "generated_completion": "\n    return x if x x 0 else 0\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return zero when x is negative.\ndef nonnegative_oxxzsyj(x):",
+      "reference_completion": "\n    return x if x > 0 else 0\n",
+      "task_id": "final-nonnegative-002"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x 2 2 ==== 0\n",
+      "generated_tokens": 26,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_xsiuilb(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "final-even-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x 2 2 ==== else 0\n",
+      "generated_tokens": 31,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return whether x is even.\ndef even_ncwqmry(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "final-even-001"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "even",
+      "generated_completion": "\n    return x % 2 === 0\n",
+      "generated_tokens": 25,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Check divisibility by two.\ndef even_cqexrvd(x):",
+      "reference_completion": "\n    return x % 2 == 0\n",
+      "task_id": "final-even-002"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "reverse",
+      "generated_completion": "\n    return turn textextextext[:::::::::::::::::",
+      "generated_tokens": 48,
+      "hit_token_cap": true,
+      "prompt": "# Complete this Python function.\n# Reverse the string.\ndef reverse_hnskdvj(text):",
+      "reference_completion": "\n    return text[::-1]\n",
+      "task_id": "final-reverse-000"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "reverse",
+      "generated_completion": "\n    return texturn textextext[:::::::::::::::::",
+      "generated_tokens": 48,
+      "hit_token_cap": true,
+      "prompt": "# Complete this Python function.\n# Reverse the string.\ndef reverse_pkmiczb(text):",
+      "reference_completion": "\n    return text[::-1]\n",
+      "task_id": "final-reverse-001"
+    },
+    {
+      "evaluation": {
+        "message": "invalid syntax (<unknown>, line 4)",
+        "pass_fraction": 0.0,
+        "passed": false,
+        "status": "invalid",
+        "tests_passed": 0,
+        "tests_total": 3
+      },
+      "family": "reverse",
+      "generated_completion": "\n    return textextext[:::::::::::::::::::::::::",
+      "generated_tokens": 48,
+      "hit_token_cap": true,
+      "prompt": "# Complete this Python function.\n# Return text in reverse order.\ndef reverse_gmfwrab(text):",
+      "reference_completion": "\n    return text[::-1]\n",
+      "task_id": "final-reverse-002"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 1.0,
+        "passed": true,
+        "status": "passed",
+        "tests_passed": 3,
+        "tests_total": 3
+      },
+      "family": "list_sum",
+      "generated_completion": "\n    return sum(values)\n",
+      "generated_tokens": 24,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Add every number in the list.\ndef list_sum_wdouxzm(values):",
+      "reference_completion": "\n    return sum(values)\n",
+      "task_id": "final-list_sum-000"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 1.0,
+        "passed": true,
+        "status": "passed",
+        "tests_passed": 3,
+        "tests_total": 3
+      },
+      "family": "list_sum",
+      "generated_completion": "\n    return sum(values)\n",
+      "generated_tokens": 24,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Return the sum of values.\ndef list_sum_swqxjcr(values):",
+      "reference_completion": "\n    return sum(values)\n",
+      "task_id": "final-list_sum-001"
+    },
+    {
+      "evaluation": {
+        "message": "",
+        "pass_fraction": 1.0,
+        "passed": true,
+        "status": "passed",
+        "tests_passed": 3,
+        "tests_total": 3
+      },
+      "family": "list_sum",
+      "generated_completion": "\n    return sum(values)\n",
+      "generated_tokens": 24,
+      "hit_token_cap": false,
+      "prompt": "# Complete this Python function.\n# Add every number in the list.\ndef list_sum_nxkdoju(values):",
+      "reference_completion": "\n    return sum(values)\n",
+      "task_id": "final-list_sum-002"
+    }
+  ],
+  "inference": {
+    "greedy": true,
+    "max_new_tokens": 48,
+    "seed": 2026
+  },
+  "peak_vram_gib": 0.153,
+  "schema_version": "1.0",
+  "split": "final",
+  "status": "complete",
+  "summary": {
+    "pass_at_1": 0.25,
+    "tasks_solved": 6,
+    "tasks_total": 24,
+    "test_accuracy": 0.2777777777777778,
+    "tests_passed": 20,
+    "tests_total": 72,
+    "token_cap_hits": 3,
+    "valid_programs": 11
+  }
+}
