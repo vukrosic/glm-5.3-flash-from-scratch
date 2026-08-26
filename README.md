@@ -1,4 +1,4 @@
-# GLM-5.3-Flash From Scratch
+# Build & Train GLM-5.3-Flash From Scratch
 
 A readable 25.7M-parameter language model inspired by GLM-5.3-Flash, trained from random initialization and then improved with executable-reward reinforcement learning on one 12 GB GPU.
 
