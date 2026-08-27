@@ -1,21 +1,21 @@
 STATUS: PASS
-Pass: 8
+Pass: 9
+Slides: 62
+Animated frames: 68
+Blocking issues: None
 
-## Blocking issues
+## Checks completed
 
-None.
+- Rendered every slide and every progressive animation state at 1280 × 720.
+- Detected no horizontal overflow, vertical overflow, or elements outside the viewport.
+- Replaced small white-background chart images with native dark-theme charts.
+- Added plain-language purpose explanations through the architecture, pretraining, and RL sections.
+- Distinguished the miniature teaching implementation from the released GLM-5.3-Flash architecture where they differ.
+- Added a separate NoPE slide and clarified where the released model uses RoPE.
+- Verified the model, experiment, and vision numbers against local source, configs, and reports.
+- Checked the slide feedback endpoint after editing. No unresolved notes remained.
 
-## Verification
+## Remaining polish
 
-- Rendered all 60 slides at 1280 x 720 from the source deck on localhost.
-- Visually inspected the complete contact sheet and the opening slide at full resolution.
-- The opening slide uses one real checkpoint-0100 greedy completion and a lightweight looping HTML/CSS typewriter animation.
-- The vision sequence explains the 2 x 2 spatial merge, shows why 64 patches become 16 visual tokens, and includes the bounded full-model integration result.
-- Browser console and page errors: 0.
-- Active slide feedback notes: 0.
-- No em dashes, unresolved TODOs, broken assets, visible overflow, or navigation overlap found.
-- Print CSS is present.
-
-## Polish
-
-None required before recording.
+- The deck is intentionally dense after the introduction. During recording, pause on mechanism visuals before advancing to their code slides.
+- The reported RL gain is narrow and family-specific. The slides now state this limitation directly.

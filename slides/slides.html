@@ -159,8 +159,11 @@
 </div>
 <small class="source-note">Recruiting post for Anthropic · Research Engineer, Domain Scaling</small></div>
 <div data-slide-id="pretraining-progress" class="slide title pretraining-chart"><h1>Pretraining progress</h1>
-<img src="assets/pretraining-progress.png" alt="Measured pretraining progress">
-<p>1.38M tokens · 400 steps · 63 seconds</p></div>
+<p>Held-out code completions become correct as next-byte training continues.</p>
+<div class="pretrain-line-chart" role="img" aria-label="Held-out tasks solved: zero of eight at step zero, two at step 100, seven at step 200, and eight at step 400">
+  <div class="pretrain-grid"><span style="--x:0%;--y:100%"><b>0/8</b><small>step 0</small></span><span style="--x:25%;--y:75%"><b>2/8</b><small>100</small></span><span style="--x:50%;--y:12.5%"><b>7/8</b><small>200</small></span><span style="--x:100%;--y:0%"><b>8/8</b><small>400</small></span><svg viewBox="0 0 1000 300" preserveAspectRatio="none"><polyline points="0,300 250,225 500,37.5 1000,0"/></svg></div>
+</div>
+<small class="source-note">1.38M training bytes · 63 seconds · checkpoint 100 kept for RL so there was room to improve</small></div>
 <div data-slide-id="learn-by-predicting-the-next-token" class="slide title"><h1>Learn by predicting the next token</h1>
 <p>At every position, the model predicts what comes next and updates whenever it is wrong.</p>
 <div class="next-token"><div><small>INPUT</small><code>return&nbsp; x&nbsp; +</code></div><b>→</b><div class="target"><small>NEXT TOKEN</small><code>1</code></div></div>
@@ -209,7 +212,7 @@
   <div class="byte-row byte-ids"><span>104</span><span>105</span><span>106</span><span>36</span><span>109</span><span>114</span><span>…</span></div>
 </div>
 <div class="byte-reasons"><span><strong>260-token vocabulary</strong> keeps the model tiny</span><span><strong>No tokenizer training</strong> or vocabulary download</span><span><strong>Tradeoff:</strong> 17 tokens instead of 4</span></div>
-<small class="source-note">IDs 0–3 are control tokens, so each byte value is stored as token ID +4.</small>
+<small class="source-note">IDs 0 – 3 are control tokens, so each byte value is stored as token ID +4.</small>
 <style>
   .byte-flow{display:grid;gap:18px;margin-top:5vh}.byte-row{display:flex;justify-content:center;gap:16px}
   .byte-row span{display:grid;place-items:center;width:112px;height:92px;border:1px solid var(--line);
@@ -237,8 +240,8 @@
   <span><b>PROJECTOR</b><strong>language width</strong><small>match the LM embedding size</small></span><i>→</i>
   <span class="vision-lm"><b>LANGUAGE MODEL</b><strong>image tokens</strong><small>predict the answer autoregressively</small></span>
 </div>
-<div class="vision-scale-note"><span>Released GLM: 24 vision blocks · width 1024</span><span>Our miniature: 2 vision blocks · width 24</span></div></div>
-<div data-slide-id="image-becomes-visual-tokens" class="slide title vision-mechanism-slide"><h1>How an image becomes 16 visual tokens</h1>
+<div class="vision-scale-note"><span>Released GLM: 24 vision blocks · width 1024</span><span>Our miniature: 2 vision blocks · width 24</span></div><small class="architecture-caveat"><b>Position differs:</b> released GLM uses temporal patches + 2D rotary position; our still-image miniature uses a learned 2D position table.</small></div>
+<div data-slide-id="image-becomes-visual-tokens" class="slide title vision-mechanism-slide"><h1>How our image becomes 16 visual tokens</h1>
 <div class="vision-mechanism">
   <span class="vision-image"><small>32 × 32 RGB</small><svg viewBox="0 0 120 120" role="img" aria-label="A colored seven-segment digit"><rect width="120" height="120" fill="#24231f"/><g stroke="#efb19a" stroke-width="10" stroke-linecap="round"><path d="M30 18H90M92 24V55M92 65V96M30 102H90M28 65V96M28 24V55M30 60H90"/></g></svg></span><b>→</b>
   <span class="vision-patches"><small>8 × 8 PATCH GRID</small><i></i></span><b>→</b>
@@ -352,11 +355,15 @@ return self.output(hidden), torch.stack(usages)</pre></div>
 <code>attention_norm(x)</code><p>Same direction, controlled magnitude, steadier updates.</p></div>
 <div data-slide-id="rope-writes-position-into-queries-and-keys" class="slide title mechanism-slide"><h1>RoPE writes position into queries and keys</h1>
 <div class="concept-flow rope-flow"><section><small>token position</small><b class="position-dial">3</b><span>where this token appears</span></section><i><small>rotate by position</small><b>↻</b></i><section><small>queries + keys</small><div class="vector-arrows"><b>↗</b><b>↘</b></div><span>same vectors, new angle</span></section><i><small>compare rotations</small><b>→</b></i><section class="result"><small>attention knows</small><b>relative distance</b><span>who came before whom</span></section></div>
-<code>q, k = apply_rope(q, k)</code><p>Linear and sparse attention use the same positional signal.</p></div>
-<div data-slide-id="3-linear-1-sparse" class="slide title"><h1>3 linear + 1 sparse</h1>
-<p>The four-layer rhythm repeats three times</p>
+<code>q, k = apply_rope(q, k)</code><p class="rope-explainer">RoPE rotates pairs of query and key values by an angle based on token position. Comparing their angles lets attention detect order and relative distance without adding a learned position vector.</p><small class="rope-caveat"><b>Our miniature:</b> RoPE in both attention types. <b>Released GLM-5.3-Flash:</b> NoPE in main attention; RoPE only in the sparse indexer.</small></div>
+<div data-slide-id="where-released-glm-uses-position" class="slide title nope-slide"><h1>Where released GLM uses position</h1>
+<p><strong>NoPE</strong> means the main attention vectors receive no explicit position rotation.</p>
+<div class="nope-grid"><article><small>KDA linear layers</small><b>running state</b><span>processing tokens in sequence preserves order</span></article><i>+</i><article class="indexer"><small>sparse indexer</small><b>RoPE</b><span>position helps retrieve 2,048 relevant tokens</span></article><i>→</i><article class="nope"><small>main sparse attention</small><b>NoPE</b><span>selected tokens are compared by content</span></article></div>
+<small class="architecture-caveat"><b>Our miniature is simpler:</b> it applies RoPE directly inside both attention types.</small></div>
+<div data-slide-id="3-linear-1-sparse" class="slide title"><h1>Our 12 layers: 3 linear + 1 sparse</h1>
+<p>The teaching model repeats this four-layer rhythm three times</p>
 <div class="layer-stack"><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div></div>
-<div class="attention-legend"><span><b>L</b><small>linear attention</small><em>cheap running memory</em></span><i>× 3</i><span class="sparse"><b>S</b><small>sparse attention</small><em>exact selected lookback</em></span><i>repeat</i></div>
+<div class="attention-legend"><span><b>L</b><small>linear attention</small><em>cheap running memory</em></span><i>× 3</i><span class="sparse"><b>S</b><small>sparse attention</small><em>exact selected lookback</em></span><i>repeat</i></div><p class="slide-why"><b>Why combine them?</b> Linear layers carry compressed history cheaply; sparse layers periodically recover exact distant details.</p><small class="architecture-caveat"><b>Released GLM:</b> 34 KDA linear layers + 11 sparse layers across 45 layers.</small>
 <style>.layer-stack{display:flex;justify-content:center;gap:24px;margin-top:5vh}.layer-stack>div{display:flex;gap:8px;padding:12px;border-radius:18px;background:#e9e3d8}.layer-stack span{display:grid;place-items:center;width:70px;height:100px;border-radius:12px;background:#ead4c7;border:2px solid #d97757;color:#d97757;font-size:36px;font-weight:800}.layer-stack .sparse{background:#ded4c8;border-color:#8a6252;color:#8a6252;box-shadow:0 0 28px #8a625255}</style></div>
 <div data-slide-id="the-attention-rhythm-in-code" class="slide code-pair"><h1>The attention rhythm in code</h1>
 <p>One condition selects the attention algorithm for every layer.</p>
@@ -375,7 +382,7 @@ self.attention = (
     SparseAttention(config) if sparse
     else LinearAttention(config)
 )</pre></div>
-<div data-slide-id="one-expression-creates-the-rhythm" class="slide title algorithm-walkthrough"><h1>One expression creates the rhythm</h1>
+<div data-slide-id="one-expression-creates-the-rhythm" class="slide title algorithm-walkthrough"><h1>One expression creates our rhythm</h1>
 <div class="walkthrough-steps">
   <div class="step"><code>index + 1</code><p><strong>1. Count naturally:</strong> convert zero-based indices into layers 1 through 12.</p></div>
   <div class="step"><code>(index + 1) % 4 == 0</code><p><strong>2. Mark every fourth layer:</strong> layers 4, 8, and 12 become sparse.</p></div>
@@ -384,22 +391,23 @@ self.attention = (
 <div data-slide-id="linear-attention-carries-a-running-memory" class="slide title"><h1>Linear attention carries a running memory</h1>
 <p>Each token updates one compact prefix state</p>
 <div class="linear-memory"><div class="lm-flow"><span><b>x₁</b><i>↓</i></span><span><b>x₂</b><i>↓</i></span><span><b>x₃</b><i>↓</i></span><span><b>x₄</b><i>↓</i></span><span><b>x₅</b><i>↓</i></span></div><div class="lm-state">running key – value state</div></div>
+<p class="slide-why"><b>Why:</b> the state stays fixed in size as context grows, making long sequences cheaper than storing every key and value. The tradeoff is compressed history.</p><small class="architecture-caveat"><b>Teaching model:</b> ELU feature maps + prefix sums. <b>Released GLM:</b> KDA recurrent state + short convolution.</small>
 <style>.linear-memory{margin-top:7vh}.lm-flow{display:flex;justify-content:center;gap:42px}.lm-flow span{display:grid;justify-items:center;gap:14px}.lm-flow b{display:grid;place-items:center;width:96px;height:96px;border-radius:50%;background:#e9e3d8;border:3px solid #d97757;color:#1f1f1c;font-size:32px}.lm-flow i{color:#d97757;font:400 48px/1 Arial,sans-serif}.lm-state{display:inline-block;margin-top:14px;padding:30px 80px;border-radius:20px;background:#ded4c8;border:2px solid #8a6252;font-size:34px;font-weight:700;box-shadow:0 0 45px #d9775733}</style></div>
 <div data-slide-id="sparse-attention-retrieves-selected-positions" class="slide title"><h1>Sparse attention retrieves selected positions</h1>
 <p>Local window + regularly spaced anchors</p>
 <div class="sparse-row"><span class="anchor">0</span><span>1</span><span>2</span><span>3</span><span class="anchor">4</span><span>5</span><span>6</span><span>7</span><span class="anchor">8</span><span>9</span><span class="local">10</span><span class="local">11</span><span class="local">12</span><span class="local">13</span><span class="current">14</span></div>
-<div class="sparse-key"><b>anchors</b> reach far back <i>+</i> <strong>local tokens</strong> preserve detail</div>
+<div class="sparse-key"><b>anchors</b> reach far back <i>+</i> <strong>local tokens</strong> preserve detail</div><p class="slide-why"><b>Why:</b> selected tokens preserve exact details that a compressed running state may blur or forget.</p><small class="architecture-caveat"><b>Teaching model:</b> fixed local + strided positions. <b>Released GLM:</b> a learned indexer selects 2,048 positions; IndexPool compresses four index keys into one.</small>
 <style>.sparse-row{display:flex;justify-content:center;gap:10px;margin-top:12vh}.sparse-row span{display:grid;place-items:center;width:72px;height:82px;border-radius:12px;background:#e9e3d8;border:2px solid #c7beb0;color:#6f675c;font-size:25px}.sparse-row .anchor{border-color:#8a6252;color:#8a6252;background:#ded4c8}.sparse-row .local{border-color:#d97757;color:#d97757;background:#ead4c7}.sparse-row .current{border-color:#68785c;background:#dce3d7;color:#68785c;box-shadow:0 0 30px #68785c66}.sparse-key{margin-top:60px;font-size:27px;color:#6f675c}.sparse-key b{color:#8a6252}.sparse-key strong{color:#d97757}.sparse-key i{padding:0 24px;color:#1f1f1c}</style></div>
 <div data-slide-id="each-token-chooses-experts" class="slide title"><h1>Each token chooses experts</h1>
 <p>Two routed experts + one shared expert</p>
-<div class="moe-flow"><div class="moe-token">token</div><div class="moe-arrow">→</div><div class="moe-router">router</div><div class="moe-arrow">→</div><div class="experts"><span>E1</span><span class="on">E2</span><span>E3</span><span>E4</span><span>E5</span><span>E6</span><span class="on">E7</span><span>E8</span><strong>shared</strong></div></div>
+<div class="moe-flow"><div class="moe-token">token</div><div class="moe-arrow">→</div><div class="moe-router">router</div><div class="moe-arrow">→</div><div class="experts"><span>E1</span><span class="on">E2</span><span>E3</span><span>E4</span><span>E5</span><span>E6</span><span class="on">E7</span><span>E8</span><strong>shared</strong></div></div><p class="slide-why"><b>Why:</b> MoE gives the model many specialist parameter sets without running every specialist for every token.</p><small class="architecture-caveat"><b>Teaching model:</b> 2 of 8 routed + 1 shared. <b>Released GLM:</b> 8 of 288 routed + 1 shared.</small>
 <style>.moe-flow{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:8vh}.moe-token,.moe-router{display:grid;place-items:center;width:150px;height:110px;border-radius:18px;background:#e9e3d8;border:2px solid #d97757;font-size:30px;font-weight:700}.moe-router{border-color:#8a6252}.moe-arrow{font-size:48px;color:#d97757}.experts{display:grid;grid-template-columns:repeat(4,82px);gap:12px}.experts span,.experts strong{display:grid;place-items:center;height:72px;border-radius:12px;background:#e9e3d8;border:2px solid #c7beb0;color:#6f675c;font-size:22px}.experts .on{background:#dce3d7;border-color:#68785c;color:#68785c;box-shadow:0 0 25px #68785c44}.experts strong{grid-column:1/5;background:#ded4c8;border-color:#8a6252;color:#8a6252}</style></div>
 <div data-slide-id="four-residual-streams" class="slide title"><h1>Four residual streams</h1>
 <p>Mix before the block · route the update back afterward</p>
-<div class="streams"><div class="stream-lines"><i></i><i></i><i></i><i></i></div><b>mix</b><em>→</em><strong>attention + MoE</strong><em>→</em><b>route</b><div class="stream-lines out"><i></i><i></i><i></i><i></i></div></div>
+<div class="streams"><div class="stream-lines"><i></i><i></i><i></i><i></i></div><b>mix</b><em>→</em><strong>attention + MoE</strong><em>→</em><b>route</b><div class="stream-lines out"><i></i><i></i><i></i><i></i></div></div><p class="slide-why"><b>Why:</b> each block can read one useful mixture, then send its update down several residual paths instead of one.</p><small class="architecture-caveat"><b>Teaching model:</b> learned softmax mixing. <b>Released GLM:</b> manifold-constrained hyper-connections with Sinkhorn normalization.</small>
 <style>.streams{display:flex;align-items:center;justify-content:center;gap:26px;margin-top:12vh}.stream-lines{display:grid;gap:18px;width:210px}.stream-lines i{height:10px;border-radius:8px;background:linear-gradient(90deg,#d97757,#8a6252);box-shadow:0 0 16px #d9775744}.stream-lines.out i:nth-child(2){transform:translateX(16px)}.stream-lines.out i:nth-child(3){transform:translateX(-12px)}.streams b{display:grid;place-items:center;width:110px;height:110px;border-radius:50%;background:#ded4c8;border:2px solid #8a6252;font-size:28px}.streams strong{padding:34px 46px;border-radius:18px;background:#e9e3d8;border:2px solid #d97757;font-size:30px}.streams em{font-style:normal;font-size:42px;color:#d97757}</style></div>
 <div data-slide-id="the-model-configuration" class="slide"><h1>The model configuration</h1>
-<pre>ModelConfig(
+<div class="config-layout"><pre>ModelConfig(
     vocab_size=260,
     dim=192,
     layers=12,
@@ -408,7 +416,7 @@ self.attention = (
     top_k=2,
     streams=4,
     max_sequence_length=192,
-)</pre></div>
+)</pre><div class="config-meaning"><span><b>260</b><small>possible byte tokens</small></span><span><b>192</b><small>numbers in each token vector</small></span><span><b>12</b><small>hybrid blocks</small></span><span><b>2 of 8</b><small>routed experts per token</small></span><span><b>4</b><small>residual streams</small></span><span><b>192</b><small>bytes of context</small></span></div></div><p class="slide-why"><b>Why these values:</b> large enough to demonstrate every mechanism, but small enough to train the whole model quickly.</p></div>
 <div data-slide-id="one-hybrid-block" class="slide"><h1>One hybrid block</h1>
 <pre>def forward(self, x):
     x = x + self.attention(self.attention_norm(x))
@@ -416,11 +424,11 @@ self.attention = (
     ffn, usage = self.moe(self.ffn_norm(x))
 
     return x + ffn, usage</pre>
-<p>Attention reads tokens. MoE transforms them.</p></div>
+<p>Attention moves information between token positions. MoE applies specialist transformations to each position. Residual additions preserve the previous representation while adding both updates.</p></div>
 <div data-slide-id="the-input-and-output-share-one-matrix" class="slide title"><h1>The input and output share one matrix</h1>
 <pre>self.output.weight = self.embedding.weight</pre>
 <div class="tie-path"><span>read byte tokens</span><b>↔</b><span>shared weights</span><b>↔</b><span>predict next byte</span></div>
-<p>One matrix learns both token embeddings and output logits.</p>
+<p>One matrix learns both token embeddings and output logits. Weight tying removes a second large matrix and makes reading and predicting bytes use the same learned geometry.</p>
 <style>.tie-path{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:8vh}.tie-path span{padding:28px 36px;border-bottom:3px solid #d97757;background:#e9e3d8;font-size:29px;font-weight:700}.tie-path b{font-size:46px;color:#d97757}</style></div>
 <div data-slide-id="prove-the-model-is-wired-correctly" class="slide title"><h1>Prove the model is wired correctly</h1>
 <div class="checks"><span>✓ tokenizer round-trip</span><span>✓ causal outputs</span><span>✓ 3:1 attention rhythm</span><span>✓ expert usage sums to 1</span><span>✓ active &lt; total parameters</span></div>
@@ -441,6 +449,9 @@ loss.backward()
 clip_grad_norm_(model.parameters(), 1.0)
 optimizer.step()</pre>
 <p>Predict → compare → backpropagate → update</p></div>
+<div data-slide-id="how-one-pretraining-step-changes-the-model" class="slide title pretrain-mechanism-slide"><h1>How one pretraining step changes the model</h1>
+<div class="training-mechanism"><span><small>1 · PREDICT</small><b>next-byte scores</b><em>What does the model currently expect?</em></span><i>→</i><span><small>2 · COMPARE</small><b>cross-entropy loss</b><em>How much probability missed the correct byte?</em></span><i>→</i><span><small>3 · ASSIGN BLAME</small><b>gradients</b><em>Which weights caused the error?</em></span><i>→</i><span class="updated"><small>4 · UPDATE</small><b>AdamW step</b><em>Make the observed continuation more likely.</em></span></div>
+<p>The model is never given a rule called “write Python.” Millions of next-byte errors gradually shape weights that reproduce Python structure.</p></div>
 <div data-slide-id="pretraining-makes-code-shaped-text" class="slide title"><h1>Pretraining makes code-shaped text</h1>
 <p>Capability is uneven: on a different held-out prompt, the model produced invalid Python.</p>
 <div class="bad-code"><code>return x * * 0 0</code><strong>INVALID PYTHON</strong></div>
@@ -448,8 +459,8 @@ optimizer.step()</pre>
 <div data-slide-id="turn-execution-into-reward" class="slide title"><h1>Turn execution into reward</h1>
 <div class="reward-pipe"><span>generate code</span><b>→</b><span>run tests</span><b>→</b><span>score it</span><b>→</b><span>update model</span></div>
 <style>.reward-pipe{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:13vh}.reward-pipe span{padding:30px 34px;border-radius:18px;background:#e9e3d8;border:2px solid #c7beb0;font-size:29px;font-weight:700}.reward-pipe span:nth-of-type(2){border-color:#d97757}.reward-pipe span:nth-of-type(3){border-color:#68785c}.reward-pipe span:nth-of-type(4){border-color:#8a6252}.reward-pipe b{font-size:43px;color:#d97757}</style></div>
-<div data-slide-id="reinforcement-learning-improves-the-attempts" class="slide title native-rl-progress"><h1>Reinforcement learning improves the attempts</h1>
-<p>The model tries many answers. As training continues, more of them work.</p>
+<div data-slide-id="reinforcement-learning-improves-the-attempts" class="slide title native-rl-progress"><h1>RL raises the dev rollout rate</h1>
+<p>The model samples many programs for development prompts. More pass the executable tests as training continues.</p>
 <div class="native-line-chart"><span class="axis-label top">50%</span><span class="axis-label bottom">0%</span><svg viewBox="0 0 900 360" role="img" aria-label="Exact rollout rate rises from 4.2 percent to 45.8 percent"><line x1="45" y1="315" x2="860" y2="315"/><line x1="45" y1="35" x2="45" y2="315"/><polyline points="45,292 180,270 315,226 450,190 585,142 720,91 860,58"/><circle cx="45" cy="292" r="9"/><circle cx="860" cy="58" r="11"/></svg><b class="line-start">4.2%</b><b class="line-end">45.8%</b></div>
 <small class="source-note">Exact rollout rate on dev · 1,536 sampled programs</small></div>
 <div data-slide-id="before-and-after-reinforcement-learning" class="slide title native-before-after"><h1>Before and after reinforcement learning</h1>
@@ -478,10 +489,12 @@ for arguments, expected in task.cases:
 <style>.rollouts{display:grid;grid-template-columns:repeat(8,82px);gap:18px;justify-content:center;margin-top:10vh}.rollouts span{display:grid;place-items:center;width:82px;height:82px;border-radius:50%;background:#e9e3d8;border:2px solid #b8aea0;color:#6f675c;font-size:24px;font-weight:800}.rollouts .good{border-color:#68785c;background:#dce3d7;color:#68785c;box-shadow:0 0 22px #68785c44}.rollouts .bad{border-color:#a94f3d;background:#ead7d0;color:#a94f3d}</style></div>
 <div data-slide-id="compare-each-attempt-with-the-others" class="slide title"><h1>Compare each attempt with the others</h1>
 <div class="advantage"><code>advantageᵢ = rewardᵢ − mean(other rewards)</code><div><span class="up">better → more likely</span><span class="down">worse → less likely</span></div></div>
+<p class="slide-why">The other attempts create a prompt-specific baseline: the update asks whether this completion was unusually good for the same task, without training a separate critic.</p>
 <style>.advantage{display:grid;gap:60px;margin-top:11vh}.advantage code{padding:38px 55px;border-radius:20px;background:#e9e3d8;border:2px solid #8a6252;font-size:40px}.advantage>div{display:flex;justify-content:center;gap:35px}.advantage span{padding:22px 32px;border-radius:14px;font-size:27px;font-weight:700}.advantage .up{background:#dce3d7;color:#68785c}.advantage .down{background:#ead7d0;color:#a94f3d}</style></div>
 <div data-slide-id="update-only-2-19m-parameters" class="slide title"><h1>Update only 2.19M parameters</h1>
 <p>Last block + final normalization + tied output head</p>
 <div class="train-scope"><div class="frozen"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="trainable">block 12</div><b>→</b><div class="head">output head</div></div>
+<p class="slide-why">This makes the experiment faster and reduces forgetting. The final block changes features; the tied head converts those features into different next-byte probabilities.</p>
 <style>.train-scope{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:10vh}.frozen{display:flex;gap:7px}.frozen span{width:28px;height:95px;border-radius:7px;background:#c7beb0;border:2px solid #b8aea0}.trainable,.head{display:grid;place-items:center;height:112px;padding:0 28px;border-radius:14px;background:#dce3d7;border:2px solid #68785c;color:#68785c;font-size:25px;font-weight:800;box-shadow:0 0 28px #68785c44}.train-scope b{font-size:42px;color:#d97757}</style></div>
 <div data-slide-id="the-rloo-update" class="slide"><h1>The RLOO update</h1>
 <pre>generations = generate_group(model, task, group_size=16)
@@ -493,12 +506,22 @@ loss = -(advantages * log_probs).mean()
 
 loss.backward()
 optimizer.step()</pre>
-<p>No reference completion is shown during RL.</p></div>
+<p>The current policy generates its own attempts. Executable rewards say which attempts worked; no reference completion or critic is supplied.</p></div>
 <div data-slide-id="open-the-confirmation-set-once" class="slide title"><h1>Open the confirmation set once</h1>
 <div class="split-lock"><div><span>TRAIN</span><b>learn</b></div><i>→</i><div><span>DEV</span><b>choose checkpoint</b></div><i>→</i><div class="locked"><span>CONFIRM</span><b>🔒 unseen tasks</b></div></div>
+<p class="slide-why">We inspect confirmation only after choosing the checkpoint. Repeatedly checking it would turn it into another development set.</p>
 <style>.split-lock{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:12vh}.split-lock>div{display:grid;gap:15px;width:260px;padding:32px;border-radius:18px;background:#e9e3d8;border:2px solid #c7beb0}.split-lock span{font-size:30px;font-weight:800;color:#d97757}.split-lock b{font-size:22px;color:#6f675c}.split-lock i{font-style:normal;font-size:45px;color:#d97757}.split-lock .locked{border-color:#68785c}.split-lock .locked span{color:#68785c}</style></div>
 <div data-slide-id="the-gains-are-not-uniform" class="slide title"><h1>The gains are not uniform</h1>
-<img src="assets/family-results.png" alt="Per-family measured results" style="max-height:58vh;max-width:88vw;width:auto"></div>
+<p>RL improved the practiced behaviors, but did not make the model uniformly better.</p>
+<div class="family-bars" role="img" aria-label="Before and after exact success rates across eight coding task families">
+  <div class="family-legend"><span class="before">before</span><span class="after">after RL</span><em>trained family</em></div>
+  <div class="family-row trained"><b>increment</b><span><i class="before" style="--w:9.4%"></i><small>9%</small></span><span><i class="after" style="--w:62.5%"></i><small>63%</small></span></div>
+  <div class="family-row trained"><b>double</b><span><i class="before" style="--w:6.2%"></i><small>6%</small></span><span><i class="after" style="--w:70.3%"></i><small>70%</small></span></div>
+  <div class="family-row trained"><b>even</b><span><i class="before" style="--w:4.7%"></i><small>5%</small></span><span><i class="after" style="--w:4.7%"></i><small>5%</small></span></div>
+  <div class="family-row"><b>square</b><span><i class="before" style="--w:81.2%"></i><small>81%</small></span><span><i class="after" style="--w:57.8%"></i><small>58%</small></span></div>
+  <div class="family-row"><b>list sum</b><span><i class="before" style="--w:95.3%"></i><small>95%</small></span><span><i class="after" style="--w:87.5%"></i><small>88%</small></span></div>
+  <div class="family-row zero"><b>absolute · nonnegative · reverse</b><span><small>0% before</small></span><span><small>0% after</small></span></div>
+</div></div>
 <div data-slide-id="what-changed" class="slide title"><h1>What changed</h1>
 <div class="family-summary"><span class="gain">increment ↑</span><span class="gain">double ↑</span><span class="flat">even –</span><span class="loss">square ↓</span><span class="loss">list sum ↓</span></div>
 <style>.family-summary{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;max-width:1100px;margin:13vh auto 0}.family-summary span{padding:26px 34px;border-radius:16px;background:#e9e3d8;border:2px solid #c7beb0;font-size:30px;font-weight:800}.family-summary .gain{border-color:#68785c;color:#68785c}.family-summary .flat{border-color:#8a6252;color:#8a6252}.family-summary .loss{border-color:#a94f3d;color:#a94f3d}</style></div>
@@ -925,8 +948,19 @@ optimizer.step()</pre>
   .split-result h1 { display:none; }
   .split-result img { width:auto; height:82vh; max-width:92vw !important; max-height:none !important; margin:0; }
   .split-result p { margin-top:.35em; }
-  .pretraining-chart img { width:auto; height:68vh; max-width:90vw !important; max-height:none !important; margin:0; }
-  .pretraining-chart p { margin-top:.25em; }
+  .pretraining-chart>p { margin:.2em 0 0; }
+  .pretrain-line-chart { width:min(1040px,86vw); margin:5vh auto 0; }
+  .pretrain-grid { position:relative; height:34vh; border-left:2px solid var(--line); border-bottom:2px solid var(--line);
+    background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),#383530 25%); }
+  .pretrain-grid svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .pretrain-grid polyline { fill:none; stroke:var(--olive); stroke-width:7; vector-effect:non-scaling-stroke;
+    stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 7px 13px #8f9a6740); }
+  .pretrain-grid>span { position:absolute; left:var(--x); top:var(--y); z-index:2; transform:translate(-50%,-50%);
+    display:grid; gap:5px; min-width:72px; padding:10px 12px; background:#20211d; border:1px solid var(--olive); }
+  .pretrain-grid>span:first-of-type { transform:translate(0,-100%); }
+  .pretrain-grid>span:last-of-type { transform:translate(-100%,0); }
+  .pretrain-grid b { color:#d7ddb5 !important; font:700 23px/1 Georgia,serif; }
+  .pretrain-grid small { color:var(--muted); font:700 11px/1 Arial,sans-serif; letter-spacing:.06em; }
   .research-branches { display:flex; align-items:center; justify-content:center; gap:18px;
     margin-top:9vh; font-size:.92em; }
   .research-branches>i { color:var(--accent); font-style:normal; }
@@ -965,6 +999,21 @@ optimizer.step()</pre>
   .native-result-bars .after i { background:#303324; border-color:var(--olive); }
   .native-result-bars strong { color:var(--ink) !important; font:700 48px/1 Georgia,serif; }
   .native-result-bars>b { align-self:center; color:var(--accent); font-size:58px; }
+  .family-bars { display:grid; gap:9px; width:min(1040px,88vw); margin:3vh auto 0; }
+  .family-legend { display:flex; justify-content:flex-end; gap:24px; color:var(--muted); font:700 12px/1 Arial,sans-serif;
+    text-transform:uppercase; letter-spacing:.09em; }
+  .family-legend span::before { content:""; display:inline-block; width:18px; height:8px; margin-right:7px; vertical-align:1px; }
+  .family-legend .before::before { background:#806158; }.family-legend .after::before { background:var(--olive); }
+  .family-legend em { color:#d8aa98; font-style:normal; }
+  .family-row { display:grid; grid-template-columns:200px 1fr 1fr; align-items:center; gap:16px; min-height:43px; }
+  .family-row>b { color:var(--ink) !important; font:700 16px/1 Arial,sans-serif; text-align:right; }
+  .family-row.trained>b::before { content:"TRAINED"; margin-right:9px; color:var(--accent); font:700 9px/1 Arial,sans-serif;
+    letter-spacing:.08em; }
+  .family-row>span { position:relative; height:26px; background:#24221f; border:1px solid #35322d; }
+  .family-row i { display:block; width:var(--w); height:100%; min-width:3px; background:#806158; }
+  .family-row i.after { background:var(--olive); }
+  .family-row small { position:absolute; right:8px; top:6px; color:#ddd6ca; font:700 11px/1 Arial,sans-serif; }
+  .family-row.zero>span { display:grid; place-items:center; }.family-row.zero small { position:static; color:var(--muted); }
   .tokenizer-example { display:flex; align-items:center; justify-content:center; gap:30px; margin-top:7vh; }
   .tokenizer-example>code { padding:22px 28px; font-size:29px; }.tokenizer-example>b { color:var(--accent); font-size:42px; }
   .tokenizer-example>div { display:flex; gap:10px; }.tokenizer-example span { padding:20px 18px; background:var(--soft);
@@ -1016,6 +1065,24 @@ optimizer.step()</pre>
   .experiment-steps p { margin:0; max-width:none; font-size:.72em; line-height:1.4; text-align:left !important; }
   .code-pair p { margin:.1em 0 1em; color:var(--muted); }
   .code-pair pre { width:min(82vw,1240px); font-size:.76em; }
+  .config-layout { display:grid; grid-template-columns:440px 1fr; align-items:center; gap:34px;
+    width:min(86vw,1180px); margin:3vh auto 0; }
+  .config-layout pre { width:auto; margin:0; font-size:.58em; }
+  .config-meaning { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .config-meaning span { display:grid; grid-template-columns:92px 1fr; align-items:center; min-height:72px;
+    padding:14px 18px; background:var(--soft); border:1px solid var(--line); text-align:left; }
+  .config-meaning b { color:var(--accent) !important; font:700 25px/1 Georgia,serif; }
+  .config-meaning small { color:var(--muted); font-size:14px; line-height:1.25; }
+  .training-mechanism { display:flex; align-items:stretch; justify-content:center; gap:14px; margin:8vh auto 4vh; }
+  .training-mechanism>span { display:grid; align-content:center; gap:14px; width:235px; min-height:190px;
+    padding:22px; background:var(--soft); border:1px solid var(--line); text-align:left; }
+  .training-mechanism>span.updated { border-color:var(--olive); background:#20211d; }
+  .training-mechanism small { color:var(--muted); font:700 11px/1 Arial,sans-serif; letter-spacing:.08em; }
+  .training-mechanism b { color:var(--ink) !important; font:700 25px/1.15 Georgia,serif; }
+  .training-mechanism .updated b { color:#bcc39c !important; }
+  .training-mechanism em { color:var(--muted); font:400 15px/1.35 Arial,sans-serif; }
+  .training-mechanism>i { align-self:center; color:var(--accent); font:700 30px/1 Arial,sans-serif; }
+  .pretrain-mechanism-slide>p { max-width:920px; font-size:.72em; line-height:1.4; }
   .algorithm-walkthrough .walkthrough-steps { position:relative; width:min(82vw,1180px); height:42vh;
     margin:7vh auto 0; }
   .algorithm-walkthrough .step { display:none; position:absolute; inset:0; align-content:center;
@@ -1064,6 +1131,22 @@ optimizer.step()</pre>
   .rope-flow { gap:12px !important; }
   .rope-flow>section { min-width:190px !important; min-height:160px !important; padding:18px !important; }
   .rope-flow>i { min-width:86px !important; }
+  .mechanism-slide .rope-explainer { max-width:920px; margin:.65em auto 0; font-size:.62em; line-height:1.35; }
+  .rope-caveat { display:block; max-width:980px; margin:10px auto 0; color:var(--muted);
+    font:600 13px/1.3 Arial,sans-serif; }
+  .rope-caveat b { color:#bcc39c; }
+  .nope-slide>p { margin:.25em auto 0; font-size:.76em; }
+  .nope-grid { display:flex; align-items:center; justify-content:center; gap:18px; margin:7vh auto 2vh; }
+  .nope-grid article { display:grid; place-items:center; align-content:center; gap:15px; width:280px; min-height:190px;
+    padding:24px; background:var(--soft); border:1px solid var(--line); }
+  .nope-grid article.indexer { border-color:var(--accent); }
+  .nope-grid article.nope { border-color:var(--olive); background:#20211d; }
+  .nope-grid small { color:var(--muted); font:700 12px/1 Arial,sans-serif; letter-spacing:.08em; text-transform:uppercase; }
+  .nope-grid b { color:var(--ink) !important; font:700 31px/1.1 Georgia,serif; }
+  .nope-grid .indexer b { color:#efb19a !important; }
+  .nope-grid .nope b { color:#bcc39c !important; }
+  .nope-grid span { max-width:220px; color:var(--muted); font-size:16px; line-height:1.35; }
+  .nope-grid>i { color:var(--accent); font:700 36px/1 Arial,sans-serif; }
   .position-dial { display:grid; place-items:center; width:62px; height:62px; border-radius:50%;
     border:2px solid var(--accent); }
   .vector-arrows { display:flex; gap:18px; color:var(--accent); font-size:34px; }
@@ -1076,6 +1159,13 @@ optimizer.step()</pre>
   .attention-legend small { color:var(--ink); font:700 14px/1.2 Arial,sans-serif; }
   .attention-legend em { color:var(--muted); font:400 12px/1.2 Arial,sans-serif; }
   .attention-legend>i { color:var(--muted); font:700 13px/1 Arial,sans-serif; text-transform:uppercase; }
+  .architecture-caveat { display:block; max-width:1080px; margin:24px auto 0; color:var(--muted);
+    font:600 13px/1.35 Arial,sans-serif; }
+  .architecture-caveat b { color:#bcc39c; }
+  .slide-why { max-width:980px !important; margin:20px auto 0 !important; color:var(--muted);
+    font-size:18px !important; line-height:1.35 !important; }
+  .slide-why b { color:#bcc39c; }
+  .slide-why + .architecture-caveat { margin-top:8px; }
   .algorithm-walkthrough .walkthrough-dots { display:flex; justify-content:center; gap:12px; margin-top:2vh; }
   .algorithm-walkthrough .walkthrough-dots i { width:10px; height:10px; border-radius:50%;
     background:#4a4640; }
@@ -1300,6 +1390,25 @@ optimizer.step()</pre>
     const ordered = saved.map(id => byId.get(id)).filter(Boolean);
     const seen = new Set(ordered);
     ordered.push(...s.filter(el => !seen.has(el)));
+    if (!saved.includes('where-released-glm-uses-position')) {
+      const positionSlide = byId.get('where-released-glm-uses-position');
+      const ropeIndex = ordered.findIndex(el => el.dataset.slideId === 'rope-writes-position-into-queries-and-keys');
+      const currentIndex = ordered.indexOf(positionSlide);
+      if (positionSlide && ropeIndex >= 0 && currentIndex >= 0) {
+        ordered.splice(currentIndex, 1);
+        ordered.splice(ropeIndex + 1, 0, positionSlide);
+      }
+    }
+    if (!saved.includes('how-one-pretraining-step-changes-the-model')) {
+      const mechanismSlide = byId.get('how-one-pretraining-step-changes-the-model');
+      const stepIndex = ordered.findIndex(el => el.dataset.slideId === 'the-pretraining-step');
+      const currentIndex = ordered.indexOf(mechanismSlide);
+      if (mechanismSlide && stepIndex >= 0 && currentIndex >= 0) {
+        ordered.splice(currentIndex, 1);
+        const refreshedStepIndex = ordered.findIndex(el => el.dataset.slideId === 'the-pretraining-step');
+        ordered.splice(refreshedStepIndex + 1, 0, mechanismSlide);
+      }
+    }
     ordered.forEach(el => filmstripPanel.before(el));
     s = ordered;
   } catch (_) {}
@@ -1492,7 +1601,7 @@ optimizer.step()</pre>
     '.next-token > *', '.experiment-steps > article', '.layer-stack > div',
     '.linear-memory > *', '.sparse-row > span', '.moe-flow > *', '.experts > *',
     '.streams > *', '.checks > span', '.walkthrough-steps code', '.walkthrough-steps p',
-    '.reward-pipe > *', '.reward-values > div', '.family-summary > span',
+    '.reward-pipe > *', '.reward-values > div', '.family-summary > span', '.family-row > *', '.pretrain-grid > span',
     '.result-final > *', '.lab-ad-flow > *',
     '.vision-scale-path > *', '.vision-mechanism > *', '.vision-sequence > *',
     '.vision-training-visual > *', '.vision-training-facts > *', '.vision-result-bars > *'
