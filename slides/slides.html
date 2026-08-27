@@ -249,7 +249,7 @@
   <span class="vision-merge"><small>2 × 2 MERGE</small><i></i><em>four neighboring vectors → one</em></span><b>→</b>
   <span class="vision-tokens"><small>4 × 4 = 16 IMAGE TOKENS</small><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><em>one token summarizes each region</em></span>
 </div>
-<p>Each 2 × 2 group becomes one vector, so the 8 × 8 patch grid becomes a 4 × 4 grid of 16 image tokens.</p></div>
+<div class="vision-input-contract"><strong>Fixed input contract: <code>[batch, 3, 32, 32]</code> RGB floats from 0 to 1.</strong><span>The encoder rejects other shapes. An arbitrary image must first be decoded as RGB, cropped or padded to a square, and resized to 32 × 32.</span><small><b>Why 16 tokens?</b> 32 ÷ 4-pixel patches = 8 patches per side. Then 8 ÷ 2-way merge = 4 tokens per side. 4 × 4 = 16.</small></div></div>
 <div data-slide-id="image-tokens-enter-the-language-model" class="slide title vision-sequence-slide"><h1>Image tokens enter the language sequence</h1>
 <p>Special tokens mark exactly where the image belongs.</p>
 <div class="vision-sequence">
@@ -263,11 +263,12 @@ logits = language_model.forward_embeddings(embeddings)</pre></div>
 <div data-slide-id="vision-training-task" class="slide title vision-training-slide"><h1>What did the vision model learn?</h1>
 <p>Read noisy, shifted RGB seven-segment digits and answer with the correct character.</p>
 <div class="vision-training-visual">
-  <section><b>TRAIN</b><strong>4,800 generated images</strong><small>new position, color, and noise every step</small><div class="vision-digit-row"><i>1</i><i>4</i><i>7</i><i>8</i></div></section>
+  <section><b>TRAIN</b><strong>4,800 generated images</strong><small>40 fresh renderings per step × 120 optimizer steps</small><figure class="vision-example-strip"><img src="assets/vision-train-examples.png" alt="Actual generated training images of digits 1, 4, 7, and 8"><figcaption>Actual step-0 renderings · labels 1, 4, 7, 8</figcaption></figure></section>
   <i>→</i>
-  <section class="heldout"><b>HELD OUT</b><strong>200 new renderings</strong><small>never used for optimization</small><div class="vision-digit-row"><i>2</i><i>5</i><i>6</i><i>9</i></div></section>
+  <section class="heldout"><b>HELD OUT</b><strong>200 fixed renderings</strong><small>seed 10042 · scored before and after · never optimized</small><figure class="vision-example-strip"><img src="assets/vision-heldout-examples.png" alt="Actual held-out evaluation images of digits 2, 5, 6, and 9"><figcaption>Actual evaluation renderings · labels 2, 5, 6, 9</figcaption></figure></section>
 </div>
-<div class="vision-training-facts"><span>120 optimizer steps</span><span>batch size 40</span><span>CPU training</span><span>4.3 seconds for both models</span></div></div>
+<p class="vision-split-explainer"><b>What is held out?</b> Both splits contain digit classes 0 – 9. Evaluation holds out the exact pixels: new shifts, colors, intensities, and noise. This tests recognition of new renderings, not unseen digit categories.</p>
+<div class="vision-training-facts"><span>target: one digit character</span><span>batch size 40</span><span>answer-only loss</span><span>4.3 seconds for both models</span></div></div>
 <div data-slide-id="vision-experiment-result" class="slide title vision-result-slide"><h1>The GLM-like vision path learned</h1>
 <p>Same data, seed, steps, batch size, and held-out images.</p>
 <div class="vision-result-bars">
@@ -651,6 +652,11 @@ optimizer.step()</pre>
   .vision-tokens small { grid-column:1/-1; }.vision-tokens i { display:block; width:25px; height:25px; background:var(--olive); opacity:.82; }
   .vision-merge>em, .vision-tokens>em { color:var(--muted); font:400 11px/1.25 Arial,sans-serif; font-style:normal; }
   .vision-tokens>em { grid-column:1/-1; }
+  .vision-input-contract { display:grid; gap:6px; width:min(1160px,90vw); margin:0 auto; padding:13px 18px;
+    background:var(--soft); border:1px solid var(--line); text-align:left; }
+  .vision-input-contract strong { color:var(--ink); font-size:18px; }.vision-input-contract code { color:#efb19a; }
+  .vision-input-contract span { color:var(--muted); font-size:15px; line-height:1.3; }
+  .vision-input-contract small { color:var(--muted); font-size:13px; }.vision-input-contract small b { color:#bcc39c; }
   .vision-sequence { display:flex; align-items:center; justify-content:center; gap:11px; margin:8vh auto 4vh; }
   .vision-sequence>span { display:grid; place-items:center; min-height:92px; padding:18px 24px; background:var(--soft);
     border:1px solid var(--line); font:700 18px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; }
@@ -660,8 +666,8 @@ optimizer.step()</pre>
   .vision-sequence>b { color:var(--accent); font-size:38px; }
   .vision-scatter { display:flex; justify-content:center; align-items:center; gap:20px; color:var(--muted); font-size:16px; }
   .vision-scatter>b { color:var(--accent); }.vision-sequence-slide pre { margin:4vh auto 0; font-size:.56em; }
-  .vision-training-visual { display:grid; grid-template-columns:1fr auto 1fr; align-items:stretch; gap:28px; width:min(86vw,1250px); margin:7vh auto 4vh; }
-  .vision-training-visual>section { display:grid; gap:12px; padding:28px; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .vision-training-visual { display:grid; grid-template-columns:1fr auto 1fr; align-items:stretch; gap:24px; width:min(90vw,1220px); margin:3vh auto 1.5vh; }
+  .vision-training-visual>section { display:grid; gap:9px; padding:18px; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
   .vision-training-visual>.heldout { border-top-color:var(--olive); }
   .vision-training-visual section>b { color:var(--muted); font:700 14px/1 Arial,sans-serif; letter-spacing:.12em; }
   .vision-training-visual section>strong { color:var(--ink) !important; font:700 29px/1.1 Georgia,serif; }
@@ -670,6 +676,10 @@ optimizer.step()</pre>
   .vision-digit-row { display:flex; gap:12px; margin-top:8px; }.vision-digit-row i { display:grid; place-items:center; width:62px; height:62px;
     background:#2b211e; border:1px solid var(--line); color:#efb19a; font:700 33px/1 ui-monospace,SFMono-Regular,Menlo,monospace; font-style:normal; }
   .heldout .vision-digit-row i { background:#303324; color:#bcc39c; }
+  .vision-example-strip { display:grid; gap:6px; margin:4px 0 0; }.vision-example-strip img { display:block; width:100%; max-height:116px;
+    object-fit:contain; object-position:left center; image-rendering:pixelated; }.vision-example-strip figcaption { color:var(--muted); font-size:12px; }
+  .vision-split-explainer { max-width:1100px !important; margin:8px auto 10px !important; color:var(--muted);
+    font-size:15px !important; line-height:1.35 !important; }.vision-split-explainer b { color:#bcc39c; }
   .vision-training-facts { display:flex; justify-content:center; gap:13px; }.vision-training-facts span { padding:12px 17px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:15px; }
   .vision-result-slide h1 { max-width:760px; margin-right:auto; text-align:left; font-size:56px; }
   .vision-result-bars { display:grid; grid-template-columns:repeat(3,220px); align-items:end; justify-content:center; gap:55px; margin:2.5vh auto 2vh; }
