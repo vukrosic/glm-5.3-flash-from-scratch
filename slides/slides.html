@@ -825,6 +825,8 @@ optimizer.step()</pre>
   body.presentation-mode #edit-toast { display:none !important; }
   body.presentation-mode [data-edit-element-id].element-hovered {
     outline:none !important; cursor:default; }
+  body.presentation-mode .text-editable,
+  body.presentation-mode .text-editable:hover { outline:none !important; cursor:default !important; }
 </style>
 <style id="dark-editorial-theme">
   :root {
@@ -1089,7 +1091,7 @@ optimizer.step()</pre>
   <textarea id="slide-feedback-input" placeholder="Feedback for this slide…" spellcheck="true"></textarea>
 </section>
 <aside id="filmstrip-panel" aria-label="Slide editor">
-  <div id="filmstrip-head"><strong>Slides</strong><span id="thumb-total"></span><span class="hint">Double-click text to edit · drag slides to reorder · hover + X to remove</span><button id="thumb-toggle" type="button" aria-label="Pin slide thumbnails open" title="Pin thumbnails (T)">Pin</button></div>
+  <div id="filmstrip-head"><strong>Slides</strong><span id="thumb-total"></span><span class="hint">P: recording mode · double-click text to edit · drag to reorder · hover + X to remove</span><button id="thumb-toggle" type="button" aria-label="Pin slide thumbnails open" title="Pin thumbnails (T)">Pin</button></div>
   <div id="filmstrip" aria-label="Slide thumbnails"></div>
 </aside>
 <script>
@@ -1103,6 +1105,7 @@ optimizer.step()</pre>
   const FEEDBACK_CATALOG_KEY = 'glm53-slide-feedback-catalog-v1';
   const FEEDBACK_PANEL_POS_KEY = 'glm53-feedback-panel-position-v2';
   const TEXT_EDITS_KEY = 'glm53-slide-text-edits-v1';
+  const PRESENTATION_KEY = 'glm53-recording-mode-v1';
   const filmstripPanel = document.getElementById('filmstrip-panel');
   const filmstrip = document.getElementById('filmstrip');
   const thumbToggle = document.getElementById('thumb-toggle');
@@ -1560,6 +1563,7 @@ optimizer.step()</pre>
   hydrateTextEdits();
 
   addEventListener('dblclick', event => {
+    if (document.body.classList.contains('presentation-mode')) return;
     const element = event.target.closest('.text-editable[data-edit-element-id]');
     if (!element || !element.closest('.slide.on:not(.thumb-canvas)')) return;
     clearElementHover();
@@ -1583,6 +1587,10 @@ optimizer.step()</pre>
     saveTextEdit(element);
   });
   addEventListener('pointermove', event => {
+    if (document.body.classList.contains('presentation-mode')) {
+      clearElementHover();
+      return;
+    }
     if (event.target.closest('#element-delete-hint')) {
       clearTimeout(hoverClearTimer);
       return;
@@ -1791,6 +1799,15 @@ optimizer.step()</pre>
       }
       return;
     }
+    if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'p') {
+      e.preventDefault();
+      const recording = !document.body.classList.contains('presentation-mode');
+      document.body.classList.toggle('presentation-mode', recording);
+      try { localStorage.setItem(PRESENTATION_KEY, recording ? '1' : '0'); } catch (_) {}
+      clearElementHover();
+      showEditToast(recording ? 'Recording mode on' : 'Editing mode on');
+      return;
+    }
     if (e.target.closest('#slide-feedback-panel')) return;
     if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
       if (undoElementRemoval()) e.preventDefault();
@@ -1930,7 +1947,16 @@ optimizer.step()</pre>
   }
 
   const reviewParams = new URLSearchParams(location.search);
-  document.body.classList.toggle('presentation-mode', reviewParams.get('present') === '1');
+  let recordingMode = true;
+  if (reviewParams.has('present')) recordingMode = reviewParams.get('present') === '1';
+  else {
+    try {
+      const savedRecordingMode = localStorage.getItem(PRESENTATION_KEY);
+      recordingMode = savedRecordingMode === null ? true : savedRecordingMode === '1';
+      if (savedRecordingMode === null) localStorage.setItem(PRESENTATION_KEY, '1');
+    } catch (_) {}
+  }
+  document.body.classList.toggle('presentation-mode', recordingMode);
   var START = Math.max(0, Number.parseInt(reviewParams.get('slide') || '0', 10) || 0);
   var STEP = Math.max(0, Number.parseInt(reviewParams.get('step') || '0', 10) || 0);
   thumbToggle.addEventListener('click', () =>
