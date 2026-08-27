@@ -105,6 +105,14 @@
   .nav button:hover { background: rgba(255,255,255,.14); color: #1f1f1c; }
   #bar { position: fixed; top: 0; left: 0; height: 3px; width: 0;
     background: linear-gradient(90deg, #d97757, #8a6252); transition: width .3s; }
+  .compact-explanation { max-width: 1120px !important; margin: 3vh auto 0 !important; padding: 16px 22px;
+    border-left: 4px solid #8a6252; background: rgba(233,227,216,.72); color: #4f4941 !important;
+    font-size: 18px !important; line-height: 1.42 !important; text-align: left; }
+  .compact-explanation b { color: #1f1f1c; }
+  .pretrain-example-notes { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; max-width:1150px; margin:3vh auto 0; }
+  .pretrain-example-notes span { display:grid; gap:8px; padding:16px 20px; border:1px solid #c7beb0;
+    border-top:3px solid #8a6252; background:#e9e3d8; color:#4f4941; font-size:17px; line-height:1.35; text-align:left; }
+  .pretrain-example-notes b { color:#8a6252; font-size:14px; letter-spacing:.08em; }
 </style></head><body>
 <div class="orb" style="width:34vw;height:34vw;left:-10vw;top:-12vh;background:rgba(64,110,255,.13)"></div>
 <div class="orb" style="width:26vw;height:26vw;right:-8vw;bottom:-10vh;background:rgba(255,140,60,.07);animation-delay:-13s"></div>
@@ -158,15 +166,16 @@
   </div>
 </div>
 <small class="source-note">Recruiting post for Anthropic · Research Engineer, Domain Scaling</small></div>
-<div data-slide-id="pretraining-progress" class="slide title pretraining-chart"><h1>Pretraining progress</h1>
-<p>Held-out code completions become correct as next-byte training continues.</p>
+<div data-slide-id="pretraining-progress" class="slide title pretraining-chart"><h1>Does pre-training improve unseen code?</h1>
+<p>After each checkpoint, greedy generation is tested on the same eight held-out tasks.</p>
 <div class="pretrain-line-chart" role="img" aria-label="Held-out tasks solved: zero of eight at step zero, two at step 100, seven at step 200, and eight at step 400">
-  <div class="pretrain-grid"><span style="--x:0%;--y:100%"><b>0/8</b><small>step 0</small></span><span style="--x:25%;--y:75%"><b>2/8</b><small>100</small></span><span style="--x:50%;--y:12.5%"><b>7/8</b><small>200</small></span><span style="--x:100%;--y:0%"><b>8/8</b><small>400</small></span><svg viewBox="0 0 1000 300" preserveAspectRatio="none"><polyline points="0,300 250,225 500,37.5 1000,0"/></svg></div>
+  <div class="pretrain-grid"><span style="--x:0%;--y:100%"><b>0/8</b><small>random weights</small></span><span class="selected-checkpoint" style="--x:25%;--y:75%"><b>2/8</b><small>step 100 · used for RL</small></span><span style="--x:50%;--y:12.5%"><b>7/8</b><small>step 200</small></span><span style="--x:100%;--y:0%"><b>8/8</b><small>step 400</small></span><svg viewBox="0 0 1000 300" preserveAspectRatio="none"><polyline points="0,300 250,225 500,37.5 1000,0"/></svg></div>
 </div>
-<small class="source-note">1.38M training bytes · 63 seconds · checkpoint 100 kept for RL so there was room to improve</small></div>
-<div data-slide-id="learn-by-predicting-the-next-token" class="slide title"><h1>Learn by predicting the next token</h1>
-<p>At every position, the model predicts what comes next and updates whenever it is wrong.</p>
-<div class="next-token"><div><small>INPUT</small><code>return&nbsp; x&nbsp; +</code></div><b>→</b><div class="target"><small>NEXT TOKEN</small><code>1</code></div></div>
+<small class="source-note">Strict tasks solved with greedy decoding · 1.38M training bytes · 63 seconds for the full 400-step run</small></div>
+<div data-slide-id="learn-by-predicting-the-next-token" class="slide title"><h1>The learning rule: predict the next byte</h1>
+<p>At every position, the model sees all earlier bytes and assigns probabilities to what comes next.</p>
+<div class="next-token"><div><small>BYTES ALREADY SEEN</small><code>return&nbsp; x&nbsp; +</code></div><b>→</b><div class="target"><small>CORRECT NEXT BYTE</small><code>1</code></div></div>
+<p class="slide-why">For ASCII Python, one byte is usually one visible character. Every wrong probability becomes a training signal.</p>
 <style>.next-token{display:flex;justify-content:center;align-items:center;gap:55px;margin-top:8vh}.next-token>div{display:grid;gap:22px;padding:38px 52px;border-radius:20px;background:#e9e3d8;border:2px solid #c7beb0}.next-token small{color:#6f675c;font-size:21px;font-weight:800;letter-spacing:.14em}.next-token code{font-size:50px;color:#1f1f1c}.next-token b{font-size:58px;color:#d97757}.next-token .target{border-color:#68785c;box-shadow:0 0 36px #68785c44}.next-token .target code{color:#68785c}</style></div>
 <div data-slide-id="we-will-also-do-real-research" class="slide title research-question"><h1>Research question</h1>
 <p>Which reinforcement-learning choice produces the largest improvement on unseen coding tasks?</p>
@@ -270,27 +279,28 @@ logits = language_model.forward_embeddings(embeddings)</pre></div>
 <p class="vision-split-explainer"><b>What is held out?</b> Both splits contain digit classes 0 – 9. Evaluation holds out the exact pixels: new shifts, colors, intensities, and noise. This tests recognition of new renderings, not unseen digit categories.</p>
 <div class="vision-training-facts"><span>target: one digit character</span><span>batch size 40</span><span>answer-only loss</span><span>4.3 seconds for both models</span></div></div>
 <div data-slide-id="vision-experiment-result" class="slide title vision-result-slide"><h1>The GLM-like vision path learned</h1>
-<p>Same data, seed, steps, batch size, and held-out images.</p>
+<p>Exact top-1 accuracy on the same 200 fixed held-out images. Both models saw identical data, seeds, updates, and batches.</p>
 <div class="vision-result-bars">
   <div><span>BEFORE TRAINING</span><i style="--score:2px"></i><strong>0%</strong><small>faithful miniature</small></div>
   <div class="faithful"><span>AFTER · GLM-LIKE</span><i style="--score:94px"></i><strong>59.5%</strong><small>119 / 200 correct</small></div>
   <div class="baseline"><span>AFTER · DIRECT PATCH</span><i style="--score:149px"></i><strong>94.5%</strong><small>189 / 200 correct</small></div>
 </div>
-<div class="vision-result-conclusion"><strong>Result:</strong> under a 120-step budget, the simpler adapter learned this tiny task faster.</div>
+<div class="vision-result-conclusion"><strong>Result:</strong> both paths learned new renderings. Under only 120 updates, the direct patch baseline reached the answer faster because it has fewer transformations to optimize.</div>
 <small class="source-note">One synthetic dataset and one seed · useful pilot, not a general architecture ranking.</small></div>
 <div data-slide-id="full-25m-vision-integration" class="slide title full-vision-result-slide"><h1>The full 25.7M language model also learned from images</h1>
 <p>This is an integration test, separate from the miniature adapter comparison.</p>
 <div class="full-vision-flow">
   <span><b>400 TRAINING IMAGES</b><strong>32 × 32 RGB digits</strong><small>40 updates · batch size 10</small></span><i>→</i>
   <span><b>VISION ENCODER</b><strong>16 visual tokens</strong><small>passed into the language model</small></span><i>→</i>
-  <span class="full-lm"><b>FULL LANGUAGE PATH</b><strong>all 12 layers executed</strong><small>25.7M-parameter LM</small></span>
+  <span class="full-lm"><b>FULL LANGUAGE PATH</b><strong>all 12 layers executed</strong><small>first 11 LM blocks frozen</small></span>
 </div>
 <div class="full-vision-metrics">
   <span><small>HELD-OUT ACCURACY</small><strong>0 / 100 <i>→</i> 40 / 100</strong></span>
   <span><small>CROSS-ENTROPY</small><strong>8.389 <i>→</i> 1.555</strong></span>
   <span><small>TRAINING</small><strong>37 seconds on MPS</strong></span>
 </div>
-<small class="source-note">One synthetic task and one seed · not general vision ability · no checkpoint was saved.</small></div>
+<p class="compact-explanation"><b>What actually learned?</b> The vision encoder, final LM block, final norm, and tied byte embedding/output matrix. Gradients still passed through the frozen layers so the vision encoder could learn inputs the existing language path could use.</p>
+<small class="source-note">Initialized from coding checkpoint 100 · one synthetic task and one seed · no checkpoint was saved.</small></div>
 <div data-slide-id="how-the-experiment-works" class="slide title experiment-overview"><h1>How the experiment works</h1>
 <div class="experiment-steps">
   <article><strong>1</strong><h2>Build</h2><p>Initialize the 25.7M-parameter model with random weights.</p></article>
@@ -438,46 +448,76 @@ self.attention = (
 <div data-slide-id="prove-the-model-is-wired-correctly" class="slide title"><h1>Prove the model is wired correctly</h1>
 <div class="checks"><span>✓ tokenizer round-trip</span><span>✓ causal outputs</span><span>✓ 3:1 attention rhythm</span><span>✓ expert usage sums to 1</span><span>✓ active &lt; total parameters</span></div>
 <style>.checks{display:grid;grid-template-columns:repeat(2,minmax(380px,1fr));gap:24px;max-width:1050px;margin:9vh auto 0}.checks span{padding:25px 30px;border-radius:16px;background:#e9e3d8;border-left:6px solid #68785c;text-align:left;font-size:27px}.checks span:last-child{grid-column:1/3}</style></div>
-<div data-slide-id="one-pretraining-example" class="slide"><h1>One pretraining example</h1>
-<pre># Complete this Python function.
-# Return x plus one.
-def increment_qrdadnk(x):
-    return x + 1</pre>
-<p>The model sees complete Python programs.</p></div>
-<div data-slide-id="the-pretraining-step" class="slide"><h1>The pretraining step</h1>
-<pre>logits, usage = model(inputs)
-
-loss = cross_entropy(logits, labels)
-loss += 0.01 * router_balance_loss(usage)
-
-loss.backward()
-clip_grad_norm_(model.parameters(), 1.0)
-optimizer.step()</pre>
-<p>Predict → compare → backpropagate → update</p></div>
-<div data-slide-id="how-one-pretraining-step-changes-the-model" class="slide title pretrain-mechanism-slide"><h1>How one pretraining step changes the model</h1>
-<div class="training-mechanism"><span><small>1 · PREDICT</small><b>next-byte scores</b><em>What does the model currently expect?</em></span><i>→</i><span><small>2 · COMPARE</small><b>cross-entropy loss</b><em>How much probability missed the correct byte?</em></span><i>→</i><span><small>3 · ASSIGN BLAME</small><b>gradients</b><em>Which weights caused the error?</em></span><i>→</i><span class="updated"><small>4 · UPDATE</small><b>AdamW step</b><em>Make the observed continuation more likely.</em></span></div>
-<p>The model is never given a rule called “write Python.” Millions of next-byte errors gradually shape weights that reproduce Python structure.</p></div>
-<div data-slide-id="pretraining-makes-code-shaped-text" class="slide title"><h1>Pretraining makes code-shaped text</h1>
-<p>Capability is uneven: on a different held-out prompt, the model produced invalid Python.</p>
-<div class="bad-code"><code>return x * * 0 0</code><strong>INVALID PYTHON</strong></div>
-<style>.bad-code{display:grid;gap:35px;margin-top:10vh}.bad-code code{padding:40px 70px;border-radius:20px;background:#e9e3d8;border:2px solid #a94f3d;font-size:52px;color:#1f1f1c}.bad-code strong{font-size:32px;color:#a94f3d;letter-spacing:.08em}</style></div>
-<div data-slide-id="turn-execution-into-reward" class="slide title"><h1>Turn execution into reward</h1>
+<div data-slide-id="pretraining-data-and-modalities" class="slide title pretraining-data-slide"><h1>What does pre-training see?</h1>
+<div class="data-recipe">
+  <article><small>PROMPT</small><code># Return x plus one.<br>def increment_qrdadnk(x):</code></article>
+  <b>+</b>
+  <article><small>COMPLETION</small><code><br>&nbsp;&nbsp;&nbsp;&nbsp;return x + 1</code></article>
+  <i>→</i>
+  <article class="byte-stream"><small>TRAINING SEQUENCE</small><strong>UTF-8 bytes</strong><span>one next-byte target at every position</span></article>
+</div>
+<div class="modality-split"><span class="active"><b>THIS PRE-TRAINING RUN</b>Text and Python code only</span><span><b>SEPARATE VISION PILOT</b>Generated RGB digit images were attached later</span></div>
+<p class="slide-why">The language checkpoint did not see images during pre-training. Vision was a separate experiment that reused the trained language model.</p></div>
+<div data-slide-id="one-pretraining-example" class="slide title pretraining-example-slide"><h1>One sequence creates many lessons</h1>
+<div class="byte-window">
+  <code>return x + </code><span class="target-byte">1</span><span class="next-byte">↳ next byte</span>
+</div>
+<div class="prediction-strip" aria-label="The same sequence produces a next-byte prediction target at every position">
+  <span><small>SEE</small><code>ret</code><b>→</b><strong>u</strong></span>
+  <span><small>SEE</small><code>return</code><b>→</b><strong>&nbsp;</strong></span>
+  <span><small>SEE</small><code>return x</code><b>→</b><strong>&nbsp;</strong></span>
+  <span><small>SEE</small><code>return x + </code><b>→</b><strong>1</strong></span>
+</div>
+<p class="compact-explanation"><b>Why this is efficient:</b> one program is not one training label. A 100-byte sequence creates about 99 next-byte prediction targets. Randomized function names reduce exact string memorization.</p></div>
+<div data-slide-id="the-pretraining-step" class="slide title pretraining-step-visual"><h1>One pre-training step</h1>
+<div class="pretrain-loop">
+  <article><small>1 · PREDICT</small><strong>probability for every next byte</strong><span><code>1</code> gets 8%</span></article>
+  <b>→</b>
+  <article><small>2 · MEASURE ERROR</small><strong>cross-entropy loss</strong><span>low probability on <code>1</code> means high loss</span></article>
+  <b>→</b>
+  <article><small>3 · BACKPROPAGATE</small><strong>assign blame to weights</strong><span>gradients show which changes reduce error</span></article>
+  <b>→</b>
+  <article class="updated"><small>4 · UPDATE</small><strong>AdamW changes weights</strong><span><code>1</code> becomes more likely next time</span></article>
+</div>
+<div class="training-guards"><span><b>ROUTER BALANCE</b>keeps all experts useful</span><span><b>GRADIENT CLIPPING</b>limits unstable jumps</span></div></div>
+<div data-slide-id="how-one-pretraining-step-changes-the-model" class="slide title probability-update-slide"><h1>What does the weight update accomplish?</h1>
+<p>For this position, the correct next byte is <code>1</code>.</p>
+<div class="probability-update">
+  <article><small>BEFORE UPDATE</small><div><span><b>*</b><i style="--p:62%">62%</i></span><span><b>0</b><i style="--p:20%">20%</i></span><span class="correct"><b>1</b><i style="--p:8%">8%</i></span></div></article>
+  <strong>gradient step →</strong>
+  <article class="after"><small>AFTER MANY SIMILAR UPDATES</small><div><span><b>*</b><i style="--p:18%">18%</i></span><span><b>0</b><i style="--p:12%">12%</i></span><span class="correct"><b>1</b><i style="--p:68%">68%</i></span></div></article>
+</div>
+<p class="compact-explanation">The update does not store a line of code in one place. It slightly changes millions of shared weights so the correct byte becomes more likely in many related contexts.</p></div>
+<div data-slide-id="pretraining-makes-code-shaped-text" class="slide title pretraining-before-after"><h1>The same prompt before and after pre-training</h1>
+<p><code># Return two times x.<br>def double_ywkaoot(x):</code></p>
+<div class="pretraining-output-compare">
+  <article class="before"><small>RANDOM WEIGHTS · STEP 0</small><code>::::::::::::::::::::::::::::::::::::::::</code><strong>not code</strong></article>
+  <b>→</b>
+  <article class="after"><small>AFTER 100 STEPS</small><code>&nbsp;&nbsp;&nbsp;&nbsp;return x * 2</code><strong>3 / 3 hidden tests pass</strong></article>
+</div>
+<p class="compact-explanation"><b>What changed:</b> 173,237 training bytes moved the model from arbitrary byte repetition to a coherent executable completion. This is one preserved example; the progress chart measures performance across held-out tasks.</p>
+<small class="source-note">Same held-out prompt · greedy decoding · seed 42 · exact outputs from the saved receipt</small></div>
+<div data-slide-id="turn-execution-into-reward" class="slide title rl-stage-slide"><small class="stage-kicker">STAGE 2 · REINFORCEMENT LEARNING</small><h1>Now the model learns from complete attempts</h1>
 <div class="reward-pipe"><span>generate code</span><b>→</b><span>run tests</span><b>→</b><span>score it</span><b>→</b><span>update model</span></div>
-<style>.reward-pipe{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:13vh}.reward-pipe span{padding:30px 34px;border-radius:18px;background:#e9e3d8;border:2px solid #c7beb0;font-size:29px;font-weight:700}.reward-pipe span:nth-of-type(2){border-color:#d97757}.reward-pipe span:nth-of-type(3){border-color:#68785c}.reward-pipe span:nth-of-type(4){border-color:#8a6252}.reward-pipe b{font-size:43px;color:#d97757}</style></div>
+<div class="learning-signal-switch"><span><b>PRE-TRAINING</b>correct next byte is known at every position</span><i>→</i><span><b>RL</b>only the final program behavior is scored</span></div>
+<p class="compact-explanation"><b>No reference solution is required.</b> The model explores by sampling programs. Hidden tests convert each complete attempt into a numerical reward, and RL makes successful attempts more likely.</p>
+<style>.reward-pipe{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:9vh}.reward-pipe span{padding:30px 34px;border-radius:18px;background:#e9e3d8;border:2px solid #c7beb0;font-size:29px;font-weight:700}.reward-pipe span:nth-of-type(2){border-color:#d97757}.reward-pipe span:nth-of-type(3){border-color:#68785c}.reward-pipe span:nth-of-type(4){border-color:#8a6252}.reward-pipe b{font-size:43px;color:#d97757}</style></div>
 <div data-slide-id="reinforcement-learning-improves-the-attempts" class="slide title native-rl-progress"><h1>RL raises the dev rollout rate</h1>
 <p>The model samples many programs for development prompts. More pass the executable tests as training continues.</p>
-<div class="native-line-chart"><span class="axis-label top">50%</span><span class="axis-label bottom">0%</span><svg viewBox="0 0 900 360" role="img" aria-label="Exact rollout rate rises from 4.2 percent to 45.8 percent"><line x1="45" y1="315" x2="860" y2="315"/><line x1="45" y1="35" x2="45" y2="315"/><polyline points="45,292 180,270 315,226 450,190 585,142 720,91 860,58"/><circle cx="45" cy="292" r="9"/><circle cx="860" cy="58" r="11"/></svg><b class="line-start">4.2%</b><b class="line-end">45.8%</b></div>
-<small class="source-note">Exact rollout rate on dev · 1,536 sampled programs</small></div>
+<div class="native-line-chart"><span class="axis-label top">50%</span><span class="axis-label bottom">0%</span><svg viewBox="0 0 900 360" role="img" aria-label="Exact rollout rate rises from 4.2 percent to 45.8 percent"><line x1="45" y1="315" x2="860" y2="315"/><line x1="45" y1="35" x2="45" y2="315"/><polyline points="45,292 180,270 315,226 450,190 585,142 720,91 860,58"/><circle cx="45" cy="292" r="9"/><circle cx="860" cy="58" r="11"/></svg><b class="line-start">4.2%</b><b class="line-end">45.8%</b><div class="chart-x-labels"><span>group 0</span><span>24</span><span>48</span><span>72</span><span>96</span></div></div>
+<small class="source-note">Exact rollout rate = sampled programs passing every test · 1,536 programs on development prompts · used to choose training duration, not as final confirmation</small></div>
 <div data-slide-id="before-and-after-reinforcement-learning" class="slide title native-before-after"><h1>Before and after reinforcement learning</h1>
 <p>We gave the model the same unseen problems before and after training.</p>
 <div class="native-result-bars"><div><span>BEFORE RL</span><i style="--height:2px"></i><strong>0 / 24</strong></div><b>→</b><div class="after"><span>AFTER RL</span><i style="--height:32vh"></i><strong>16 / 24</strong></div></div>
-<small class="source-note">Same tasks · same generation settings · three trained coding families</small></div>
+<small class="source-note">Strict pass@1 · same 24 frozen confirmation tasks and generation settings · tasks were unseen, but covered three trained coding families</small></div>
 <div data-slide-id="the-same-prompt-before-and-after-rl" class="slide title sampled-before-after"><h1>The same prompt before and after RL</h1>
 <p><code># Return two times x.</code></p>
 <div class="code-comparison"><div class="failed"><span>BEFORE RL · FAIL</span><code>return x * x</code></div><b>→</b><div class="passed"><span>AFTER RL · PASS</span><code>return x * 2</code></div></div>
+<p class="compact-explanation">The prompt and decoding settings are identical. RL did not copy this answer from a label – it increased the probability of behavior that had passed executable tests during training.</p>
 <small class="source-note">Exact sampled outputs from the immutable confirmation receipts</small></div>
 <div data-slide-id="the-reward-is-executable" class="slide title"><h1>The reward is executable</h1>
 <div class="reward-values"><div class="pass"><b>+1</b><span>all tests pass</span></div><div><b>0</b><span>valid but wrong</span></div><div class="invalid"><b>−0.1</b><span>invalid Python</span></div></div>
+<p class="compact-explanation">The reward evaluates behavior, not writing style. Partial correctness receives no success reward here, while a small syntax penalty teaches the model to avoid wasting rollouts on code that cannot run.</p>
 <style>.reward-values{display:flex;justify-content:center;gap:30px;margin-top:11vh}.reward-values>div{display:grid;gap:18px;width:310px;padding:38px 24px;border-radius:20px;background:#e9e3d8;border:2px solid #c7beb0}.reward-values b{font-size:66px}.reward-values span{font-size:25px;color:#6f675c}.reward-values .pass{border-color:#68785c}.reward-values .pass b{color:#68785c}.reward-values .invalid{border-color:#a94f3d}.reward-values .invalid b{color:#a94f3d}</style></div>
 <div data-slide-id="the-verifier-runs-hidden-tests" class="slide"><h1>The verifier runs hidden tests</h1>
 <pre>tree = validate_source(source, task.entry_point)
@@ -488,9 +528,10 @@ for arguments, expected in task.cases:
     actual = function(*arguments)
     passed += int(type(actual) is type(expected)
                   and actual == expected)</pre>
-<p>Unsafe syntax and imports are rejected before execution.</p></div>
+<p>The prompt never reveals these input-output cases. A completion earns +1 only when it compiles, defines the required function, returns the right type, and matches every expected value. Unsafe syntax and imports are rejected first.</p></div>
 <div data-slide-id="generate-16-attempts-for-one-prompt" class="slide title"><h1>Generate 16 attempts for one prompt</h1>
 <div class="rollouts"><span class="good">+1</span><span>0</span><span class="bad">−.1</span><span>0</span><span class="good">+1</span><span>0</span><span>0</span><span class="good">+1</span><span>0</span><span class="bad">−.1</span><span class="good">+1</span><span>0</span><span>0</span><span class="good">+1</span><span>0</span><span class="bad">−.1</span></div>
+<p class="compact-explanation">Sampling creates different candidate programs from the same policy. The group gives us both exploration and a local comparison: which attempts were better than this model’s other attempts on the exact same prompt?</p>
 <style>.rollouts{display:grid;grid-template-columns:repeat(8,82px);gap:18px;justify-content:center;margin-top:10vh}.rollouts span{display:grid;place-items:center;width:82px;height:82px;border-radius:50%;background:#e9e3d8;border:2px solid #b8aea0;color:#6f675c;font-size:24px;font-weight:800}.rollouts .good{border-color:#68785c;background:#dce3d7;color:#68785c;box-shadow:0 0 22px #68785c44}.rollouts .bad{border-color:#a94f3d;background:#ead7d0;color:#a94f3d}</style></div>
 <div data-slide-id="compare-each-attempt-with-the-others" class="slide title"><h1>Compare each attempt with the others</h1>
 <div class="advantage"><code>advantageᵢ = rewardᵢ − mean(other rewards)</code><div><span class="up">better → more likely</span><span class="down">worse → less likely</span></div></div>
@@ -526,7 +567,7 @@ optimizer.step()</pre>
   <div class="family-row"><b>square</b><span><i class="before" style="--w:81.2%"></i><small>81%</small></span><span><i class="after" style="--w:57.8%"></i><small>58%</small></span></div>
   <div class="family-row"><b>list sum</b><span><i class="before" style="--w:95.3%"></i><small>95%</small></span><span><i class="after" style="--w:87.5%"></i><small>88%</small></span></div>
   <div class="family-row zero"><b>absolute · nonnegative · reverse</b><span><small>0% before</small></span><span><small>0% after</small></span></div>
-</div></div>
+</div><p class="compact-explanation">This is specialization, not a general intelligence gain. Increment and double improved, even stayed flat, and two previously strong families regressed because only a narrow parameter surface was optimized for the practiced reward distribution.</p></div>
 <div data-slide-id="what-changed" class="slide title"><h1>What changed</h1>
 <div class="family-summary"><span class="gain">increment ↑</span><span class="gain">double ↑</span><span class="flat">even –</span><span class="loss">square ↓</span><span class="loss">list sum ↓</span></div>
 <style>.family-summary{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;max-width:1100px;margin:13vh auto 0}.family-summary span{padding:26px 34px;border-radius:16px;background:#e9e3d8;border:2px solid #c7beb0;font-size:30px;font-weight:800}.family-summary .gain{border-color:#68785c;color:#68785c}.family-summary .flat{border-color:#8a6252;color:#8a6252}.family-summary .loss{border-color:#a94f3d;color:#a94f3d}</style></div>
@@ -546,12 +587,12 @@ optimizer.step()</pre>
   <div class="screen-winner"><span>group size 4</span><i style="--height:37.6vh">8</i></div>
   <div><span>group size 16</span><i style="--height:28.2vh">6</i></div>
 </div>
-<small class="source-note">Dev tasks solved out of 20 · exploratory screen</small></div>
+<small class="source-note">Dev tasks solved out of 20 · one small screen can rank candidates, but cannot establish a reliable winner</small></div>
 <div data-slide-id="the-apparent-winner-did-not-replicate" class="slide title rl-confirmation-study"><h1>The apparent winner did not replicate</h1>
 <p>Group size 4 looked best on dev. Fresh seeds reversed the conclusion.</p>
 <table class="confirmation-table"><thead><tr><th>Training seed</th><th>Group 8</th><th>Group 4</th><th>Difference</th></tr></thead><tbody><tr><td>31415</td><td>12 / 40</td><td>13 / 40</td><td class="positive">+1</td></tr><tr><td>27182</td><td>14 / 40</td><td>13 / 40</td><td class="negative">−1</td></tr><tr><td>16180</td><td>11 / 40</td><td>8 / 40</td><td class="negative">−3</td></tr></tbody></table>
 <div class="confidence-interval"><span>95% interval</span><b>−6.7%</b><i></i><b>+1.7%</b><strong>crosses zero</strong></div>
-<small class="source-note">40 untouched executable tasks · paired evaluation · three RL seeds</small></div>
+<small class="source-note">40 untouched executable tasks · paired evaluation · three RL seeds · interval crosses zero, so the measured difference is compatible with no real advantage</small></div>
 <div data-slide-id="a-dev-win-is-not-a-discovery" class="slide title rl-research-conclusion"><h1>A dev win is not a discovery</h1>
 <div class="research-verdict"><div><span>SCREEN</span><strong>8 / 20</strong><small>group 4 looked best</small></div><b>→</b><div class="rejected"><span>CONFIRM</span><strong>11.3 vs 12.3</strong><small>lost on average</small></div></div>
 <p>None of the four RL changes produced statistically significant improvement.</p>
@@ -1257,6 +1298,89 @@ optimizer.step()</pre>
   .layer-stack span:nth-child(4) { animation-delay:1.05s; }
   @keyframes mechanismPulse { 0%,18%,100% { transform:translateY(0); filter:none; }
     8% { transform:translateY(-7px); filter:brightness(1.35); } }
+  .data-recipe { display:grid; grid-template-columns:minmax(280px,1fr) 34px minmax(250px,.9fr) 56px minmax(260px,.9fr);
+    align-items:center; gap:14px; width:min(1180px,90vw); margin:5vh auto 3vh; }
+  .data-recipe article { display:grid; align-content:center; gap:14px; min-height:190px; padding:24px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .data-recipe article.byte-stream { border-top-color:var(--olive); }
+  .data-recipe small,.pretrain-loop small,.training-guards b,.modality-split b,.pretraining-output-compare small,
+  .prediction-strip small { color:var(--muted); font:700 11px/1 Arial,sans-serif; letter-spacing:.1em; }
+  .data-recipe code { padding:12px; color:#efb19a; font-size:16px; line-height:1.45; }
+  .data-recipe strong { color:#bcc39c !important; font:700 27px/1.15 Georgia,serif; }
+  .data-recipe article>span { color:var(--muted); font-size:15px; }
+  .data-recipe>b,.data-recipe>i { color:var(--accent); font:700 32px/1 Arial,sans-serif; font-style:normal; }
+  .modality-split { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; width:min(940px,82vw); margin:0 auto; }
+  .modality-split span { display:grid; gap:8px; padding:16px 20px; background:#181817; border:1px solid var(--line);
+    color:var(--muted); font-size:16px; text-align:left; }
+  .modality-split span.active { border-color:var(--olive); color:#dfe3ca; }
+  .modality-split b { color:var(--ink) !important; }
+  .byte-window { position:relative; display:flex; justify-content:center; align-items:center; width:min(820px,78vw);
+    margin:5vh auto 3vh; padding:28px 40px; background:#10100f; border:1px solid var(--line); }
+  .byte-window code { padding:0; background:none; color:var(--ink); font-size:42px; }
+  .byte-window .target-byte { display:grid; place-items:center; width:58px; height:62px; margin-left:2px;
+    background:var(--olive); color:#151513; font:800 42px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+    animation:targetPulse 2.4s ease-in-out infinite; }
+  .byte-window .next-byte { position:absolute; right:70px; bottom:-30px; color:#bcc39c; font:700 12px/1 Arial,sans-serif; }
+  @keyframes targetPulse { 0%,100% { box-shadow:0 0 0 rgba(188,195,156,0); } 50% { box-shadow:0 0 32px rgba(188,195,156,.35); } }
+  .prediction-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; width:min(1120px,88vw); margin:3vh auto 0; }
+  .prediction-strip>span { display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:8px; padding:16px;
+    background:var(--soft); border:1px solid var(--line); text-align:left; }
+  .prediction-strip small { grid-column:1/4; }.prediction-strip code { padding:7px; color:var(--ink); white-space:nowrap; overflow:hidden; }
+  .prediction-strip b { color:var(--accent); }.prediction-strip strong { color:#bcc39c !important; font-size:24px; }
+  .pretrain-loop { display:grid; grid-template-columns:repeat(7,auto); align-items:center; justify-content:center; gap:12px;
+    width:min(1240px,92vw); margin:6vh auto 3vh; }
+  .pretrain-loop article { display:grid; align-content:center; gap:12px; width:235px; min-height:210px; padding:22px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .pretrain-loop article.updated { border-top-color:var(--olive); background:#20211d; }
+  .pretrain-loop strong { color:var(--ink) !important; font:700 23px/1.2 Georgia,serif; }
+  .pretrain-loop article.updated strong { color:#bcc39c !important; }
+  .pretrain-loop span { color:var(--muted); font-size:14px; line-height:1.35; }
+  .pretrain-loop>b { color:var(--accent); font-size:28px; }
+  .training-guards { display:flex; justify-content:center; gap:16px; }
+  .training-guards span { padding:14px 18px; background:#181817; border:1px solid var(--line); color:var(--muted); font-size:14px; }
+  .training-guards b { margin-right:8px; color:#bcc39c !important; }
+  .pretraining-output-compare { display:grid; grid-template-columns:minmax(330px,1fr) auto minmax(330px,1fr); align-items:center;
+    gap:28px; width:min(1120px,88vw); margin:5vh auto 2vh; }
+  .pretraining-output-compare article { display:grid; gap:18px; min-height:225px; padding:28px;
+    align-content:center; background:var(--soft); border:1px solid var(--line); border-top:5px solid var(--danger); text-align:left; }
+  .pretraining-output-compare article.after { border-top-color:var(--olive); }
+  .pretraining-output-compare code { display:block; padding:18px; overflow:hidden; color:var(--ink); font-size:23px; white-space:nowrap; }
+  .pretraining-output-compare .before code { color:#e69a8d; }
+  .pretraining-output-compare strong { color:#e69a8d !important; font:700 17px/1 Arial,sans-serif; }
+  .pretraining-output-compare .after strong { color:#bcc39c !important; }
+  .pretraining-output-compare>b { color:var(--accent); font-size:46px; }
+  .pretraining-before-after>p:first-of-type code { display:inline-block; padding:14px 20px; text-align:left; line-height:1.45; }
+  .pretrain-grid>span.selected-checkpoint { border-color:var(--accent); background:#2b2521; }
+  .pretrain-grid>span.selected-checkpoint::after { content:'SELECTED'; position:absolute; left:50%; top:-24px;
+    transform:translateX(-50%); color:#efb19a; font:700 9px/1 Arial,sans-serif; letter-spacing:.1em; }
+  .probability-update { display:grid; grid-template-columns:minmax(360px,1fr) auto minmax(360px,1fr); align-items:center;
+    gap:28px; width:min(1080px,86vw); margin:5vh auto 2vh; }
+  .probability-update article { display:grid; gap:20px; padding:26px; background:var(--soft); border:1px solid var(--line);
+    border-top:4px solid var(--accent); text-align:left; }
+  .probability-update article.after { border-top-color:var(--olive); background:#20211d; }
+  .probability-update article>small { color:var(--muted); font:700 11px/1 Arial,sans-serif; letter-spacing:.1em; }
+  .probability-update article>div { display:grid; gap:13px; }
+  .probability-update span { display:grid; grid-template-columns:34px 1fr; align-items:center; gap:12px; }
+  .probability-update span>b { color:var(--muted) !important; font:700 20px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .probability-update i { position:relative; display:block; width:var(--p); min-width:58px; height:34px; padding:9px 10px;
+    background:#6f4a3e; color:#f0ece3; font:700 13px/1 Arial,sans-serif; font-style:normal; text-align:right; }
+  .probability-update .correct i { background:var(--olive); color:#151513; }
+  .probability-update>strong { color:var(--accent) !important; font:700 18px/1.2 Arial,sans-serif; white-space:nowrap; }
+  .stage-kicker { display:block; margin-bottom:12px; color:#efb19a; font:700 12px/1 Arial,sans-serif;
+    letter-spacing:.14em; }
+  .rl-stage-slide .reward-pipe { margin-top:4vh; }
+  .rl-stage-slide .reward-pipe span { padding:22px 27px; border-radius:0; font-size:23px; }
+  .learning-signal-switch { display:grid; grid-template-columns:minmax(320px,1fr) auto minmax(320px,1fr); align-items:center;
+    gap:18px; width:min(930px,82vw); margin:3vh auto 0; }
+  .learning-signal-switch span { display:grid; gap:7px; padding:15px 18px; background:#181817; border:1px solid var(--line);
+    color:var(--muted); font-size:15px; text-align:left; }
+  .learning-signal-switch span:last-child { border-color:var(--olive); }
+  .learning-signal-switch b { color:var(--ink) !important; font:700 11px/1 Arial,sans-serif; letter-spacing:.1em; }
+  .learning-signal-switch i { color:var(--accent); font-style:normal; font-size:28px; }
+  .native-line-chart .chart-x-labels { position:absolute; left:4%; right:0; bottom:-20px; display:flex;
+    justify-content:space-between; color:var(--muted); font:600 11px/1 Arial,sans-serif; }
+  .native-rl-progress .native-line-chart { height:44vh; margin-bottom:18px; }
+  .native-rl-progress .source-note { margin-top:8px; }
   #slide-feedback-panel { position:fixed; z-index:320; top:18px; right:18px; width:min(330px,30vw);
     padding:9px; background:rgba(14,14,13,.38); border:1px solid rgba(240,236,227,.16);
     backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:var(--ink);
@@ -1441,6 +1565,25 @@ optimizer.step()</pre>
         const refreshedStepIndex = ordered.findIndex(el => el.dataset.slideId === 'the-pretraining-step');
         ordered.splice(refreshedStepIndex + 1, 0, mechanismSlide);
       }
+    }
+    const trainingStoryKey = 'glm53-training-story-order-v1';
+    if (localStorage.getItem(trainingStoryKey) !== '1') {
+      const storyIds = [
+        'pretraining-data-and-modalities',
+        'one-pretraining-example',
+        'the-pretraining-step',
+        'how-one-pretraining-step-changes-the-model',
+        'pretraining-progress',
+        'pretraining-makes-code-shaped-text'
+      ];
+      const storySlides = storyIds.map(id => byId.get(id)).filter(Boolean);
+      const storySet = new Set(storySlides);
+      const firstStoryIndex = Math.min(...storySlides.map(slide => ordered.indexOf(slide)).filter(index => index >= 0));
+      const withoutStory = ordered.filter(slide => !storySet.has(slide));
+      withoutStory.splice(Math.min(firstStoryIndex, withoutStory.length), 0, ...storySlides);
+      ordered.splice(0, ordered.length, ...withoutStory);
+      localStorage.setItem(ORDER_KEY, JSON.stringify(ordered.map(slide => slide.dataset.slideId)));
+      localStorage.setItem(trainingStoryKey, '1');
     }
     ordered.forEach(el => filmstripPanel.before(el));
     s = ordered;
