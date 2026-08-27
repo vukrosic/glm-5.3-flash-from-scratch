@@ -1036,7 +1036,7 @@ optimizer.step()</pre>
   // Each slide has 1+ "steps". Normal slides = 1 step. An `explain` slide has
   // one step per sentence: → reveals the next sentence with the image pinned,
   // and only rolls to the next slide once the last sentence is shown.
-  const ORDER_KEY = 'glm53-slide-order-v17';
+  const ORDER_KEY = 'glm53-slide-order-v18';
   const THUMBS_KEY = 'glm53-thumbnails-visible-v1';
   const DELETED_KEY = 'glm53-deleted-elements-v1';
   const FEEDBACK_KEY = 'glm53-slide-feedback-v1';
@@ -1111,11 +1111,6 @@ optimizer.step()</pre>
     'how-one-byte-becomes-a-prediction',
     'four-ideas-define-the-architecture',
     'what-we-built',
-    'glm-vision-path',
-    'image-becomes-visual-tokens',
-    'image-tokens-enter-the-language-model',
-    'vision-training-task',
-    'vision-experiment-result',
     'how-the-experiment-works'
   ];
   const defaultById = new Map(s.map(el => [el.dataset.slideId, el]));
@@ -1123,6 +1118,18 @@ optimizer.step()</pre>
   const openingSet = new Set(openingSlides);
   const pretrainingChart = defaultById.get('pretraining-progress');
   let remainingSlides = s.filter(el => !openingSet.has(el) && el !== pretrainingChart);
+  const visionIds = [
+    'glm-vision-path',
+    'image-becomes-visual-tokens',
+    'image-tokens-enter-the-language-model',
+    'vision-training-task',
+    'vision-experiment-result'
+  ];
+  const visionSlides = visionIds.map(id => defaultById.get(id)).filter(Boolean);
+  const visionSet = new Set(visionSlides);
+  remainingSlides = remainingSlides.filter(el => !visionSet.has(el));
+  const modelProofIndex = remainingSlides.findIndex(el => el.dataset.slideId === 'prove-the-model-is-wired-correctly');
+  if (modelProofIndex >= 0) remainingSlides.splice(modelProofIndex + 1, 0, ...visionSlides);
   const pretrainingStepIndex = remainingSlides.findIndex(el => el.dataset.slideId === 'the-pretraining-step');
   if (pretrainingChart && pretrainingStepIndex >= 0) remainingSlides.splice(pretrainingStepIndex + 1, 0, pretrainingChart);
   s = [...openingSlides, ...remainingSlides];
