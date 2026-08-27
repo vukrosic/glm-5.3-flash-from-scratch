@@ -341,25 +341,23 @@ hidden = self.final_norm(streams.mean(dim=2))
 return self.output(hidden), torch.stack(usages)</pre></div>
 <div data-slide-id="read-the-algorithm-not-the-syntax" class="slide title algorithm-walkthrough embedding-walkthrough"><h1>Read the algorithm, not the syntax</h1>
 <div class="walkthrough-steps">
-  <div class="step embedding-step"><code>self.embedding(input_ids)</code><div class="embedding-visual"><div class="embedding-token"><small>token ID</small><b>104</b></div><i><span>select row 104</span>→</i><div class="embedding-table"><small>learned embedding table</small><span>row 0</span><span>row 1</span><span>⋮</span><span class="selected">row 104</span><span>⋮</span></div><i><span>retrieve its values</span>→</i><div class="embedding-vector"><small>one learned vector</small><b>[ 0.12, −0.08, 0.31, … ]</b></div></div><p><strong>The idea:</strong> a token ID is an address. The embedding layer retrieves that token's learned vector.</p></div>
+  <div class="step embedding-step"><code>self.embedding(input_ids)</code><div class="embedding-visual"><div class="embedding-token"><small>token ID</small><b>104</b></div><i><span>select row 104</span>→</i><div class="embedding-table"><small>learned embedding table</small><span>row 0</span><span>row 1</span><span>⋮</span><span class="selected">row 104</span><span>⋮</span></div><i><span>retrieve its values</span>→</i><div class="embedding-vector"><small>one learned vector</small><b>[0.12, −0.08, 0.31, …]</b></div></div><p><strong>The idea:</strong> a token ID is an address. The embedding layer retrieves that token's learned vector.</p></div>
   <div class="step"><code>expand(-1, -1, self.config.streams, -1)</code><p><strong>2. Branch:</strong> copy each token representation into four residual streams.</p></div>
   <div class="step"><code>streams, usage = layer(streams)</code><p><strong>3. Transform:</strong> every hybrid block reads, mixes, and updates those streams.</p></div>
   <div class="step"><code>self.final_norm(streams.mean(dim=2))</code><p><strong>4. Merge:</strong> average the streams and normalize the combined representation.</p></div>
   <div class="step"><code>self.output(hidden)</code><p><strong>5. Predict:</strong> score every possible next byte.</p></div>
 </div><div class="walkthrough-dots dots"><i></i><i></i><i></i><i></i><i></i></div></div>
-<div data-slide-id="rmsnorm-sets-the-scale-before-each-sublayer" class="slide"><h1>RMSNorm sets the scale before each sublayer</h1>
-<pre>x = x + self.attention(self.attention_norm(x))
-ffn, usage = self.moe(self.ffn_norm(x))</pre>
-<p>Normalize activation magnitude before attention and MoE.</p></div>
-<div data-slide-id="rope-writes-position-into-queries-and-keys" class="slide title"><h1>RoPE writes position into queries and keys</h1>
-<pre>q, k = apply_rope(q, k)</pre>
-<div class="rope-path"><span>token position</span><b>→</b><span>rotate q + k</span><b>→</b><span>position-aware attention</span></div>
-<p>Linear and sparse attention use the same positional mechanism.</p>
-<style>.rope-path{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:8vh}.rope-path span{padding:28px 36px;border-top:3px solid #d97757;background:#e9e3d8;font-size:29px;font-weight:700}.rope-path b{font-size:42px;color:#d97757}</style></div>
+<div data-slide-id="rmsnorm-sets-the-scale-before-each-sublayer" class="slide title mechanism-slide"><h1>RMSNorm sets the scale before each sublayer</h1>
+<div class="concept-flow rms-flow"><section><small>input activations</small><b>[8.0, −2.0, 0.5]</b><span>uneven magnitude</span></section><i><small>divide by RMS</small><b>÷ 4.77</b></i><section class="result"><small>normalized activations</small><b>[1.68, −0.42, 0.10]</b><span>stable scale</span></section></div>
+<code>attention_norm(x)</code><p>Same direction, controlled magnitude, steadier updates.</p></div>
+<div data-slide-id="rope-writes-position-into-queries-and-keys" class="slide title mechanism-slide"><h1>RoPE writes position into queries and keys</h1>
+<div class="concept-flow rope-flow"><section><small>token position</small><b class="position-dial">3</b><span>where this token appears</span></section><i><small>rotate by position</small><b>↻</b></i><section><small>queries + keys</small><div class="vector-arrows"><b>↗</b><b>↘</b></div><span>same vectors, new angle</span></section><i><small>compare rotations</small><b>→</b></i><section class="result"><small>attention knows</small><b>relative distance</b><span>who came before whom</span></section></div>
+<code>q, k = apply_rope(q, k)</code><p>Linear and sparse attention use the same positional signal.</p></div>
 <div data-slide-id="3-linear-1-sparse" class="slide title"><h1>3 linear + 1 sparse</h1>
 <p>The four-layer rhythm repeats three times</p>
 <div class="layer-stack"><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div></div>
-<style>.layer-stack{display:flex;justify-content:center;gap:24px;margin-top:9vh}.layer-stack>div{display:flex;gap:8px;padding:12px;border-radius:18px;background:#e9e3d8}.layer-stack span{display:grid;place-items:center;width:70px;height:112px;border-radius:12px;background:#ead4c7;border:2px solid #d97757;color:#d97757;font-size:36px;font-weight:800}.layer-stack .sparse{background:#ded4c8;border-color:#8a6252;color:#8a6252;box-shadow:0 0 28px #8a625255}</style></div>
+<div class="attention-legend"><span><b>L</b><small>linear attention</small><em>cheap running memory</em></span><i>× 3</i><span class="sparse"><b>S</b><small>sparse attention</small><em>exact selected lookback</em></span><i>repeat</i></div>
+<style>.layer-stack{display:flex;justify-content:center;gap:24px;margin-top:5vh}.layer-stack>div{display:flex;gap:8px;padding:12px;border-radius:18px;background:#e9e3d8}.layer-stack span{display:grid;place-items:center;width:70px;height:100px;border-radius:12px;background:#ead4c7;border:2px solid #d97757;color:#d97757;font-size:36px;font-weight:800}.layer-stack .sparse{background:#ded4c8;border-color:#8a6252;color:#8a6252;box-shadow:0 0 28px #8a625255}</style></div>
 <div data-slide-id="the-attention-rhythm-in-code" class="slide code-pair"><h1>The attention rhythm in code</h1>
 <p>One condition selects the attention algorithm for every layer.</p>
 <pre>self.layers = nn.ModuleList([
@@ -1035,7 +1033,8 @@ optimizer.step()</pre>
   .embedding-token small, .embedding-vector small, .embedding-table small { color:var(--muted); font:700 12px/1 Arial,sans-serif;
     letter-spacing:.08em; text-transform:uppercase; }
   .embedding-token b { color:var(--ink) !important; font:700 38px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
-  .embedding-vector b { color:#bcc39c !important; font:700 20px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:nowrap; }
+  .embedding-vector b { color:#bcc39c !important; font:700 18px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
+    letter-spacing:-.025em; white-space:nowrap; }
   .embedding-table { display:grid; grid-template-columns:1fr; gap:5px; padding:14px 16px;
     background:#10100f; border:1px solid var(--line); text-align:left; }
   .embedding-table small { margin-bottom:4px; text-align:center; }
@@ -1044,6 +1043,39 @@ optimizer.step()</pre>
   .embedding-visual>i { display:grid; justify-items:center; gap:8px; color:var(--accent); font:400 38px/1 Arial,sans-serif; }
   .embedding-visual>i span { color:var(--muted); font:700 11px/1.2 Arial,sans-serif; text-transform:uppercase; letter-spacing:.05em; }
   @keyframes embedding-row { 0%,100% { filter:none; } 50% { filter:brightness(1.25); box-shadow:0 0 24px rgba(217,119,87,.28); } }
+  .mechanism-slide .concept-flow { display:flex; align-items:center; justify-content:center; gap:18px;
+    width:min(88vw,1260px); margin:6vh auto 3vh; }
+  .mechanism-slide .concept-flow>section { display:grid; place-items:center; align-content:center; gap:15px;
+    min-width:245px; min-height:170px; padding:22px; background:var(--soft); border:1px solid var(--line); }
+  .mechanism-slide .concept-flow>section.result { border-color:var(--olive); background:#20211d; }
+  .mechanism-slide .concept-flow small { color:var(--muted); font:700 12px/1 Arial,sans-serif;
+    letter-spacing:.09em; text-transform:uppercase; }
+  .mechanism-slide .concept-flow section>b { color:var(--ink) !important;
+    font:700 25px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:nowrap; }
+  .mechanism-slide .concept-flow section.result>b { color:#bcc39c !important; }
+  .mechanism-slide .concept-flow section>span { color:var(--muted); font-size:16px; }
+  .mechanism-slide .concept-flow>i { display:grid; place-items:center; gap:10px; min-width:105px;
+    color:var(--accent); font-style:normal; }
+  .mechanism-slide .concept-flow>i small { color:var(--muted); font-size:10px; }
+  .mechanism-slide .concept-flow>i b { color:var(--accent) !important; font-size:34px; }
+  .mechanism-slide>code { display:inline-block; padding:.5em .8em; background:#24231f; color:#efb19a;
+    border:1px solid var(--line); font-size:.78em; }
+  .mechanism-slide>p { margin:.7em auto 0; font-size:.75em; }
+  .rope-flow { gap:12px !important; }
+  .rope-flow>section { min-width:190px !important; min-height:160px !important; padding:18px !important; }
+  .rope-flow>i { min-width:86px !important; }
+  .position-dial { display:grid; place-items:center; width:62px; height:62px; border-radius:50%;
+    border:2px solid var(--accent); }
+  .vector-arrows { display:flex; gap:18px; color:var(--accent); font-size:34px; }
+  .attention-legend { display:flex; align-items:center; justify-content:center; gap:18px; margin:3vh auto 0; }
+  .attention-legend>span { display:grid; grid-template-columns:48px 1fr; column-gap:14px; align-items:center;
+    min-width:235px; padding:14px 18px; background:var(--soft); border:1px solid var(--line); text-align:left; }
+  .attention-legend>span>b { grid-row:1/3; display:grid; place-items:center; width:44px; height:44px;
+    border:2px solid var(--accent); color:var(--accent) !important; font:800 24px/1 Arial,sans-serif; }
+  .attention-legend>span.sparse>b { border-color:#8a6252; color:#bda092 !important; }
+  .attention-legend small { color:var(--ink); font:700 14px/1.2 Arial,sans-serif; }
+  .attention-legend em { color:var(--muted); font:400 12px/1.2 Arial,sans-serif; }
+  .attention-legend>i { color:var(--muted); font:700 13px/1 Arial,sans-serif; text-transform:uppercase; }
   .algorithm-walkthrough .walkthrough-dots { display:flex; justify-content:center; gap:12px; margin-top:2vh; }
   .algorithm-walkthrough .walkthrough-dots i { width:10px; height:10px; border-radius:50%;
     background:#4a4640; }
@@ -1126,6 +1158,7 @@ optimizer.step()</pre>
   const FEEDBACK_PANEL_POS_KEY = 'glm53-feedback-panel-position-v2';
   const TEXT_EDITS_KEY = 'glm53-slide-text-edits-v1';
   const PRESENTATION_KEY = 'glm53-recording-mode-v1';
+  const CURRENT_LOCATION_KEY = 'glm53-current-slide-v1';
   const filmstripPanel = document.getElementById('filmstrip-panel');
   const filmstrip = document.getElementById('filmstrip');
   const thumbToggle = document.getElementById('thumb-toggle');
@@ -1690,6 +1723,9 @@ optimizer.step()</pre>
     document.getElementById('bar').style.width = (100 * (frame() + 1) / total) + '%';
     updateFilmstrip();
     updateFeedbackPanel();
+    try {
+      localStorage.setItem(CURRENT_LOCATION_KEY, JSON.stringify({slideId:s[i].dataset.slideId, step:k}));
+    } catch (_) {}
   }
 
   function go(d) {
@@ -1979,6 +2015,10 @@ optimizer.step()</pre>
   document.body.classList.toggle('presentation-mode', recordingMode);
   var START = Math.max(0, Number.parseInt(reviewParams.get('slide') || '0', 10) || 0);
   var STEP = Math.max(0, Number.parseInt(reviewParams.get('step') || '0', 10) || 0);
+  let savedLocation = null;
+  if (!reviewParams.has('slide')) {
+    try { savedLocation = JSON.parse(localStorage.getItem(CURRENT_LOCATION_KEY) || 'null'); } catch (_) {}
+  }
   thumbToggle.addEventListener('click', () =>
     setThumbnailsPinned(!document.body.classList.contains('thumbnails-pinned')));
   let initialThumbs = reviewParams.get('thumbs') === '1';
@@ -1988,7 +2028,12 @@ optimizer.step()</pre>
   setThumbnailsPinned(initialThumbs, false);
   rebuildMetadata();
   buildFilmstrip();
+  if (savedLocation?.slideId) {
+    const savedIndex = s.findIndex(slide => slide.dataset.slideId === savedLocation.slideId);
+    if (savedIndex >= 0) START = savedIndex;
+    if (Number.isFinite(savedLocation.step)) STEP = Math.max(0, savedLocation.step);
+  }
   i = Math.min(START, s.length - 1); k = 0; render();
   hydrateFeedbackFromDisk();
-  for (let z = 0; z < STEP; z++) go(1);
+  k = Math.min(STEP, steps[i] - 1); render();
 </script></body></html>
