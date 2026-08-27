@@ -15,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "slide-feedback.json"
+TEXT_EDITS_PATH = ROOT / "slide-text-edits.json"
 
 
 def empty_feedback() -> dict:
@@ -62,6 +63,46 @@ def write_feedback(payload: dict) -> dict:
     return saved
 
 
+def read_text_edits() -> dict:
+    if not TEXT_EDITS_PATH.exists():
+        return {"version": 1, "updatedAt": None, "edits": {}}
+    try:
+        saved = json.loads(TEXT_EDITS_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"version": 1, "updatedAt": None, "edits": {}}
+    if not isinstance(saved, dict) or not isinstance(saved.get("edits", {}), dict):
+        return {"version": 1, "updatedAt": None, "edits": {}}
+    saved.setdefault("version", 1)
+    saved.setdefault("updatedAt", None)
+    saved.setdefault("edits", {})
+    return saved
+
+
+def write_text_edits(payload: dict) -> dict:
+    edits = payload.get("edits", {})
+    if not isinstance(edits, dict):
+        raise ValueError("edits must be an object")
+    if any(not isinstance(key, str) or not isinstance(value, str) for key, value in edits.items()):
+        raise ValueError("edit keys and values must be strings")
+    saved = {
+        "version": 1,
+        "updatedAt": datetime.now(timezone.utc).isoformat(),
+        "edits": edits,
+    }
+    descriptor, temporary_name = tempfile.mkstemp(
+        dir=ROOT, prefix=".slide-text-edits-", suffix=".json"
+    )
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as temporary:
+            json.dump(saved, temporary, indent=2, ensure_ascii=False)
+            temporary.write("\n")
+        os.replace(temporary_name, TEXT_EDITS_PATH)
+    finally:
+        if os.path.exists(temporary_name):
+            os.unlink(temporary_name)
+    return saved
+
+
 class SlideHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -76,13 +117,18 @@ class SlideHandler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:
-        if self.path.split("?", 1)[0] == "/api/feedback":
+        route = self.path.split("?", 1)[0]
+        if route == "/api/feedback":
             self.send_json(read_feedback())
+            return
+        if route == "/api/text-edits":
+            self.send_json(read_text_edits())
             return
         super().do_GET()
 
     def do_POST(self) -> None:
-        if self.path.split("?", 1)[0] != "/api/feedback":
+        route = self.path.split("?", 1)[0]
+        if route not in {"/api/feedback", "/api/text-edits"}:
             self.send_error(HTTPStatus.NOT_FOUND)
             return
         try:
@@ -92,7 +138,7 @@ class SlideHandler(SimpleHTTPRequestHandler):
             payload = json.loads(self.rfile.read(length).decode("utf-8"))
             if not isinstance(payload, dict):
                 raise ValueError("payload must be an object")
-            saved = write_feedback(payload)
+            saved = write_feedback(payload) if route == "/api/feedback" else write_text_edits(payload)
         except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
             self.send_json({"error": str(error)}, HTTPStatus.BAD_REQUEST)
             return

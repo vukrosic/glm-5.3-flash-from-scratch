@@ -791,6 +791,9 @@ optimizer.step()</pre>
     transform:translateY(5px); transition:opacity .2s,transform .2s; pointer-events:none; }
   #save-toast.on { opacity:1; transform:none; }
   [data-edit-element-id] { transition:outline-color .12s, opacity .12s; }
+  .text-editable { cursor:text; }
+  .text-editable:hover:not(.text-editing) { outline:1px dashed rgba(239,177,154,.45); outline-offset:4px; }
+  .text-editing { outline:2px solid var(--accent) !important; outline-offset:6px; cursor:text !important; }
   [data-edit-element-id].element-hovered { outline:2px solid var(--danger) !important;
     outline-offset:5px; cursor:crosshair; }
   .element-deleted { display:none !important; }
@@ -1086,7 +1089,7 @@ optimizer.step()</pre>
   <textarea id="slide-feedback-input" placeholder="Feedback for this slide…" spellcheck="true"></textarea>
 </section>
 <aside id="filmstrip-panel" aria-label="Slide editor">
-  <div id="filmstrip-head"><strong>Slides</strong><span id="thumb-total"></span><span class="hint">Drag slides to reorder · hover an element + X to remove · ⌘Z to undo</span><button id="thumb-toggle" type="button" aria-label="Pin slide thumbnails open" title="Pin thumbnails (T)">Pin</button></div>
+  <div id="filmstrip-head"><strong>Slides</strong><span id="thumb-total"></span><span class="hint">Double-click text to edit · drag slides to reorder · hover + X to remove</span><button id="thumb-toggle" type="button" aria-label="Pin slide thumbnails open" title="Pin thumbnails (T)">Pin</button></div>
   <div id="filmstrip" aria-label="Slide thumbnails"></div>
 </aside>
 <script>
@@ -1099,6 +1102,7 @@ optimizer.step()</pre>
   const FEEDBACK_KEY = 'glm53-slide-feedback-v1';
   const FEEDBACK_CATALOG_KEY = 'glm53-slide-feedback-catalog-v1';
   const FEEDBACK_PANEL_POS_KEY = 'glm53-feedback-panel-position-v2';
+  const TEXT_EDITS_KEY = 'glm53-slide-text-edits-v1';
   const filmstripPanel = document.getElementById('filmstrip-panel');
   const filmstrip = document.getElementById('filmstrip');
   const thumbToggle = document.getElementById('thumb-toggle');
@@ -1492,12 +1496,102 @@ optimizer.step()</pre>
   }
 
   setupElementEditing();
+  let textEdits = {};
+  let textEditSyncTimer = null;
+  try { textEdits = JSON.parse(localStorage.getItem(TEXT_EDITS_KEY) || '{}'); } catch (_) {}
+
+  function applyTextEdits() {
+    Object.entries(textEdits).forEach(([id, value]) => {
+      const element = document.querySelector(`[data-edit-element-id="${CSS.escape(id)}"]`);
+      if (element && typeof value === 'string') element.textContent = value;
+    });
+  }
+
+  async function syncTextEditsToDisk() {
+    try {
+      const response = await fetch('/api/text-edits', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({edits: textEdits})
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      showEditToast('Text saved to disk');
+    } catch (_) {
+      showEditToast('Text saved in browser');
+    }
+  }
+
+  function queueTextEditSync() {
+    clearTimeout(textEditSyncTimer);
+    textEditSyncTimer = setTimeout(syncTextEditsToDisk, 240);
+  }
+
+  function saveTextEdit(element) {
+    const id = element.dataset.editElementId;
+    if (!id) return;
+    textEdits[id] = element.textContent;
+    try { localStorage.setItem(TEXT_EDITS_KEY, JSON.stringify(textEdits)); } catch (_) {}
+    queueTextEditSync();
+    clearTimeout(saveTextEdit.previewTimer);
+    saveTextEdit.previewTimer = setTimeout(buildFilmstrip, 260);
+  }
+
+  async function hydrateTextEdits() {
+    try {
+      const response = await fetch('/api/text-edits', {cache: 'no-store'});
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const saved = await response.json();
+      textEdits = {...textEdits, ...(saved.edits || {})};
+      localStorage.setItem(TEXT_EDITS_KEY, JSON.stringify(textEdits));
+    } catch (_) {}
+    applyTextEdits();
+    buildFilmstrip();
+  }
+
+  s.forEach(slide => {
+    slide.querySelectorAll('h1, h2, p, small, li, th, td, code').forEach(element => {
+      if (element.children.length || element.closest('.opening-generation, #filmstrip-panel, #slide-feedback-panel')) return;
+      if (!element.dataset.editElementId) return;
+      element.classList.add('text-editable');
+      element.title = 'Double-click to edit text';
+    });
+  });
+  applyTextEdits();
+  hydrateTextEdits();
+
+  addEventListener('dblclick', event => {
+    const element = event.target.closest('.text-editable[data-edit-element-id]');
+    if (!element || !element.closest('.slide.on:not(.thumb-canvas)')) return;
+    clearElementHover();
+    element.dataset.editStart = element.textContent;
+    element.contentEditable = 'plaintext-only';
+    element.classList.add('text-editing');
+    element.focus();
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  addEventListener('input', event => {
+    const element = event.target.closest('.text-editing[data-edit-element-id]');
+    if (element) saveTextEdit(element);
+  });
+  addEventListener('focusout', event => {
+    const element = event.target.closest('.text-editing[data-edit-element-id]');
+    if (!element) return;
+    element.removeAttribute('contenteditable');
+    element.classList.remove('text-editing');
+    delete element.dataset.editStart;
+    saveTextEdit(element);
+  });
   addEventListener('pointermove', event => {
     if (event.target.closest('#element-delete-hint')) {
       clearTimeout(hoverClearTimer);
       return;
     }
     if (event.target.closest('#filmstrip-panel, #edit-toast')) {
+      clearElementHover();
+      return;
+    }
+    if (document.activeElement?.isContentEditable) {
       clearElementHover();
       return;
     }
@@ -1686,6 +1780,17 @@ optimizer.step()</pre>
   }
 
   addEventListener('keydown', e => {
+    if (e.target.isContentEditable) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.target.textContent = e.target.dataset.editStart || e.target.textContent;
+        e.target.blur();
+      } else if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        e.target.blur();
+      }
+      return;
+    }
     if (e.target.closest('#slide-feedback-panel')) return;
     if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
       if (undoElementRemoval()) e.preventDefault();
