@@ -1,0 +1,204 @@
+{
+  "schema_version": "1.0",
+  "status": "complete",
+  "experiment": "full_25m_language_model_rgb_digit_integration",
+  "claim_tested": "A miniature GLM-like vision encoder can learn a held-out RGB digit task while its tokens pass through the full 12-layer 25.7M language model.",
+  "initialization": {
+    "source": "local_pretraining_checkpoint",
+    "checkpoint": "runs/mac-pretrain-before-after-001/checkpoint-0100"
+  },
+  "environment": {
+    "device": "mps",
+    "torch_version": "2.5.1",
+    "python_version": "3.12.9",
+    "platform": "macOS-26.5-arm64-arm-64bit"
+  },
+  "model": {
+    "language_model_parameters": 25731168,
+    "total_multimodal_parameters": 25875576,
+    "trainable_parameters": 2335136,
+    "language_layers_executed": 12,
+    "visual_tokens": 16,
+    "trained_components": [
+      "vision_encoder",
+      "language_model.layers[-1]",
+      "language_model.final_norm",
+      "tied_embedding_output"
+    ],
+    "frozen_components": "language_model.layers[0:11]"
+  },
+  "data": {
+    "source": "procedurally generated RGB seven-segment digits",
+    "downloaded": false,
+    "training_examples_seen": 400,
+    "training_seed_schedule": "seed + step",
+    "held_out_examples": 100,
+    "held_out_seed": 100073,
+    "held_out_reused_before_after": true
+  },
+  "optimization": {
+    "requested_steps": 40,
+    "completed_steps": 40,
+    "batch_size": 10,
+    "learning_rate": 0.001,
+    "max_seconds": 540.0,
+    "stop_reason": "step_cap",
+    "wall_time_seconds": 37.007,
+    "loss_trace": [
+      {
+        "step": 1,
+        "language_loss": 8.376293,
+        "gradient_norm": 20.569876
+      },
+      {
+        "step": 5,
+        "language_loss": 4.42236,
+        "gradient_norm": 4.635606
+      },
+      {
+        "step": 10,
+        "language_loss": 3.152648,
+        "gradient_norm": 2.932392
+      },
+      {
+        "step": 15,
+        "language_loss": 2.467719,
+        "gradient_norm": 1.591197
+      },
+      {
+        "step": 20,
+        "language_loss": 2.044684,
+        "gradient_norm": 2.516465
+      },
+      {
+        "step": 25,
+        "language_loss": 1.741951,
+        "gradient_norm": 1.550837
+      },
+      {
+        "step": 30,
+        "language_loss": 1.596589,
+        "gradient_norm": 12.94724
+      },
+      {
+        "step": 35,
+        "language_loss": 1.847204,
+        "gradient_norm": 30.555872
+      },
+      {
+        "step": 40,
+        "language_loss": 1.544227,
+        "gradient_norm": 10.436757
+      }
+    ]
+  },
+  "before": {
+    "accuracy": 0.0,
+    "correct": 0,
+    "examples": 100,
+    "cross_entropy": 8.389400482177734,
+    "predictions_first_20": [
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " ",
+      " "
+    ],
+    "targets_first_20": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ]
+  },
+  "after": {
+    "accuracy": 0.4000000059604645,
+    "correct": 40,
+    "examples": 100,
+    "cross_entropy": 1.5550293922424316,
+    "predictions_first_20": [
+      "0",
+      "1",
+      "0",
+      "0",
+      "4",
+      "0",
+      "0",
+      "7",
+      "0",
+      "0",
+      "0",
+      "1",
+      "3",
+      "3",
+      "4",
+      "0",
+      "0",
+      "7",
+      "0",
+      "0"
+    ],
+    "targets_first_20": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ]
+  },
+  "learned_at_all": true,
+  "checkpoint_saved": false,
+  "limitations": [
+    "One synthetic task and one seed; this is an integration pilot, not general vision evidence.",
+    "The first eleven language-model layers were frozen but still executed in every forward and backward pass.",
+    "Only a small number of procedural training images were seen.",
+    "The held-out set changes image rendering randomness, not the ten semantic digit classes.",
+    "No architecture comparison or statistical significance claim is made."
+  ]
+}

@@ -153,19 +153,42 @@ python scripts/train_vision.py \
 
 On the recorded single-seed run, the faithful miniature improved from 0/200 to 119/200 held-out accuracy and loss `5.5809 -> 1.1618`. The smaller direct-patch baseline improved from 0/200 to 189/200 and loss `5.5758 -> 0.9608`. The baseline won this tiny short-run comparison. This does not show that the production topology is worse – it shows that added structure did not pay off under this very small model and training budget. See [`VISION_REPORT.md`](VISION_REPORT.md) for the exact configuration, timings, component audit, and limitations.
 
+### Full 25.7M language-model integration pilot
+
+A second bounded pilot attached the GLM-like vision encoder to the complete 12-layer language model initialized from the local step-100 coding checkpoint. All 12 language layers executed, while training was limited to the vision encoder, final LM block, final norm, and tied embedding/output matrix. No weights were saved.
+
+| Metric | Before | After |
+|---|---:|---:|
+| Held-out RGB digit accuracy | 0/100 | **40/100** |
+| Held-out cross-entropy | 8.389 | **1.555** |
+
+The run used 40 updates, 400 generated training images, and 37 seconds on Apple Silicon MPS. It proves that the integration can learn this synthetic rendering task; it does not establish general vision ability. The first eleven LM blocks were frozen, the semantic digit classes were shared across train and evaluation, and this was one seed without a matched baseline.
+
+After creating the local pretraining checkpoint, reproduce the no-checkpoint-saved pilot with:
+
+```bash
+python experiments/full_25m_vision_digit_pilot.py \
+  --device auto --steps 40 --batch-size 10 --eval-examples 100 \
+  --learning-rate 0.001 --max-seconds 540 \
+  --checkpoint runs/glm53-coding-pretrain-001/checkpoint-0100 \
+  --output artifacts/receipts/full-25m-vision-digit-pilot-seed73.json
+```
+
+See [`experiments/FULL_25M_VISION_DIGIT_PILOT_REPORT.md`](experiments/FULL_25M_VISION_DIGIT_PILOT_REPORT.md) for the exact receipt, trainable surface, and limitations.
+
 ## Quick start
 
 ```bash
 git clone https://github.com/vukrosic/glm-5.3-flash-from-scratch.git
 cd glm-5.3-flash-from-scratch
-python3 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m pytest -q
 ```
 
-This setup works on macOS with Apple Silicon, Linux with NVIDIA CUDA, and CPU-only machines. The training scripts accept `--device auto` and select the available backend.
+Use Python 3.12 because the pinned PyTorch 2.5.1 release does not provide Python 3.13 wheels. This setup works on macOS with Apple Silicon, Linux with NVIDIA CUDA, and CPU-only machines. The training scripts accept `--device auto` and select the available backend.
 
 ## Open the complete course slides
 
@@ -244,6 +267,8 @@ Every task, prompt, completion, unit-test count, seed, checkpoint hash, timing, 
 - [`scripts/evaluate.py`](scripts/evaluate.py): greedy pass@1 evaluation.
 - [`scripts/evaluate_passk.py`](scripts/evaluate_passk.py): sampled policy evaluation.
 - [`scripts/train_vision.py`](scripts/train_vision.py): deterministic generated-RGB training and held-out comparison.
+- [`experiments/full_25m_vision_digit_pilot.py`](experiments/full_25m_vision_digit_pilot.py): bounded full-language-model vision integration test that never saves weights.
+- [`experiments/FULL_25M_VISION_DIGIT_PILOT_REPORT.md`](experiments/FULL_25M_VISION_DIGIT_PILOT_REPORT.md): exact full-model vision pilot result and limitations.
 - [`VISION_REPORT.md`](VISION_REPORT.md): exact vision result and official-to-miniature component audit.
 - [`slides/slides.html`](slides/slides.html): complete interactive YouTube course deck.
 - [`slides/serve_slides.py`](slides/serve_slides.py): local slide and feedback server.

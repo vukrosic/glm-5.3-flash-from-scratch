@@ -3,6 +3,12 @@ __pycache__/
 .venv/
 *.pyc
 *.pt
+*.pth
+*.ckpt
+*.safetensors
 /runs/
+/checkpoints/
+/outputs/
+/wandb/
 /slides/slide-feedback.json
 /slides/.slide-feedback-*.json

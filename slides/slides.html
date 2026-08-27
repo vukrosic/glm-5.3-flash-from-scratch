@@ -1,5 +1,5 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>&lt;!-- slide: title --&gt;</title>
+<html><head><meta charset="utf-8"><title>Build &amp; Train GLM-5.3-Flash From Scratch</title>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: #f4f1e8; color: #1f1f1c;
@@ -110,9 +110,13 @@
 <div class="orb" style="width:26vw;height:26vw;right:-8vw;bottom:-10vh;background:rgba(255,140,60,.07);animation-delay:-13s"></div>
 <div id="bar"></div>
 <div data-slide-id="build-and-train-glm-5-3-flash-from-scratch" class="slide title opening-slide"><h1>Build &amp; Train GLM-5.3-Flash From Scratch</h1>
-<p>Watch our model change from random output to generated Python.</p>
-<video class="opening-generation" src="pretraining-before-after.mp4" autoplay muted loop playsinline aria-label="Our model generating Python before and after pretraining"></video>
-<small class="source-note">The same prompt · random initialization → 100 pretraining steps</small>
+<p>Watch our trained model generate a working Python function.</p>
+<div class="opening-generation" role="img" aria-label="A real greedy completion from the trained tiny GLM model writes a Python double function">
+  <div class="generation-label"><span>LIVE GENERATION</span><strong>CHECKPOINT 0100 · GREEDY</strong></div>
+  <pre><span class="prompt"># Complete this Python function.<br># Double the input.<br>def double_bimbxfa(x):</span><br><span class="generated-line"><span class="generated">    return x * 2</span><span class="cursor"></span></span></pre>
+  <div class="generation-foot"><span>captured from the trained 25.7M-parameter model</span><b>18 tokens · 2.617 seconds</b></div>
+</div>
+<small class="source-note">One real completion · checkpoint-0100 · no fabricated output</small>
 <a class="repo-url" href="https://github.com/vukrosic/glm-5.3-flash-from-scratch" target="_blank" rel="noopener">github.com/vukrosic/glm-5.3-flash-from-scratch</a></div>
 <div data-slide-id="what-we-will-do" class="slide title intro-roadmap-slide"><h1>What are we going to do?</h1>
 <p>Follow one model through the complete learning process.</p>
@@ -150,7 +154,7 @@
 <div class="frontier-work-grid">
   <img src="assets/anthropic-domain-scaling-job.png" alt="Recruiting post for Anthropic Research Engineer, Domain Scaling">
   <div class="frontier-statement">
-    <p><strong>Most frontier-model training roles focus on data and environments – not inventing new model algorithms.</strong></p>
+    <p><strong>This Anthropic training role focuses on data and environments – not inventing a new model algorithm.</strong></p>
     <p>Researchers choose what the model should practice, build tasks with automatically verifiable outcomes, and turn those checks into rewards.</p>
     <p>Algorithms control how weights update. Data and environments control what the model learns.</p>
   </div>
@@ -225,7 +229,7 @@
 <div data-slide-id="what-we-built" class="slide title model-summary"><h1>The core language model we built</h1>
 <table><tr><th></th><th>Released model</th><th>Teaching model</th></tr><tr><td>Parameters</td><td>320B</td><td><strong>25.7M</strong></td></tr><tr><td>Layers</td><td>45</td><td><strong>12</strong></td></tr><tr><td>Active experts</td><td>8 of 288</td><td><strong>2 of 8</strong></td></tr><tr><td>Tokenizer</td><td>BPE · 154,880</td><td><strong>bytes · 260</strong></td></tr><tr><td>Context</td><td>1M</td><td><strong>192</strong></td></tr></table>
 <p>Small enough for Mac, NVIDIA GPU, or CPU · trained from random initialization</p>
-<small class="source-note">Next, we attach a separate 60,924-parameter GLM-like vision miniature.</small></div>
+<small class="source-note">First, we test vision in a 60,924-parameter miniature. Then we attach it to the full 25.7M language model.</small></div>
 <div data-slide-id="glm-vision-path" class="slide title vision-path-slide"><h1>GLM-5.3-Flash also sees images</h1>
 <p>The production model and our miniature use the same high-level path.</p>
 <div class="vision-scale-path">
@@ -240,11 +244,11 @@
 <div class="vision-mechanism">
   <span class="vision-image"><small>32 × 32 RGB</small><svg viewBox="0 0 120 120" role="img" aria-label="A colored seven-segment digit"><rect width="120" height="120" fill="#24231f"/><g stroke="#efb19a" stroke-width="10" stroke-linecap="round"><path d="M30 18H90M92 24V55M92 65V96M30 102H90M28 65V96M28 24V55M30 60H90"/></g></svg></span><b>→</b>
   <span class="vision-patches"><small>8 × 8 PATCH GRID</small><i></i></span><b>→</b>
-  <span class="vision-blocks"><small>2 VISION BLOCKS</small><i>full attention</i><i>SwiGLU MLP</i></span><b>→</b>
-  <span class="vision-merge"><small>2 × 2 MERGE</small><i></i></span><b>→</b>
-  <span class="vision-tokens"><small>16 IMAGE TOKENS</small><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+  <span class="vision-blocks"><small>2 VISION BLOCKS</small><i><strong>Full attention</strong><small>every patch can read every other patch</small></i><i><strong>SwiGLU</strong><small>a gate keeps the useful transformed features</small></i></span><b>→</b>
+  <span class="vision-merge"><small>2 × 2 MERGE</small><i></i><em>four neighboring vectors → one</em></span><b>→</b>
+  <span class="vision-tokens"><small>4 × 4 = 16 IMAGE TOKENS</small><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><em>one token summarizes each region</em></span>
 </div>
-<p>Spatial merging reduces 64 patch vectors to 16 language-width image vectors.</p></div>
+<p>Each 2 × 2 group becomes one vector, so the 8 × 8 patch grid becomes a 4 × 4 grid of 16 image tokens.</p></div>
 <div data-slide-id="image-tokens-enter-the-language-model" class="slide title vision-sequence-slide"><h1>Image tokens enter the language sequence</h1>
 <p>Special tokens mark exactly where the image belongs.</p>
 <div class="vision-sequence">
@@ -272,6 +276,19 @@ logits = language_model.forward_embeddings(embeddings)</pre></div>
 </div>
 <div class="vision-result-conclusion"><strong>Result:</strong> under a 120-step budget, the simpler adapter learned this tiny task faster.</div>
 <small class="source-note">One synthetic dataset and one seed · useful pilot, not a general architecture ranking.</small></div>
+<div data-slide-id="full-25m-vision-integration" class="slide title full-vision-result-slide"><h1>The full 25.7M language model also learned from images</h1>
+<p>This is an integration test, separate from the miniature adapter comparison.</p>
+<div class="full-vision-flow">
+  <span><b>400 TRAINING IMAGES</b><strong>32 × 32 RGB digits</strong><small>40 updates · batch size 10</small></span><i>→</i>
+  <span><b>VISION ENCODER</b><strong>16 visual tokens</strong><small>passed into the language model</small></span><i>→</i>
+  <span class="full-lm"><b>FULL LANGUAGE PATH</b><strong>all 12 layers executed</strong><small>25.7M-parameter LM</small></span>
+</div>
+<div class="full-vision-metrics">
+  <span><small>HELD-OUT ACCURACY</small><strong>0 / 100 <i>→</i> 40 / 100</strong></span>
+  <span><small>CROSS-ENTROPY</small><strong>8.389 <i>→</i> 1.555</strong></span>
+  <span><small>TRAINING</small><strong>37 seconds on MPS</strong></span>
+</div>
+<small class="source-note">One synthetic task and one seed · not general vision ability · no checkpoint was saved.</small></div>
 <div data-slide-id="how-the-experiment-works" class="slide title experiment-overview"><h1>How the experiment works</h1>
 <div class="experiment-steps">
   <article><strong>1</strong><h2>Build</h2><p>Initialize the 25.7M-parameter model with random weights.</p></article>
@@ -344,7 +361,7 @@ ffn, usage = self.moe(self.ffn_norm(x))</pre>
 <div data-slide-id="3-linear-1-sparse" class="slide title"><h1>3 linear + 1 sparse</h1>
 <p>The four-layer rhythm repeats three times</p>
 <div class="layer-stack"><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div></div>
-<style>.layer-stack{display:flex;justify-content:center;gap:45px;margin-top:9vh}.layer-stack>div{display:flex;gap:12px;padding:18px;border-radius:22px;background:#e9e3d8}.layer-stack span{display:grid;place-items:center;width:84px;height:120px;border-radius:15px;background:#ead4c7;border:2px solid #d97757;color:#d97757;font-size:40px;font-weight:800}.layer-stack .sparse{background:#ded4c8;border-color:#8a6252;color:#8a6252;box-shadow:0 0 28px #8a625255}</style></div>
+<style>.layer-stack{display:flex;justify-content:center;gap:24px;margin-top:9vh}.layer-stack>div{display:flex;gap:8px;padding:12px;border-radius:18px;background:#e9e3d8}.layer-stack span{display:grid;place-items:center;width:70px;height:112px;border-radius:12px;background:#ead4c7;border:2px solid #d97757;color:#d97757;font-size:36px;font-weight:800}.layer-stack .sparse{background:#ded4c8;border-color:#8a6252;color:#8a6252;box-shadow:0 0 28px #8a625255}</style></div>
 <div data-slide-id="the-attention-rhythm-in-code" class="slide code-pair"><h1>The attention rhythm in code</h1>
 <p>One condition selects the attention algorithm for every layer.</p>
 <pre>self.layers = nn.ModuleList([
@@ -429,7 +446,7 @@ clip_grad_norm_(model.parameters(), 1.0)
 optimizer.step()</pre>
 <p>Predict → compare → backpropagate → update</p></div>
 <div data-slide-id="pretraining-makes-code-shaped-text" class="slide title"><h1>Pretraining makes code-shaped text</h1>
-<p>But the programs still fail hidden tests</p>
+<p>Capability is uneven: on a different held-out prompt, the model produced invalid Python.</p>
 <div class="bad-code"><code>return x * * 0 0</code><strong>INVALID PYTHON</strong></div>
 <style>.bad-code{display:grid;gap:35px;margin-top:10vh}.bad-code code{padding:40px 70px;border-radius:20px;background:#e9e3d8;border:2px solid #a94f3d;font-size:52px;color:#1f1f1c}.bad-code strong{font-size:32px;color:#a94f3d;letter-spacing:.08em}</style></div>
 <div data-slide-id="turn-execution-into-reward" class="slide title"><h1>Turn execution into reward</h1>
@@ -516,8 +533,8 @@ optimizer.step()</pre>
 <p>None of the four RL changes produced statistically significant improvement.</p>
 <small class="source-note">Next question: does temperature 0.20 replicate across fresh seeds?</small></div>
 <style>
-  .intro-roadmap { display:flex; align-items:center; justify-content:center; gap:18px; width:min(94vw,1450px); margin:8vh auto 0; }
-  .intro-roadmap>span { display:grid; gap:10px; width:250px; min-height:170px; align-content:center; padding:25px;
+  .intro-roadmap { display:flex; align-items:center; justify-content:center; gap:18px; width:100%; max-width:1450px; margin:8vh auto 0; }
+  .intro-roadmap>span { display:grid; gap:10px; flex:1 1 0; min-width:0; min-height:170px; align-content:center; padding:25px;
     background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
   .intro-roadmap>span:last-of-type { border-top-color:var(--olive); }
   .intro-roadmap b { color:var(--muted); font-size:18px; }
@@ -571,8 +588,8 @@ optimizer.step()</pre>
   .research-control-visual>.changed>b { grid-column:1/-1; }
   .research-control-visual>.changed strong { color:var(--ink) !important; font-size:21px; }
   .research-control-visual>.changed em { color:var(--muted); font-size:14px; }
-  .research-verification-flow { display:flex; align-items:stretch; justify-content:center; gap:16px; width:min(94vw,1450px); margin:7vh auto 3vh; }
-  .research-verification-flow>span { display:grid; align-content:center; gap:10px; width:240px; min-height:190px; padding:25px;
+  .research-verification-flow { display:flex; align-items:stretch; justify-content:center; gap:16px; width:100%; max-width:1450px; margin:7vh auto 3vh; }
+  .research-verification-flow>span { display:grid; align-content:center; gap:10px; flex:1 1 0; min-width:0; min-height:190px; padding:25px;
     background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
   .research-verification-flow>.decision { border-top-color:var(--olive); }
   .research-verification-flow b { color:var(--muted); font-size:16px; }
@@ -583,8 +600,8 @@ optimizer.step()</pre>
   .research-decision>span { padding:15px 22px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:16px; }
   .research-decision>span:first-child { border-color:var(--olive); }.research-decision>span:last-child { border-color:var(--danger); }
   .research-decision b { color:var(--ink); }
-  .vision-scale-path { display:flex; align-items:stretch; justify-content:center; gap:13px; width:min(95vw,1500px); margin:7vh auto 3vh; }
-  .vision-scale-path>span { display:grid; align-content:center; gap:10px; width:205px; min-height:205px; padding:24px;
+  .vision-scale-path { display:flex; align-items:stretch; justify-content:center; gap:13px; width:100%; max-width:1500px; margin:7vh auto 3vh; }
+  .vision-scale-path>span { display:grid; align-content:center; gap:10px; flex:1 1 0; min-width:0; min-height:205px; padding:20px;
     background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
   .vision-scale-path>.vision-lm { border-top-color:var(--olive); }
   .vision-scale-path span>b { color:var(--muted); font:700 13px/1 Arial,sans-serif; letter-spacing:.12em; }
@@ -593,8 +610,8 @@ optimizer.step()</pre>
   .vision-scale-path>i { align-self:center; color:var(--accent); font-style:normal; font-size:30px; }
   .vision-scale-note { display:flex; justify-content:center; gap:18px; }
   .vision-scale-note span { padding:12px 18px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:15px; }
-  .vision-mechanism { display:flex; align-items:stretch; justify-content:center; gap:13px; width:min(96vw,1510px); margin:7vh auto 3vh; }
-  .vision-mechanism>span { display:grid; align-content:center; gap:13px; width:190px; min-height:225px; padding:20px;
+  .vision-mechanism { display:flex; align-items:stretch; justify-content:center; gap:13px; width:100%; max-width:1510px; margin:7vh auto 3vh; }
+  .vision-mechanism>span { display:grid; align-content:center; gap:13px; flex:1 1 0; min-width:0; min-height:225px; padding:16px;
     background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
   .vision-mechanism>span:last-child { border-top-color:var(--olive); }
   .vision-mechanism span>small { color:var(--muted); font:700 13px/1 Arial,sans-serif; letter-spacing:.11em; }
@@ -602,11 +619,15 @@ optimizer.step()</pre>
   .vision-image svg { width:120px; height:120px; margin:auto; border:1px solid var(--line); }
   .vision-patches>i { display:block; width:132px; height:132px; margin:auto;
     background:repeating-linear-gradient(0deg,transparent 0 15px,var(--line) 15px 16px),repeating-linear-gradient(90deg,#2b211e 0 15px,var(--line) 15px 16px); }
-  .vision-blocks>i { display:grid; place-items:center; min-height:55px; border:1px solid var(--accent); color:var(--ink); font-style:normal; font-size:16px; }
+  .vision-blocks>i { display:grid; place-items:center; gap:5px; min-height:62px; padding:7px; border:1px solid var(--accent); color:var(--ink); font-style:normal; }
+  .vision-blocks>i>strong { color:var(--ink) !important; font:700 15px/1.1 Arial,sans-serif; }
+  .vision-blocks>i>small { color:var(--muted); font:400 11px/1.2 Arial,sans-serif; letter-spacing:0; text-transform:none; }
   .vision-merge>i { display:block; width:132px; height:132px; margin:auto;
     background:repeating-linear-gradient(0deg,transparent 0 31px,var(--olive) 31px 33px),repeating-linear-gradient(90deg,#303324 0 31px,var(--olive) 31px 33px); }
-  .vision-tokens { grid-template-columns:repeat(4,1fr); align-items:center; }
+  .vision-tokens { grid-template-columns:repeat(4,1fr); align-items:center; gap:8px !important; }
   .vision-tokens small { grid-column:1/-1; }.vision-tokens i { display:block; width:25px; height:25px; background:var(--olive); opacity:.82; }
+  .vision-merge>em, .vision-tokens>em { color:var(--muted); font:400 11px/1.25 Arial,sans-serif; font-style:normal; }
+  .vision-tokens>em { grid-column:1/-1; }
   .vision-sequence { display:flex; align-items:center; justify-content:center; gap:11px; margin:8vh auto 4vh; }
   .vision-sequence>span { display:grid; place-items:center; min-height:92px; padding:18px 24px; background:var(--soft);
     border:1px solid var(--line); font:700 18px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; }
@@ -636,6 +657,20 @@ optimizer.step()</pre>
   .vision-result-bars strong { color:var(--ink) !important; font:700 42px/1 Georgia,serif; }.vision-result-bars small { color:var(--muted); font-size:15px; }
   .vision-result-conclusion { display:inline-block; padding:14px 22px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:17px; }
   .vision-result-conclusion strong { color:var(--ink) !important; }
+  .full-vision-result-slide h1 { max-width:1080px; font-size:50px; }
+  .full-vision-flow { display:flex; align-items:stretch; justify-content:center; gap:18px; width:min(92vw,1320px); margin:5vh auto 3vh; }
+  .full-vision-flow>span { display:grid; align-content:center; gap:10px; width:300px; min-height:165px; padding:22px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .full-vision-flow>.full-lm { border-top-color:var(--olive); }
+  .full-vision-flow span>b { color:var(--muted); font:700 13px/1 Arial,sans-serif; letter-spacing:.11em; }
+  .full-vision-flow span>strong { color:var(--ink) !important; font:700 26px/1.15 Georgia,serif; }
+  .full-vision-flow span>small { color:var(--muted); font-size:15px; line-height:1.3; }
+  .full-vision-flow>i { align-self:center; color:var(--accent); font-style:normal; font-size:32px; }
+  .full-vision-metrics { display:flex; justify-content:center; gap:14px; margin:0 auto 2vh; }
+  .full-vision-metrics>span { display:grid; gap:8px; min-width:250px; padding:15px 18px; background:var(--soft); border:1px solid var(--line); }
+  .full-vision-metrics small { color:var(--muted); font:700 12px/1 Arial,sans-serif; letter-spacing:.1em; }
+  .full-vision-metrics strong { color:var(--ink) !important; font:700 22px/1.2 Georgia,serif; }
+  .full-vision-metrics i { color:var(--accent); font-style:normal; }
   [data-slide-id="the-attention-rhythm-in-code"] { padding-top:2vh; padding-bottom:6vh; }
   [data-slide-id="the-attention-rhythm-in-code"] h1 { font-size:1.45em; margin-bottom:.15em; }
   [data-slide-id="the-attention-rhythm-in-code"] p { margin:.1em 0 .45em; font-size:.82em; }
@@ -779,6 +814,16 @@ optimizer.step()</pre>
     .nav, #bar, #n, .orb, #filmstrip-panel, #thumb-toggle, #save-toast,
     #element-delete-hint, #edit-toast { display:none !important; }
   }
+  body.presentation-mode #bar,
+  body.presentation-mode #n,
+  body.presentation-mode .nav,
+  body.presentation-mode #filmstrip-panel,
+  body.presentation-mode #slide-feedback-panel,
+  body.presentation-mode #save-toast,
+  body.presentation-mode #element-delete-hint,
+  body.presentation-mode #edit-toast { display:none !important; }
+  body.presentation-mode [data-edit-element-id].element-hovered {
+    outline:none !important; cursor:default; }
 </style>
 <style id="dark-editorial-theme">
   :root {
@@ -859,8 +904,21 @@ optimizer.step()</pre>
   .opening-slide { justify-content:flex-start !important; padding:2.5vh 4vw 2vh !important; }
   .opening-slide h1 { margin-top:0; margin-bottom:.15em; font-size:1.65em; }
   .opening-slide p { margin:.05em 0 .35em; }
-  .opening-generation { display:block; width:min(1060px,88vw); height:58vh; margin:.5vh auto 0;
-    object-fit:contain; background:#151513; border:1px solid var(--line); }
+  .opening-generation { display:grid; grid-template-rows:auto 1fr auto; width:min(1060px,88vw); height:58vh; margin:.5vh auto 0;
+    padding:28px 34px 22px; box-sizing:border-box; text-align:left; background:#151513; border:1px solid var(--line); }
+  .opening-generation .generation-label { display:flex; justify-content:space-between; align-items:center; color:#8d877c;
+    font:700 13px/1 Arial,sans-serif; letter-spacing:.13em; }
+  .opening-generation .generation-label strong { color:#bcc39c; font-weight:700; }
+  .opening-generation pre { margin:5vh 0 0; white-space:pre-wrap; color:#d7d0c4; font:clamp(20px,2.05vw,31px)/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .opening-generation .prompt { color:#8d877c; }
+  .opening-generation .generated { color:#bcc39c; }
+  .opening-generation .cursor { display:inline-block; width:.58em; height:1.05em; margin-left:3px; vertical-align:-.12em;
+    background:#efb19a; animation:opening-cursor .85s steps(1,end) infinite; }
+  .opening-generation .generation-foot { display:flex; justify-content:space-between; align-items:end; gap:20px; color:#81796e; font:14px/1.35 Arial,sans-serif; }
+  .opening-generation .generation-foot b { color:#efb19a; font-weight:700; }
+  @keyframes opening-cursor { 50% { opacity:0; } }
+  @keyframes opening-write { 0%,12% { width:0; } 56%,88% { width:100%; } 100% { width:0; } }
+  .opening-generation .generated-line { display:block; width:0; overflow:hidden; white-space:nowrap; animation:opening-write 7s steps(21,end) infinite; }
   .research-opening img { max-height:58vh; width:auto; }
   .split-result h1 { display:none; }
   .split-result img { width:auto; height:82vh; max-width:92vw !important; max-height:none !important; margin:0; }
@@ -1036,7 +1094,7 @@ optimizer.step()</pre>
   // Each slide has 1+ "steps". Normal slides = 1 step. An `explain` slide has
   // one step per sentence: → reveals the next sentence with the image pinned,
   // and only rolls to the next slide once the last sentence is shown.
-  const ORDER_KEY = 'glm53-slide-order-v18';
+  const ORDER_KEY = 'glm53-slide-order-v19';
   const THUMBS_KEY = 'glm53-thumbnails-visible-v1';
   const DELETED_KEY = 'glm53-deleted-elements-v1';
   const FEEDBACK_KEY = 'glm53-slide-feedback-v1';
@@ -1060,7 +1118,7 @@ optimizer.step()</pre>
   // Each feedback implementation gets a one-time migration. It clears only the resolved
   // slide notes once; later feedback on the same slide is preserved.
   try {
-    const resolutionKey = 'glm53-feedback-resolution-2026-08-27-v3';
+    const resolutionKey = 'glm53-feedback-resolution-2026-08-27-v4';
     if (localStorage.getItem(resolutionKey) !== '1') {
       [
         'what-are-we-trying-to-build',
@@ -1073,7 +1131,8 @@ optimizer.step()</pre>
         'we-will-also-do-real-research',
         'research-results-preview',
         'before-after-video',
-        'what-you-will-learn'
+        'what-you-will-learn',
+        'image-becomes-visual-tokens'
       ].forEach(id => delete slideFeedback[id]);
       localStorage.setItem(FEEDBACK_KEY, JSON.stringify(slideFeedback));
       localStorage.setItem(resolutionKey, '1');
@@ -1123,7 +1182,8 @@ optimizer.step()</pre>
     'image-becomes-visual-tokens',
     'image-tokens-enter-the-language-model',
     'vision-training-task',
-    'vision-experiment-result'
+    'vision-experiment-result',
+    'full-25m-vision-integration'
   ];
   const visionSlides = visionIds.map(id => defaultById.get(id)).filter(Boolean);
   const visionSet = new Set(visionSlides);
@@ -1740,6 +1800,7 @@ optimizer.step()</pre>
   });
 
   const reviewParams = new URLSearchParams(location.search);
+  document.body.classList.toggle('presentation-mode', reviewParams.get('present') === '1');
   var START = Math.max(0, Number.parseInt(reviewParams.get('slide') || '0', 10) || 0);
   var STEP = Math.max(0, Number.parseInt(reviewParams.get('step') || '0', 10) || 0);
   thumbToggle.addEventListener('click', () =>

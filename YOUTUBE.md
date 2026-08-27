@@ -19,9 +19,8 @@ Recommended pairing: title 1 with the `RANDOM → CODING` thumbnail. It promises
 
 ### Random to coding
 
-![Random to coding](thumbnails/random-to-coding.png)
+![Random to coding](thumbnails/random-to-coding.webp)
 
 ### GLM from zero
 
-![GLM from zero](thumbnails/glm-from-zero.png)
-
+![GLM from zero](thumbnails/glm-from-zero.webp)
