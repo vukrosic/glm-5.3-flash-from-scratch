@@ -339,9 +339,9 @@ for layer in self.layers:
 
 hidden = self.final_norm(streams.mean(dim=2))
 return self.output(hidden), torch.stack(usages)</pre></div>
-<div data-slide-id="read-the-algorithm-not-the-syntax" class="slide title algorithm-walkthrough"><h1>Read the algorithm, not the syntax</h1>
+<div data-slide-id="read-the-algorithm-not-the-syntax" class="slide title algorithm-walkthrough embedding-walkthrough"><h1>Read the algorithm, not the syntax</h1>
 <div class="walkthrough-steps">
-  <div class="step"><code>self.embedding(input_ids)</code><p><strong>1. Represent:</strong> convert byte-token IDs into learned vectors.</p></div>
+  <div class="step embedding-step"><code>self.embedding(input_ids)</code><div class="embedding-visual"><div class="embedding-token"><small>token ID</small><b>104</b></div><i><span>select row 104</span>→</i><div class="embedding-table"><small>learned embedding table</small><span>row 0</span><span>row 1</span><span>⋮</span><span class="selected">row 104</span><span>⋮</span></div><i><span>retrieve its values</span>→</i><div class="embedding-vector"><small>one learned vector</small><b>[ 0.12, −0.08, 0.31, … ]</b></div></div><p><strong>The idea:</strong> a token ID is an address. The embedding layer retrieves that token's learned vector.</p></div>
   <div class="step"><code>expand(-1, -1, self.config.streams, -1)</code><p><strong>2. Branch:</strong> copy each token representation into four residual streams.</p></div>
   <div class="step"><code>streams, usage = layer(streams)</code><p><strong>3. Transform:</strong> every hybrid block reads, mixes, and updates those streams.</p></div>
   <div class="step"><code>self.final_norm(streams.mean(dim=2))</code><p><strong>4. Merge:</strong> average the streams and normalize the combined representation.</p></div>
@@ -1026,10 +1026,30 @@ optimizer.step()</pre>
   .algorithm-walkthrough .step code { padding:.7em 1em; background:#24231f; color:#efb19a;
     border:1px solid var(--line); font-size:1.2em; white-space:nowrap; }
   .algorithm-walkthrough .step p { max-width:34em; margin:0; font-size:1em; line-height:1.45; }
+  .algorithm-walkthrough .embedding-step { gap:18px; }
+  .embedding-visual { display:grid; grid-template-columns:150px 120px 230px 120px 300px; align-items:center;
+    justify-content:center; gap:14px; width:min(78vw,1040px); }
+  .embedding-token, .embedding-vector { display:grid; place-items:center; min-height:118px; padding:16px;
+    background:var(--soft); border:1px solid var(--line); }
+  .embedding-token { border-color:var(--accent); }
+  .embedding-token small, .embedding-vector small, .embedding-table small { color:var(--muted); font:700 12px/1 Arial,sans-serif;
+    letter-spacing:.08em; text-transform:uppercase; }
+  .embedding-token b { color:var(--ink) !important; font:700 38px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .embedding-vector b { color:#bcc39c !important; font:700 20px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:nowrap; }
+  .embedding-table { display:grid; grid-template-columns:1fr; gap:5px; padding:14px 16px;
+    background:#10100f; border:1px solid var(--line); text-align:left; }
+  .embedding-table small { margin-bottom:4px; text-align:center; }
+  .embedding-table span { padding:3px 10px; color:#706a61; font:600 13px/1.15 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .embedding-table .selected { color:#151513; background:var(--accent); animation:embedding-row 2.6s ease-in-out infinite; }
+  .embedding-visual>i { display:grid; justify-items:center; gap:8px; color:var(--accent); font:400 38px/1 Arial,sans-serif; }
+  .embedding-visual>i span { color:var(--muted); font:700 11px/1.2 Arial,sans-serif; text-transform:uppercase; letter-spacing:.05em; }
+  @keyframes embedding-row { 0%,100% { filter:none; } 50% { filter:brightness(1.25); box-shadow:0 0 24px rgba(217,119,87,.28); } }
   .algorithm-walkthrough .walkthrough-dots { display:flex; justify-content:center; gap:12px; margin-top:2vh; }
   .algorithm-walkthrough .walkthrough-dots i { width:10px; height:10px; border-radius:50%;
     background:#4a4640; }
   .algorithm-walkthrough .walkthrough-dots i.on { background:var(--accent); transform:scale(1.15); }
+  .embedding-walkthrough .walkthrough-steps { height:54vh; margin:1vh auto 0; }
+  .embedding-walkthrough .walkthrough-dots { margin-top:0; }
   .thumb-canvas.algorithm-walkthrough .step { display:none !important; }
   .thumb-canvas.algorithm-walkthrough .step:first-child { display:grid !important; }
   .data-path span { animation:mechanismPulse 5s ease-in-out infinite; }
