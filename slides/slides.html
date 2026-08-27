@@ -112,11 +112,9 @@
 <div data-slide-id="build-and-train-glm-5-3-flash-from-scratch" class="slide title opening-slide"><h1>Build &amp; Train GLM-5.3-Flash From Scratch</h1>
 <p>Watch our trained model generate a working Python function.</p>
 <div class="opening-generation" role="img" aria-label="A real greedy completion from the trained tiny GLM model writes a Python double function">
-  <div class="generation-label"><span>LIVE GENERATION</span><strong>CHECKPOINT 0100 · GREEDY</strong></div>
+  <div class="generation-label"><span>LIVE GENERATION</span></div>
   <pre><span class="prompt"># Complete this Python function.<br># Double the input.<br>def double_bimbxfa(x):</span><br><span class="generated-line"><span class="generated">    return x * 2</span><span class="cursor"></span></span></pre>
-  <div class="generation-foot"><span>captured from the trained 25.7M-parameter model</span><b>18 tokens · 2.617 seconds</b></div>
 </div>
-<small class="source-note">One real completion · checkpoint-0100 · no fabricated output</small>
 <a class="repo-url" href="https://github.com/vukrosic/glm-5.3-flash-from-scratch" target="_blank" rel="noopener">github.com/vukrosic/glm-5.3-flash-from-scratch</a></div>
 <div data-slide-id="what-we-will-do" class="slide title intro-roadmap-slide"><h1>What are we going to do?</h1>
 <p>Follow one model through the complete learning process.</p>
@@ -904,7 +902,7 @@ optimizer.step()</pre>
   .opening-slide { justify-content:flex-start !important; padding:2.5vh 4vw 2vh !important; }
   .opening-slide h1 { margin-top:0; margin-bottom:.15em; font-size:1.65em; }
   .opening-slide p { margin:.05em 0 .35em; }
-  .opening-generation { display:grid; grid-template-rows:auto 1fr auto; width:min(1060px,88vw); height:58vh; margin:.5vh auto 0;
+  .opening-generation { display:grid; grid-template-rows:auto 1fr; width:min(1060px,88vw); height:58vh; margin:.5vh auto 0;
     padding:28px 34px 22px; box-sizing:border-box; text-align:left; background:#151513; border:1px solid var(--line); }
   .opening-generation .generation-label { display:flex; justify-content:space-between; align-items:center; color:#8d877c;
     font:700 13px/1 Arial,sans-serif; letter-spacing:.13em; }
