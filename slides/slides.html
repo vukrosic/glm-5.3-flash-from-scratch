@@ -113,7 +113,7 @@
 <p>Watch our trained model generate a working Python function.</p>
 <div class="opening-generation" role="img" aria-label="A real greedy completion from the trained tiny GLM model writes a Python double function">
   <div class="generation-label"><span>LIVE GENERATION</span></div>
-  <pre><span class="prompt"># Complete this Python function.<br># Double the input.<br>def double_bimbxfa(x):</span><br><span class="generated-line"><span class="generated">    return x * 2</span><span class="cursor"></span></span></pre>
+  <pre><span class="prompt"># Complete this Python function.<br># Double the input.<br>def double_bimbxfa(x):</span><br><span class="generated-line"><span class="generated" data-text="    return x * 2"></span><span class="cursor"></span></span></pre>
 </div>
 <a class="repo-url" href="https://github.com/vukrosic/glm-5.3-flash-from-scratch" target="_blank" rel="noopener">github.com/vukrosic/glm-5.3-flash-from-scratch</a></div>
 <div data-slide-id="what-we-will-do" class="slide title intro-roadmap-slide"><h1>What are we going to do?</h1>
@@ -385,8 +385,8 @@ self.attention = (
 </div><div class="walkthrough-dots dots"><i></i><i></i><i></i></div></div>
 <div data-slide-id="linear-attention-carries-a-running-memory" class="slide title"><h1>Linear attention carries a running memory</h1>
 <p>Each token updates one compact prefix state</p>
-<div class="linear-memory"><div class="lm-tokens"><span>x₁</span><span>x₂</span><span>x₃</span><span>x₄</span><span>x₅</span></div><div class="lm-arrows">↘ &nbsp;&nbsp; ↓ &nbsp;&nbsp; ↓ &nbsp;&nbsp; ↓ &nbsp;&nbsp; ↙</div><div class="lm-state">running key–value state</div></div>
-<style>.linear-memory{margin-top:7vh}.lm-tokens{display:flex;justify-content:center;gap:42px}.lm-tokens span{display:grid;place-items:center;width:96px;height:96px;border-radius:50%;background:#e9e3d8;border:3px solid #d97757;font-size:32px}.lm-arrows{margin:24px 0;color:#d97757;font-size:58px;letter-spacing:28px}.lm-state{display:inline-block;padding:30px 80px;border-radius:20px;background:linear-gradient(90deg,#ded4c8,#ded4c8);border:2px solid #8a6252;font-size:34px;font-weight:700;box-shadow:0 0 45px #d9775733}</style></div>
+<div class="linear-memory"><div class="lm-flow"><span><b>x₁</b><i>↓</i></span><span><b>x₂</b><i>↓</i></span><span><b>x₃</b><i>↓</i></span><span><b>x₄</b><i>↓</i></span><span><b>x₅</b><i>↓</i></span></div><div class="lm-state">running key – value state</div></div>
+<style>.linear-memory{margin-top:7vh}.lm-flow{display:flex;justify-content:center;gap:42px}.lm-flow span{display:grid;justify-items:center;gap:14px}.lm-flow b{display:grid;place-items:center;width:96px;height:96px;border-radius:50%;background:#e9e3d8;border:3px solid #d97757;color:#1f1f1c;font-size:32px}.lm-flow i{color:#d97757;font:400 48px/1 Arial,sans-serif}.lm-state{display:inline-block;margin-top:14px;padding:30px 80px;border-radius:20px;background:#ded4c8;border:2px solid #8a6252;font-size:34px;font-weight:700;box-shadow:0 0 45px #d9775733}</style></div>
 <div data-slide-id="sparse-attention-retrieves-selected-positions" class="slide title"><h1>Sparse attention retrieves selected positions</h1>
 <p>Local window + regularly spaced anchors</p>
 <div class="sparse-row"><span class="anchor">0</span><span>1</span><span>2</span><span>3</span><span class="anchor">4</span><span>5</span><span>6</span><span>7</span><span class="anchor">8</span><span>9</span><span class="local">10</span><span class="local">11</span><span class="local">12</span><span class="local">13</span><span class="current">14</span></div>
@@ -899,15 +899,17 @@ optimizer.step()</pre>
   .repo-url { display:inline-block; margin-top:7px; color:#efb19a; font:600 13px/1.25 ui-monospace,SFMono-Regular,Menlo,monospace;
     text-decoration:none; border-bottom:1px solid var(--accent); }
   .final-repo { margin-top:12px; color:var(--muted); border-color:var(--line); }
-  .opening-slide { justify-content:flex-start !important; padding:2.5vh 4vw 2vh !important; }
-  .opening-slide h1 { margin-top:0; margin-bottom:.15em; font-size:1.65em; }
-  .opening-slide p { margin:.05em 0 .35em; }
-  .opening-generation { display:grid; grid-template-rows:auto 1fr; width:min(1060px,88vw); height:58vh; margin:.5vh auto 0;
-    padding:28px 34px 22px; box-sizing:border-box; text-align:left; background:#151513; border:1px solid var(--line); }
-  .opening-generation .generation-label { display:flex; justify-content:space-between; align-items:center; color:#8d877c;
+  .opening-slide { justify-content:flex-start !important; padding:3.5vh 6vw 2vh !important; }
+  .opening-slide h1 { margin-top:0; margin-bottom:.18em; font-size:1.68em; }
+  .opening-slide p { margin:.08em 0 .55em; }
+  .opening-generation { display:grid; grid-template-rows:auto 1fr; width:min(860px,80vw); height:50vh; margin:1vh auto 0;
+    padding:24px 30px 28px; box-sizing:border-box; text-align:left; background:#151513; border:1px solid var(--line); }
+  .opening-generation .generation-label { display:flex; justify-content:center; align-items:center; color:#a49d91;
     font:700 13px/1 Arial,sans-serif; letter-spacing:.13em; }
   .opening-generation .generation-label strong { color:#bcc39c; font-weight:700; }
-  .opening-generation pre { margin:5vh 0 0; white-space:pre-wrap; color:#d7d0c4; font:clamp(20px,2.05vw,31px)/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .opening-generation pre { align-self:center; width:min(680px,100%); margin:0 auto; padding:28px 34px; white-space:pre-wrap;
+    color:#d7d0c4; font:clamp(20px,2vw,29px)/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+    background:#10100f; border:0; border-left:4px solid var(--accent); box-shadow:none; }
   .opening-generation .prompt { color:#8d877c; }
   .opening-generation .generated { color:#bcc39c; }
   .opening-generation .cursor { display:inline-block; width:.58em; height:1.05em; margin-left:3px; vertical-align:-.12em;
@@ -915,8 +917,7 @@ optimizer.step()</pre>
   .opening-generation .generation-foot { display:flex; justify-content:space-between; align-items:end; gap:20px; color:#81796e; font:14px/1.35 Arial,sans-serif; }
   .opening-generation .generation-foot b { color:#efb19a; font-weight:700; }
   @keyframes opening-cursor { 50% { opacity:0; } }
-  @keyframes opening-write { 0%,12% { width:0; } 56%,88% { width:100%; } 100% { width:0; } }
-  .opening-generation .generated-line { display:block; width:0; overflow:hidden; white-space:nowrap; animation:opening-write 7s steps(21,end) infinite; }
+  .opening-generation .generated-line { display:block; min-height:1.5em; white-space:pre; }
   .research-opening img { max-height:58vh; width:auto; }
   .split-result h1 { display:none; }
   .split-result img { width:auto; height:82vh; max-width:92vw !important; max-height:none !important; margin:0; }
@@ -1116,7 +1117,7 @@ optimizer.step()</pre>
   // Each feedback implementation gets a one-time migration. It clears only the resolved
   // slide notes once; later feedback on the same slide is preserved.
   try {
-    const resolutionKey = 'glm53-feedback-resolution-2026-08-27-v4';
+    const resolutionKey = 'glm53-feedback-resolution-2026-08-27-v5';
     if (localStorage.getItem(resolutionKey) !== '1') {
       [
         'what-are-we-trying-to-build',
@@ -1130,7 +1131,8 @@ optimizer.step()</pre>
         'research-results-preview',
         'before-after-video',
         'what-you-will-learn',
-        'image-becomes-visual-tokens'
+        'image-becomes-visual-tokens',
+        'linear-attention-carries-a-running-memory'
       ].forEach(id => delete slideFeedback[id]);
       localStorage.setItem(FEEDBACK_KEY, JSON.stringify(slideFeedback));
       localStorage.setItem(resolutionKey, '1');
@@ -1796,6 +1798,31 @@ optimizer.step()</pre>
       setFeedbackPanelPosition(rect.left, rect.top, true);
     }
   });
+
+  const openingGenerated = document.querySelector('.opening-generation .generated');
+  if (openingGenerated) {
+    const openingText = openingGenerated.dataset.text || '';
+    let openingIndex = 0;
+    const eraseOpeningCharacter = () => {
+      openingGenerated.textContent = openingText.slice(0, openingIndex);
+      if (openingIndex > 0) {
+        openingIndex -= 1;
+        setTimeout(eraseOpeningCharacter, 55);
+      } else {
+        setTimeout(typeOpeningCharacter, 500);
+      }
+    };
+    const typeOpeningCharacter = () => {
+      openingGenerated.textContent = openingText.slice(0, openingIndex);
+      if (openingIndex < openingText.length) {
+        openingIndex += 1;
+        setTimeout(typeOpeningCharacter, 105);
+      } else {
+        setTimeout(eraseOpeningCharacter, 2400);
+      }
+    };
+    setTimeout(typeOpeningCharacter, 500);
+  }
 
   const reviewParams = new URLSearchParams(location.search);
   document.body.classList.toggle('presentation-mode', reviewParams.get('present') === '1');
