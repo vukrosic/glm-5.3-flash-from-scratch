@@ -270,6 +270,7 @@ Every task, prompt, completion, unit-test count, seed, checkpoint hash, timing, 
 - [`experiments/full_25m_vision_digit_pilot.py`](experiments/full_25m_vision_digit_pilot.py): bounded full-language-model vision integration test that never saves weights.
 - [`experiments/FULL_25M_VISION_DIGIT_PILOT_REPORT.md`](experiments/FULL_25M_VISION_DIGIT_PILOT_REPORT.md): exact full-model vision pilot result and limitations.
 - [`VISION_REPORT.md`](VISION_REPORT.md): exact vision result and official-to-miniature component audit.
+- [`artifacts/receipts/pretraining-gpu-checkpoint-generation.json`](artifacts/receipts/pretraining-gpu-checkpoint-generation.json): exact same-prompt generations from GPU pre-training checkpoints 0, 100, and 200.
 - [`slides/slides.html`](slides/slides.html): complete interactive YouTube course deck.
 - [`slides/serve_slides.py`](slides/serve_slides.py): local slide and feedback server.
 - [`YOUTUBE.md`](YOUTUBE.md): title options and generated thumbnail candidates.

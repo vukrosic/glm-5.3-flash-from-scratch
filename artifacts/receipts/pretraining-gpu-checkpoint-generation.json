@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "experiment": "gpu-pretraining-checkpoint-generation-replay",
+  "model_parameters": 25730592,
+  "seed": 42,
+  "decoding": {
+    "strategy": "greedy",
+    "temperature": 1.0,
+    "max_new_tokens": 40
+  },
+  "task_id": "confirm-double-000",
+  "prompt": "# Complete this Python function.\n# Return two times x.\ndef double_ywkaoot(x):",
+  "checkpoints": [
+    {
+      "step": 0,
+      "tokens_seen": 0,
+      "weights_sha256": "deb6bdb926f4b529deccd0c9869c4f4b5ed9ae2bebf63d227b446e88b652f5b4",
+      "completion": "::::::::::::::::::::::::::::::::::::::::",
+      "status": "invalid",
+      "tests_passed": 0,
+      "tests_total": 3,
+      "hit_token_cap": true
+    },
+    {
+      "step": 100,
+      "tokens_seen": 345995,
+      "weights_sha256": "a5d34b0170ef589e4dec86e2eef90101b14a2d7b0242895f4725cd4b2bb40c01",
+      "completion": "\n    return x * * 0 0\n",
+      "status": "invalid",
+      "tests_passed": 0,
+      "tests_total": 3,
+      "hit_token_cap": false
+    },
+    {
+      "step": 200,
+      "tokens_seen": 691022,
+      "weights_sha256": "112ae29ae28680567076617b2b2500526f465c0a3038933619763c79fb661a68",
+      "completion": "\n    return x * 2\n",
+      "status": "passed",
+      "tests_passed": 3,
+      "tests_total": 3,
+      "hit_token_cap": false
+    }
+  ]
+}

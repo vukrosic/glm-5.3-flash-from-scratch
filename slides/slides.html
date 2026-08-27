@@ -118,7 +118,7 @@
 <div class="orb" style="width:26vw;height:26vw;right:-8vw;bottom:-10vh;background:rgba(255,140,60,.07);animation-delay:-13s"></div>
 <div id="bar"></div>
 <div data-slide-id="build-and-train-glm-5-3-flash-from-scratch" class="slide title opening-slide"><h1>Build &amp; Train GLM-5.3-Flash From Scratch</h1>
-<p>Watch our trained model generate a working Python function.</p>
+<p>A 25.7M teaching-scale implementation inspired by GLM-5.3-Flash.</p>
 <div class="opening-generation" role="img" aria-label="A real greedy completion from the trained tiny GLM model writes a Python double function">
   <div class="generation-label"><span>LIVE GENERATION</span></div>
   <pre><span class="prompt"># Complete this Python function.<br># Double the input.<br>def double_bimbxfa(x):</span><br><span class="generated-line"><span class="generated" data-text="    return x * 2"></span><span class="cursor"></span></span></pre>
@@ -139,6 +139,15 @@
   <span><strong>A real experiment</strong><small>controls, held-out tasks, charts, and limitations</small></span>
 </div>
 <p>You will understand the mechanism well enough to change the experiment yourself.</p></div>
+<div data-slide-id="experiments-in-this-video" class="slide title experiment-map-slide"><h1>Five experiments, not one demo</h1>
+<div class="experiment-map-grid">
+  <article><b>1</b><strong>Pre-training</strong><span>random weights → code completion</span><small>400 steps · 1.38M bytes</small></article>
+  <article><b>2</b><strong>Vision comparison</strong><span>GLM-like path vs direct patches</span><small>single-seed pilot</small></article>
+  <article><b>3</b><strong>Vision integration</strong><span>image tokens through all 12 LM layers</span><small>40-update pilot</small></article>
+  <article><b>4</b><strong>Executable RL</strong><span>before vs after RLOO training</span><small>1,536 rollouts</small></article>
+  <article><b>5</b><strong>RL replication</strong><span>change one choice, then retest</span><small>8-arm screen · 3 fresh seeds</small></article>
+</div>
+<p class="slide-why">Experiments 2 and 3 are bounded vision pilots. Experiment 4 is the main before-and-after result. Experiment 5 tests whether an apparent RL winner replicates.</p></div>
 <div data-slide-id="research-results-preview" class="slide title research-preview-slide"><h1>We will measure every claim</h1>
 <p>These are the real training and held-out results we will reproduce and explain.</p>
 <div class="research-preview-grid">
@@ -166,26 +175,27 @@
   </div>
 </div>
 <small class="source-note">Recruiting post for Anthropic · Research Engineer, Domain Scaling</small></div>
-<div data-slide-id="pretraining-progress" class="slide title pretraining-chart"><h1>Does pre-training improve unseen code?</h1>
-<p>After each checkpoint, greedy generation is tested on the same eight held-out tasks.</p>
-<div class="pretrain-line-chart" role="img" aria-label="Held-out tasks solved: zero of eight at step zero, two at step 100, seven at step 200, and eight at step 400">
-  <div class="pretrain-grid"><span style="--x:0%;--y:100%"><b>0/8</b><small>random weights</small></span><span class="selected-checkpoint" style="--x:25%;--y:75%"><b>2/8</b><small>step 100 · used for RL</small></span><span style="--x:50%;--y:12.5%"><b>7/8</b><small>step 200</small></span><span style="--x:100%;--y:0%"><b>8/8</b><small>step 400</small></span><svg viewBox="0 0 1000 300" preserveAspectRatio="none"><polyline points="0,300 250,225 500,37.5 1000,0"/></svg></div>
+<div data-slide-id="pretraining-progress" class="slide title pretraining-chart"><h1>Does pre-training improve held-out instances?</h1>
+<p>Evaluation changes the generated function name, but keeps the same eight operation templates.</p>
+<div class="pretrain-evidence-grid">
+  <figure><figcaption>TRAINING LOSS</figcaption><div class="loss-chart"><span class="loss-top">6</span><span class="loss-bottom">0</span><svg viewBox="0 0 420 240" preserveAspectRatio="none"><line x1="25" y1="215" x2="405" y2="215"/><line x1="25" y1="15" x2="25" y2="215"/><polyline points="26,30 120,194 215,204 405,207"/><circle cx="26" cy="30" r="7"/><circle cx="120" cy="194" r="7"/><circle cx="215" cy="204" r="7"/><circle cx="405" cy="207" r="7"/></svg><b class="loss-start">5.55</b><b class="loss-end">0.25</b><div class="mini-x"><span>1</span><span>100</span><span>200</span><span>400 steps</span></div></div></figure>
+  <figure><figcaption>HELD-OUT TEMPLATE INSTANCES SOLVED</figcaption><div class="task-chart"><span style="--x:0%;--y:100%"><b>0/8</b><small>random</small></span><span class="selected-checkpoint" style="--x:25%;--y:75%"><b>2/8</b><small>100 · RL start</small></span><span style="--x:50%;--y:12.5%"><b>7/8</b><small>200</small></span><span style="--x:100%;--y:0%"><b>8/8</b><small>400</small></span><svg viewBox="0 0 420 240" preserveAspectRatio="none"><line x1="0" y1="240" x2="420" y2="240"/><polyline points="0,240 105,180 210,30 420,0"/></svg></div></figure>
 </div>
-<small class="source-note">Strict tasks solved with greedy decoding · 1.38M training bytes · 63 seconds for the full 400-step run</small></div>
+<small class="source-note">Same GPU run · loss 5.551 → 0.246 · 1.38M training bytes · 63.093 seconds</small></div>
 <div data-slide-id="learn-by-predicting-the-next-token" class="slide title"><h1>The learning rule: predict the next byte</h1>
 <p>At every position, the model sees all earlier bytes and assigns probabilities to what comes next.</p>
 <div class="next-token"><div><small>BYTES ALREADY SEEN</small><code>return&nbsp; x&nbsp; +</code></div><b>→</b><div class="target"><small>CORRECT NEXT BYTE</small><code>1</code></div></div>
 <p class="slide-why">For ASCII Python, one byte is usually one visible character. Every wrong probability becomes a training signal.</p>
 <style>.next-token{display:flex;justify-content:center;align-items:center;gap:55px;margin-top:8vh}.next-token>div{display:grid;gap:22px;padding:38px 52px;border-radius:20px;background:#e9e3d8;border:2px solid #c7beb0}.next-token small{color:#6f675c;font-size:21px;font-weight:800;letter-spacing:.14em}.next-token code{font-size:50px;color:#1f1f1c}.next-token b{font-size:58px;color:#d97757}.next-token .target{border-color:#68785c;box-shadow:0 0 36px #68785c44}.next-token .target code{color:#68785c}</style></div>
 <div data-slide-id="we-will-also-do-real-research" class="slide title research-question"><h1>Research question</h1>
-<p>Which reinforcement-learning choice produces the largest improvement on unseen coding tasks?</p>
+<p>Which reinforcement-learning choice produces the largest improvement on held-out instances?</p>
 <div class="research-variable-grid">
   <span><b>REWARD</b><strong>binary or partial?</strong><small>How much credit does an imperfect program receive?</small></span>
   <span><b>PENALTY</b><strong>soft or hard?</strong><small>How strongly should invalid Python be punished?</small></span>
   <span><b>TEMPERATURE</b><strong>0.20 or 0.80?</strong><small>How much variety should generation explore?</small></span>
   <span><b>GROUP SIZE</b><strong>4 or 16?</strong><small>How many attempts should be compared together?</small></span>
 </div>
-<small class="source-note">Outcome: coding tasks solved on data never used for training.</small></div>
+<small class="source-note">Outcome: new function names from the same operation templates, never used for optimization.</small></div>
 <div data-slide-id="research-change-one-variable" class="slide title research-control-slide"><h1>Change one variable at a time</h1>
 <p>A fair experiment keeps every other source of advantage fixed.</p>
 <div class="research-control-visual">
@@ -458,6 +468,10 @@ self.attention = (
 </div>
 <div class="modality-split"><span class="active"><b>THIS PRE-TRAINING RUN</b>Text and Python code only</span><span><b>SEPARATE VISION PILOT</b>Generated RGB digit images were attached later</span></div>
 <p class="slide-why">The language checkpoint did not see images during pre-training. Vision was a separate experiment that reused the trained language model.</p></div>
+<div data-slide-id="the-pretraining-corpus-is-eight-templates" class="slide title corpus-scope-slide"><h1>The pre-training corpus has eight operation templates</h1>
+<div class="family-chip-grid"><span>increment</span><span>double</span><span>square</span><span>absolute</span><span>nonnegative</span><span>even</span><span>reverse</span><span>list sum</span></div>
+<div class="corpus-variation"><article><small>CHANGES EVERY EXAMPLE</small><b>function name</b><b>wording</b></article><i>+</i><article class="fixed"><small>STAYS WITHIN A FAMILY</small><b>operation</b><b>solution pattern</b></article></div>
+<p class="compact-explanation"><b>What “held out” means here:</b> evaluation uses new generated function names and examples, but not new algorithms. This measures learning within eight synthetic coding families.</p></div>
 <div data-slide-id="one-pretraining-example" class="slide title pretraining-example-slide"><h1>One sequence creates many lessons</h1>
 <div class="byte-window">
   <code>return x + </code><span class="target-byte">1</span><span class="next-byte">↳ next byte</span>
@@ -488,15 +502,20 @@ self.attention = (
   <article class="after"><small>AFTER MANY SIMILAR UPDATES</small><div><span><b>*</b><i style="--p:18%">18%</i></span><span><b>0</b><i style="--p:12%">12%</i></span><span class="correct"><b>1</b><i style="--p:68%">68%</i></span></div></article>
 </div>
 <p class="compact-explanation">The update does not store a line of code in one place. It slightly changes millions of shared weights so the correct byte becomes more likely in many related contexts.</p></div>
-<div data-slide-id="pretraining-makes-code-shaped-text" class="slide title pretraining-before-after"><h1>The same prompt before and after pre-training</h1>
+<div data-slide-id="pretraining-makes-code-shaped-text" class="slide title pretraining-before-after"><h1>The same prompt during one pre-training run</h1>
 <p><code># Return two times x.<br>def double_ywkaoot(x):</code></p>
-<div class="pretraining-output-compare">
-  <article class="before"><small>RANDOM WEIGHTS · STEP 0</small><code>::::::::::::::::::::::::::::::::::::::::</code><strong>not code</strong></article>
+<div class="pretraining-output-compare three-stage">
+  <article class="before"><small>STEP 0 · RANDOM</small><code>::::::::::::::::::</code><strong>invalid · 0 / 3 tests</strong></article>
   <b>→</b>
-  <article class="after"><small>AFTER 100 STEPS</small><code>&nbsp;&nbsp;&nbsp;&nbsp;return x * 2</code><strong>3 / 3 hidden tests pass</strong></article>
+  <article class="middle"><small>STEP 100 · RL START</small><code>&nbsp;&nbsp;&nbsp;&nbsp;return x * * 0 0</code><strong>invalid · 0 / 3 tests</strong></article>
+  <b>→</b>
+  <article class="after"><small>STEP 200</small><code>&nbsp;&nbsp;&nbsp;&nbsp;return x * 2</code><strong>valid · 3 / 3 tests</strong></article>
 </div>
-<p class="compact-explanation"><b>What changed:</b> 173,237 training bytes moved the model from arbitrary byte repetition to a coherent executable completion. This is one preserved example; the progress chart measures performance across held-out tasks.</p>
-<small class="source-note">Same held-out prompt · greedy decoding · seed 42 · exact outputs from the saved receipt</small></div>
+<p class="compact-explanation"><b>Why RL starts at step 100:</b> the model has learned Python-like structure but is still wrong, leaving measurable room for post-training. Step 200 had seen 691,022 training bytes.</p>
+<small class="source-note">Exact greedy outputs from GPU checkpoints 0, 100, and 200 · same prompt · same run</small></div>
+<div data-slide-id="checkpoint-100-branches-into-two-experiments" class="slide title checkpoint-branch-slide"><h1>Checkpoint 100 branches into two experiments</h1>
+<div class="checkpoint-branch"><article class="checkpoint"><small>LANGUAGE PRE-TRAINING</small><strong>checkpoint 100</strong><span>345,995 bytes seen</span></article><i>→</i><div><article><b>VISION PILOT</b><span>attach image encoder and test synthetic digits</span></article><article><b>CODING RL</b><span>reward complete programs with executable tests</span></article></div></div>
+<p class="slide-why">Both branches reuse the same partially trained language model. They answer different questions and are not one combined multimodal-RL run.</p></div>
 <div data-slide-id="turn-execution-into-reward" class="slide title rl-stage-slide"><small class="stage-kicker">STAGE 2 · REINFORCEMENT LEARNING</small><h1>Now the model learns from complete attempts</h1>
 <div class="reward-pipe"><span>generate code</span><b>→</b><span>run tests</span><b>→</b><span>score it</span><b>→</b><span>update model</span></div>
 <div class="learning-signal-switch"><span><b>PRE-TRAINING</b>correct next byte is known at every position</span><i>→</i><span><b>RL</b>only the final program behavior is scored</span></div>
@@ -507,9 +526,12 @@ self.attention = (
 <div class="native-line-chart"><span class="axis-label top">50%</span><span class="axis-label bottom">0%</span><svg viewBox="0 0 900 360" role="img" aria-label="Exact rollout rate rises from 4.2 percent to 45.8 percent"><line x1="45" y1="315" x2="860" y2="315"/><line x1="45" y1="35" x2="45" y2="315"/><polyline points="45,292 180,270 315,226 450,190 585,142 720,91 860,58"/><circle cx="45" cy="292" r="9"/><circle cx="860" cy="58" r="11"/></svg><b class="line-start">4.2%</b><b class="line-end">45.8%</b><div class="chart-x-labels"><span>group 0</span><span>24</span><span>48</span><span>72</span><span>96</span></div></div>
 <small class="source-note">Exact rollout rate = sampled programs passing every test · 1,536 programs on development prompts · used to choose training duration, not as final confirmation</small></div>
 <div data-slide-id="before-and-after-reinforcement-learning" class="slide title native-before-after"><h1>Before and after reinforcement learning</h1>
-<p>We gave the model the same unseen problems before and after training.</p>
+<p>We tested the same 24 new function names from the three trained operation families.</p>
 <div class="native-result-bars"><div><span>BEFORE RL</span><i style="--height:2px"></i><strong>0 / 24</strong></div><b>→</b><div class="after"><span>AFTER RL</span><i style="--height:32vh"></i><strong>16 / 24</strong></div></div>
-<small class="source-note">Strict pass@1 · same 24 frozen confirmation tasks and generation settings · tasks were unseen, but covered three trained coding families</small></div>
+<small class="source-note">Strict pass@1 · same frozen confirmation instances and generation settings · same prompt templates, new generated names</small></div>
+<div data-slide-id="is-the-main-rl-gain-larger-than-random-variation" class="slide title rl-significance-slide"><h1>Is the main RL gain larger than random variation?</h1>
+<div class="significance-grid"><article><small>PAIRED GREEDY RESULT</small><strong>16 gains · 0 losses</strong><span>exact paired p = 0.0000305</span></article><article><small>SAMPLED ABSOLUTE GAIN</small><strong>+39.1 points</strong><span>95% bootstrap interval: +25.0 to +53.1</span></article></div>
+<p class="compact-explanation"><b>Interpretation:</b> the gain is statistically clear on this frozen synthetic benchmark. It does not prove broad coding improvement because evaluation reuses the trained operation families and prompt templates.</p></div>
 <div data-slide-id="the-same-prompt-before-and-after-rl" class="slide title sampled-before-after"><h1>The same prompt before and after RL</h1>
 <p><code># Return two times x.</code></p>
 <div class="code-comparison"><div class="failed"><span>BEFORE RL · FAIL</span><code>return x * x</code></div><b>→</b><div class="passed"><span>AFTER RL · PASS</span><code>return x * 2</code></div></div>
@@ -568,9 +590,6 @@ optimizer.step()</pre>
   <div class="family-row"><b>list sum</b><span><i class="before" style="--w:95.3%"></i><small>95%</small></span><span><i class="after" style="--w:87.5%"></i><small>88%</small></span></div>
   <div class="family-row zero"><b>absolute · nonnegative · reverse</b><span><small>0% before</small></span><span><small>0% after</small></span></div>
 </div><p class="compact-explanation">This is specialization, not a general intelligence gain. Increment and double improved, even stayed flat, and two previously strong families regressed because only a narrow parameter surface was optimized for the practiced reward distribution.</p></div>
-<div data-slide-id="what-changed" class="slide title"><h1>What changed</h1>
-<div class="family-summary"><span class="gain">increment ↑</span><span class="gain">double ↑</span><span class="flat">even –</span><span class="loss">square ↓</span><span class="loss">list sum ↓</span></div>
-<style>.family-summary{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;max-width:1100px;margin:13vh auto 0}.family-summary span{padding:26px 34px;border-radius:16px;background:#e9e3d8;border:2px solid #c7beb0;font-size:30px;font-weight:800}.family-summary .gain{border-color:#68785c;color:#68785c}.family-summary .flat{border-color:#8a6252;color:#8a6252}.family-summary .loss{border-color:#a94f3d;color:#a94f3d}</style></div>
 <div data-slide-id="the-result" class="slide title"><h1>The result</h1>
 <p>Executable feedback made narrow coding behaviors more reliable</p>
 <div class="result-final"><strong>0 / 24</strong><b>→</b><strong>16 / 24</strong></div>
@@ -597,6 +616,13 @@ optimizer.step()</pre>
 <div class="research-verdict"><div><span>SCREEN</span><strong>8 / 20</strong><small>group 4 looked best</small></div><b>→</b><div class="rejected"><span>CONFIRM</span><strong>11.3 vs 12.3</strong><small>lost on average</small></div></div>
 <p>None of the four RL changes produced statistically significant improvement.</p>
 <small class="source-note">Next question: does temperature 0.20 replicate across fresh seeds?</small></div>
+<div data-slide-id="what-did-each-stage-teach" class="slide title stage-summary-slide"><h1>What did each stage teach?</h1>
+<div class="stage-summary"><article><small>PRE-TRAINING</small><strong>Python-like structure</strong><span>and eight operation patterns</span></article><article><small>VISION PILOT</small><strong>Synthetic digit recognition</strong><span>through a GLM-like image path</span></article><article><small>EXECUTABLE RL</small><strong>More reliable increment and double</strong><span>even stayed flat; other families regressed</span></article></div>
+<p class="compact-explanation"><b>The honest conclusion:</b> we built a complete miniature research pipeline and measured narrow learning. We did not reproduce the 320B system or demonstrate general coding intelligence.</p></div>
+<div data-slide-id="sources-code-and-fidelity" class="slide title final-source-slide"><h1>Sources, code, and fidelity</h1>
+<div class="source-closing"><article><small>INSPIRED BY</small><strong>Z.ai GLM-5.3-Flash</strong><span>official architecture and released configuration</span></article><article><small>THIS PROJECT</small><strong>25.7M teaching model</strong><span>simplified attention, hyperconnections, tokenizer, and vision scale</span></article></div>
+<a class="final-repo-link" href="https://github.com/vukrosic/glm-5.3-flash-from-scratch" target="_blank" rel="noopener">github.com/vukrosic/glm-5.3-flash-from-scratch</a>
+<div class="official-links"><a href="https://huggingface.co/zai-org/GLM-5.3-Flash/blob/04c4e9e95c5da8862dced7e5056455116f83a7e0/config.json" target="_blank" rel="noopener">Pinned official config</a><a href="https://github.com/huggingface/transformers/blob/323f24345ed92f88e68a14aeef7db78ee2b52475/src/transformers/models/glm5_next/modeling_glm5_next.py" target="_blank" rel="noopener">Pinned implementation reference</a></div></div>
 <style>
   .intro-roadmap { display:flex; align-items:center; justify-content:center; gap:18px; width:100%; max-width:1450px; margin:8vh auto 0; }
   .intro-roadmap>span { display:grid; gap:10px; flex:1 1 0; min-width:0; min-height:170px; align-content:center; padding:25px;
@@ -1381,6 +1407,68 @@ optimizer.step()</pre>
     justify-content:space-between; color:var(--muted); font:600 11px/1 Arial,sans-serif; }
   .native-rl-progress .native-line-chart { height:44vh; margin-bottom:18px; }
   .native-rl-progress .source-note { margin-top:8px; }
+  .experiment-map-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; width:min(1220px,92vw); margin:5vh auto 3vh; }
+  .experiment-map-grid article { display:grid; grid-template-rows:auto auto 1fr auto; gap:11px; min-height:235px; padding:21px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .experiment-map-grid article:nth-child(2),.experiment-map-grid article:nth-child(3) { border-top-color:#9b7d6e; }
+  .experiment-map-grid article:nth-child(4) { border-top-color:var(--olive); }
+  .experiment-map-grid article:nth-child(5) { border-top-color:#d7ddb5; }
+  .experiment-map-grid b { color:var(--accent) !important; font:700 15px/1 Arial,sans-serif; }
+  .experiment-map-grid strong { color:var(--ink) !important; font:700 22px/1.15 Georgia,serif; }
+  .experiment-map-grid span { color:var(--muted); font-size:15px; line-height:1.35; }
+  .experiment-map-grid small { color:#bcc39c; font:700 11px/1.25 Arial,sans-serif; }
+  .pretrain-evidence-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(1120px,88vw); margin:3vh auto 1vh; }
+  .pretrain-evidence-grid figure { display:grid; grid-template-rows:auto 1fr; height:45vh; margin:0; padding:22px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
+  .pretrain-evidence-grid figure:last-child { border-top-color:var(--olive); }
+  .pretrain-evidence-grid figcaption { color:var(--muted); font:700 12px/1 Arial,sans-serif; letter-spacing:.1em; text-align:left; }
+  .loss-chart,.task-chart { position:relative; min-height:0; margin:15px 8px 0; }
+  .loss-chart svg,.task-chart svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .loss-chart line,.task-chart line { stroke:var(--line); stroke-width:2; }
+  .loss-chart polyline { fill:none; stroke:var(--accent); stroke-width:6; vector-effect:non-scaling-stroke; }
+  .loss-chart circle { fill:var(--accent); stroke:#151513; stroke-width:3; }
+  .loss-chart>span { position:absolute; left:-7px; color:var(--muted); font-size:11px; }
+  .loss-chart .loss-top { top:2%; }.loss-chart .loss-bottom { bottom:5%; }
+  .loss-chart>b { position:absolute; color:var(--ink) !important; font:700 20px/1 Georgia,serif; }
+  .loss-chart .loss-start { left:7%; top:4%; }.loss-chart .loss-end { right:0; bottom:6%; color:#bcc39c !important; }
+  .mini-x { position:absolute; left:5%; right:0; bottom:-14px; display:flex; justify-content:space-between; color:var(--muted); font-size:10px; }
+  .task-chart { border-left:2px solid var(--line); border-bottom:2px solid var(--line); }
+  .task-chart polyline { fill:none; stroke:var(--olive); stroke-width:6; vector-effect:non-scaling-stroke; }
+  .task-chart>span { position:absolute; left:var(--x); top:var(--y); z-index:2; transform:translate(-50%,-50%); display:grid;
+    gap:4px; min-width:62px; padding:8px 9px; background:#20211d; border:1px solid var(--olive); }
+  .task-chart>span:first-of-type { transform:translate(0,-100%); }.task-chart>span:last-of-type { transform:translate(-100%,0); }
+  .task-chart b { color:#d7ddb5 !important; font:700 19px/1 Georgia,serif; }.task-chart small { color:var(--muted); font-size:9px; }
+  .family-chip-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; width:min(980px,82vw); margin:5vh auto 3vh; }
+  .family-chip-grid span { padding:17px; background:var(--soft); border:1px solid var(--line); border-top:3px solid var(--accent);
+    color:var(--ink); font:700 20px/1 Arial,sans-serif; }
+  .corpus-variation { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:20px; width:min(900px,78vw); margin:0 auto; }
+  .corpus-variation article { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:18px; background:#181817; border:1px solid var(--line); }
+  .corpus-variation article.fixed { border-color:var(--olive); }.corpus-variation small { grid-column:1/3; color:var(--muted); font:700 10px/1 Arial,sans-serif; letter-spacing:.09em; }
+  .corpus-variation b { padding:10px; background:var(--soft); color:var(--ink) !important; font-size:15px; }.corpus-variation i { color:var(--accent); font-style:normal; }
+  .pretraining-output-compare.three-stage { grid-template-columns:minmax(180px,1fr) auto minmax(180px,1fr) auto minmax(180px,1fr); gap:12px; width:min(1080px,84vw); }
+  .pretraining-output-compare.three-stage article { min-height:190px; padding:20px; }.pretraining-output-compare.three-stage code { font-size:17px; }
+  .pretraining-output-compare article.middle { border-top-color:#9b7d6e; }.pretraining-output-compare article.middle strong { color:#d9a182 !important; }
+  .checkpoint-branch { display:grid; grid-template-columns:320px auto 520px; align-items:center; gap:28px; width:min(980px,84vw); margin:7vh auto 3vh; }
+  .checkpoint-branch article { display:grid; gap:12px; padding:26px; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .checkpoint-branch article.checkpoint { min-height:200px; align-content:center; }.checkpoint-branch article.checkpoint strong { color:#efb19a !important; font:700 31px/1 Georgia,serif; }
+  .checkpoint-branch small { color:var(--muted); font:700 11px/1 Arial,sans-serif; letter-spacing:.1em; }.checkpoint-branch span { color:var(--muted); font-size:16px; }
+  .checkpoint-branch>i { color:var(--accent); font-style:normal; font-size:42px; }.checkpoint-branch>div { display:grid; gap:18px; }
+  .checkpoint-branch>div article { grid-template-columns:150px 1fr; align-items:center; border-top-color:var(--olive); }.checkpoint-branch>div b { color:#bcc39c !important; font-size:18px; }
+  .significance-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; width:min(960px,82vw); margin:7vh auto 3vh; }
+  .significance-grid article { display:grid; gap:16px; min-height:230px; align-content:center; padding:30px; background:var(--soft); border:1px solid var(--line); border-top:5px solid var(--olive); }
+  .significance-grid small { color:var(--muted); font:700 12px/1 Arial,sans-serif; letter-spacing:.1em; }.significance-grid strong { color:#d7ddb5 !important; font:700 39px/1 Georgia,serif; }
+  .significance-grid span { color:var(--ink); font-size:19px; }
+  .stage-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; width:min(1080px,86vw); margin:7vh auto 3vh; }
+  .stage-summary article { display:grid; gap:14px; align-content:center; min-height:230px; padding:28px; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .stage-summary article:nth-child(2) { border-top-color:#9b7d6e; }.stage-summary article:nth-child(3) { border-top-color:var(--olive); }
+  .stage-summary small { color:var(--muted); font:700 11px/1 Arial,sans-serif; letter-spacing:.1em; }.stage-summary strong { color:var(--ink) !important; font:700 27px/1.2 Georgia,serif; }
+  .stage-summary span { color:var(--muted); font-size:17px; }
+  .source-closing { display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(920px,80vw); margin:6vh auto 4vh; }
+  .source-closing article { display:grid; gap:14px; min-height:190px; align-content:center; padding:28px; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .source-closing article:last-child { border-top-color:var(--olive); }.source-closing small { color:var(--muted); font:700 11px/1 Arial,sans-serif; letter-spacing:.1em; }
+  .source-closing strong { color:var(--ink) !important; font:700 30px/1 Georgia,serif; }.source-closing span { color:var(--muted); font-size:16px; }
+  .final-repo-link { display:inline-block; padding:17px 24px; color:#efb19a; border:1px solid var(--accent); font:700 18px/1 ui-monospace,SFMono-Regular,Menlo,monospace; text-decoration:none; }
+  .official-links { display:flex; justify-content:center; gap:22px; margin-top:22px; }.official-links a { color:var(--muted); font-size:13px; }
   #slide-feedback-panel { position:fixed; z-index:320; top:18px; right:18px; width:min(330px,30vw);
     padding:9px; background:rgba(14,14,13,.38); border:1px solid rgba(240,236,227,.16);
     backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:var(--ink);
@@ -1503,13 +1591,11 @@ optimizer.step()</pre>
     'research-results-preview',
     'what-we-will-do',
     'what-you-will-finish-with',
+    'experiments-in-this-video',
     'what-are-we-trying-to-build',
     'why-make-it-tiny',
     'what-does-frontier-model-work-look-like',
     'we-will-also-do-real-research',
-    'research-change-one-variable',
-    'research-verify-the-result',
-    'want-to-join-the-real-ai-research-lab',
     'learn-by-predicting-the-next-token',
     'the-real-model-predicts-bpe-tokens',
     'our-model-predicts-the-next-byte',
@@ -1584,6 +1670,47 @@ optimizer.step()</pre>
       ordered.splice(0, ordered.length, ...withoutStory);
       localStorage.setItem(ORDER_KEY, JSON.stringify(ordered.map(slide => slide.dataset.slideId)));
       localStorage.setItem(trainingStoryKey, '1');
+    }
+    const chronologyKey = 'glm53-experiment-chronology-v2';
+    if (localStorage.getItem(chronologyKey) !== '1') {
+      const moveAfter = (ids, anchorId) => {
+        const moving = ids.map(id => byId.get(id)).filter(Boolean);
+        const movingSet = new Set(moving);
+        const rest = ordered.filter(slide => !movingSet.has(slide));
+        const anchorIndex = rest.findIndex(slide => slide.dataset.slideId === anchorId);
+        rest.splice(anchorIndex >= 0 ? anchorIndex + 1 : rest.length, 0, ...moving);
+        ordered.splice(0, ordered.length, ...rest);
+      };
+      moveAfter(['experiments-in-this-video'], 'what-you-will-finish-with');
+      moveAfter([
+        'pretraining-data-and-modalities',
+        'the-pretraining-corpus-is-eight-templates',
+        'one-pretraining-example',
+        'the-pretraining-step',
+        'how-one-pretraining-step-changes-the-model',
+        'pretraining-progress',
+        'pretraining-makes-code-shaped-text',
+        'checkpoint-100-branches-into-two-experiments',
+        'glm-vision-path',
+        'image-becomes-visual-tokens',
+        'image-tokens-enter-the-language-model',
+        'vision-training-task',
+        'vision-experiment-result',
+        'full-25m-vision-integration'
+      ], 'prove-the-model-is-wired-correctly');
+      moveAfter(['is-the-main-rl-gain-larger-than-random-variation'], 'before-and-after-reinforcement-learning');
+      const controls = ['research-change-one-variable', 'research-verify-the-result'];
+      const controlSlides = controls.map(id => byId.get(id)).filter(Boolean);
+      const controlSet = new Set(controlSlides);
+      const withoutControls = ordered.filter(slide => !controlSet.has(slide));
+      const ablationIndex = withoutControls.findIndex(slide => slide.dataset.slideId === 'which-rl-choice-works-best');
+      withoutControls.splice(ablationIndex >= 0 ? ablationIndex : withoutControls.length, 0, ...controlSlides);
+      ordered.splice(0, ordered.length, ...withoutControls);
+      moveAfter(['what-did-each-stage-teach'], 'a-dev-win-is-not-a-discovery');
+      moveAfter(['want-to-join-the-real-ai-research-lab'], 'what-did-each-stage-teach');
+      moveAfter(['sources-code-and-fidelity'], 'want-to-join-the-real-ai-research-lab');
+      localStorage.setItem(ORDER_KEY, JSON.stringify(ordered.map(slide => slide.dataset.slideId)));
+      localStorage.setItem(chronologyKey, '1');
     }
     ordered.forEach(el => filmstripPanel.before(el));
     s = ordered;
