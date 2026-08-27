@@ -36,14 +36,21 @@ def leave_one_out(rewards: list[float]) -> list[float]:
     return [reward - (total - reward) / (len(rewards) - 1) for reward in rewards]
 
 
-def reward_for(task: CodingTask, completion: str, mode: str) -> tuple[float, dict]:
+def reward_for(
+    task: CodingTask,
+    completion: str,
+    mode: str,
+    *,
+    invalid_penalty: float,
+    exact_bonus: float,
+) -> tuple[float, dict]:
     evaluation = evaluate_source(task, task.prompt + completion).to_dict()
     if mode == "binary":
-        reward = 1.0 if evaluation["passed"] else (-0.1 if evaluation["status"] == "invalid" else 0.0)
+        reward = 1.0 if evaluation["passed"] else (invalid_penalty if evaluation["status"] == "invalid" else 0.0)
     else:
-        invalid_penalty = -0.25 if evaluation["status"] == "invalid" else 0.0
-        exact_bonus = 0.5 if evaluation["passed"] else 0.0
-        reward = float(evaluation["pass_fraction"]) + exact_bonus + invalid_penalty
+        penalty = invalid_penalty if evaluation["status"] == "invalid" else 0.0
+        bonus = exact_bonus if evaluation["passed"] else 0.0
+        reward = float(evaluation["pass_fraction"]) + bonus + penalty
     return reward, evaluation
 
 
@@ -59,7 +66,7 @@ def completion_log_probabilities(
     maximum = max(map(len, completions))
     rows = [prompt + completion + [0] * (maximum - len(completion)) for completion in completions]
     sequence = torch.tensor(rows, dtype=torch.long, device=device)
-    with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+    with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=device.type == "cuda"):
         logits, _ = model(sequence[:, :-1])
     start = len(prompt) - 1
     selected_logits = logits[:, start : start + maximum].float()
@@ -84,9 +91,12 @@ def main() -> int:
     parser.add_argument("--learning-rate", type=float, default=2e-5)
     parser.add_argument("--train-scope", choices=("all", "last-block", "last-block-head"), default="all")
     parser.add_argument("--reward-mode", choices=("case-fraction", "binary"), default="case-fraction")
+    parser.add_argument("--invalid-penalty", type=float, default=-0.1)
+    parser.add_argument("--exact-bonus", type=float, default=0.0)
     parser.add_argument("--families", default="")
     parser.add_argument("--tasks-per-family", type=int, default=4)
     parser.add_argument("--seed", type=int, default=31415)
+    parser.add_argument("--device", choices=("auto", "cuda", "mps", "cpu"), default="auto")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError(args.output)
@@ -98,9 +108,14 @@ def main() -> int:
     args.output.mkdir(parents=True)
     random.seed(args.seed)
     torch.manual_seed(args.seed)
-    torch.cuda.manual_seed_all(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
     torch.set_float32_matmul_precision("high")
-    device = torch.device("cuda")
+    if args.device == "auto":
+        device_name = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+    else:
+        device_name = args.device
+    device = torch.device(device_name)
     tokenizer = ByteTokenizer()
     model = load_checkpoint(args.initial_checkpoint, device)
     if args.train_scope in {"last-block", "last-block-head"}:
@@ -130,7 +145,8 @@ def main() -> int:
     }))]
     rows = []
     started = time.perf_counter()
-    torch.cuda.reset_peak_memory_stats()
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats()
     for group_index, task in enumerate(task_schedule, 1):
         group_started = time.perf_counter()
         generations = generate_group(
@@ -140,7 +156,13 @@ def main() -> int:
         )
         rewards, evaluations = [], []
         for generation in generations:
-            reward, evaluation = reward_for(task, generation["completion"], args.reward_mode)
+            reward, evaluation = reward_for(
+                task,
+                generation["completion"],
+                args.reward_mode,
+                invalid_penalty=args.invalid_penalty,
+                exact_bonus=args.exact_bonus,
+            )
             rewards.append(reward)
             evaluations.append(evaluation)
         advantages = leave_one_out(rewards)
@@ -189,7 +211,8 @@ def main() -> int:
             saved.append(dict(group=group_index, **save_checkpoint(model, args.output / f"checkpoint-{group_index:04d}", {
                 "stage": "executable_reward_rl", "group": group_index, "seed": args.seed,
             })))
-    torch.cuda.synchronize()
+    if device.type == "cuda":
+        torch.cuda.synchronize()
     receipt = {
         "schema_version": "1.0",
         "status": "complete",
@@ -206,11 +229,14 @@ def main() -> int:
         "train_scope": args.train_scope,
         "trainable_parameters": sum(parameter.numel() for parameter in trainable_parameters),
         "reward_mode": args.reward_mode,
+        "invalid_penalty": args.invalid_penalty,
+        "exact_bonus": args.exact_bonus,
+        "device": device.type,
         "families": sorted(selected_families) if selected_families else "all",
         "tasks_per_family": args.tasks_per_family,
         "schedule_sha256": hashlib.sha256((args.output / "schedule.json").read_bytes()).hexdigest(),
         "elapsed_seconds": round(time.perf_counter() - started, 3),
-        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3),
+        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3) if device.type == "cuda" else None,
         "checkpoints": saved,
         "groups_detail": rows,
     }

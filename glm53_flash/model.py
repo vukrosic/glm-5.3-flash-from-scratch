@@ -228,8 +228,12 @@ class GLM53FlashFromScratch(nn.Module):
         if isinstance(module, (nn.Linear, nn.Embedding)):
             nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
-    def forward(self, input_ids: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        embedded = self.embedding(input_ids)
+    def forward_embeddings(self, embedded: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """Run the language model from precomputed token-like embeddings."""
+        if embedded.ndim != 3 or embedded.shape[-1] != self.config.dim:
+            raise ValueError("embedded inputs must have shape [batch, time, dim]")
+        if embedded.shape[1] > self.config.max_sequence_length:
+            raise ValueError("embedded input exceeds max_sequence_length")
         streams = embedded.unsqueeze(2).expand(-1, -1, self.config.streams, -1).contiguous()
         usages = []
         for layer in self.layers:
@@ -237,6 +241,9 @@ class GLM53FlashFromScratch(nn.Module):
             usages.append(usage)
         hidden = self.final_norm(streams.mean(dim=2))
         return self.output(hidden), torch.stack(usages)
+
+    def forward(self, input_ids: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        return self.forward_embeddings(self.embedding(input_ids))
 
     def parameter_counts(self) -> dict[str, int]:
         total = sum(parameter.numel() for parameter in self.parameters())

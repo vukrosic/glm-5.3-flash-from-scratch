@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 *.pt
 /runs/
+/slides/slide-feedback.json
+/slides/.slide-feedback-*.json

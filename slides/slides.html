@@ -1,0 +1,1750 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>&lt;!-- slide: title --&gt;</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #f4f1e8; color: #1f1f1c;
+    font: 400 clamp(16px, 2.1vw, 27px)/1.55 Arial, 'Helvetica Neue', sans-serif;
+    overflow: hidden; }
+  .slide { display: none; height: 100vh; padding: 6vh 11vw;
+    flex-direction: column; justify-content: center; position: relative; }
+  .slide.on { display: flex; }
+  .slide.on .in { animation: rise .55s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(26px); }
+                     to   { opacity: 1; transform: none; } }
+
+  /* --- rotating background moods (cycled by slide index) --- */
+  .bg0 { background:
+    radial-gradient(ellipse 70% 55% at 18% 12%, rgba(64,132,255,.16), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 90%, rgba(255,150,60,.07), transparent 60%), #f4f1e8; }
+  .bg1 { background:
+    radial-gradient(ellipse 60% 50% at 82% 15%, rgba(180,90,255,.13), transparent 60%),
+    radial-gradient(ellipse 50% 45% at 10% 85%, rgba(60,200,255,.08), transparent 60%), #f4f1e8; }
+  .bg2 { background:
+    radial-gradient(ellipse 65% 55% at 50% 110%, rgba(50,220,160,.11), transparent 65%),
+    radial-gradient(ellipse 45% 40% at 90% 5%, rgba(64,132,255,.09), transparent 60%), #f4f1e8; }
+  .bg3 { background:
+    radial-gradient(ellipse 60% 50% at 12% 88%, rgba(255,110,110,.10), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 88% 20%, rgba(255,205,80,.08), transparent 60%), #f4f1e8; }
+  .bg1::before, .bg3::before { content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.5px);
+    background-size: 34px 34px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 30%, transparent 75%); }
+  .bg2::before { content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+    background-size: 72px 72px;
+    -webkit-mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, #000 25%, transparent 78%); }
+  .orb { position: fixed; border-radius: 50%; filter: blur(70px); pointer-events: none;
+    opacity: .5; animation: drift 26s ease-in-out infinite alternate; }
+  @keyframes drift { from { transform: translate(0,0) scale(1); }
+                      to   { transform: translate(6vw,-5vh) scale(1.15); } }
+
+  h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 2.1em; line-height: 1.08;
+    margin: 0 0 .5em; letter-spacing: -.025em; color: #1f1f1c; }
+  h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 1.5em; line-height: 1.14;
+    margin: 0 0 .7em; letter-spacing: -.015em; color: #d97757; }
+  h2::after { content: ''; display: block; width: 1.6em; height: 3px; margin-top: .45em;
+    border-radius: 2px; background: linear-gradient(90deg, #d97757, transparent); }
+  p { margin: .4em 0; max-width: 28em; }
+  strong { color: #d97757; font-weight: 600; }
+  em { color: #6f675c; font-style: normal; font-size: .8em; }
+  code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: .82em;
+    background: rgba(120,160,255,.12); color: #d97757; padding: .08em .4em; border-radius: 7px; }
+  pre { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: .68em;
+    line-height: 1.6; background: rgba(10,14,20,.75); border: 1px solid rgba(120,160,255,.16);
+    border-radius: 14px; padding: 1.1em 1.4em; overflow-x: auto; width: fit-content; max-width: 100%;
+    box-shadow: 0 18px 50px rgba(0,0,0,.45); color: #f4f1e8; }
+  table { border-collapse: collapse; margin: .5em 0; font-size: .85em; }
+  th, td { padding: .35em 1em; border-bottom: 1px solid rgba(255,255,255,.12); text-align: left; }
+  th { color: #d97757; font-weight: 600; }
+  ul, ol { margin: .3em 0; padding-left: 1.2em; }
+  li { margin: .25em 0; }
+  img { max-width: min(80%, 44em); max-height: 50vh; border-radius: 14px;
+    box-shadow: 0 22px 60px rgba(0,0,0,.5); margin: .4em 0; }
+  .slide.title { padding: 4vh 8vw; text-align: center; align-items: center; }
+  .slide.title .in { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .slide.title h1 { font-size: 1.75em; margin-bottom: .4em; }
+  .slide.title h1, .slide.title p { width: 100%; text-align: center; }
+  .slide.title p { max-width: none; }
+  .slide.title img { max-height: 42vh; }
+  .slide.title p { margin: .5em 0 0; }
+  .slide.full { padding: 0; }
+  .slide.full .in { height: 100%; }
+  .slide.full img { max-width: 100%; max-height: 100vh; width: 100%; height: 100%;
+    object-fit: contain; border-radius: 0; margin: 0; box-shadow: none; }
+
+  /* --- explain: pinned image on top, sentence-by-sentence steps below --- */
+  .slide.explain { padding: 3.5vh 6vw; }
+  .slide.explain .in { height: 100%; display: flex; flex-direction: column; gap: 1.6vh; }
+  .slide.explain h2 { margin: 0; font-size: 1.08em; flex: 0 0 auto; }
+  .slide.explain h2::after { display: none; }
+  .slide.explain .pin { flex: 1 1 auto; min-height: 0; display: flex;
+    align-items: center; justify-content: center; }
+  .slide.explain .pin img { max-height: 100%; max-width: 100%; margin: 0;
+    object-fit: contain; box-shadow: 0 18px 50px rgba(0,0,0,.5); }
+  .slide.explain .steps { flex: 0 0 auto; height: 26vh; position: relative; }
+  .slide.explain .step { position: absolute; left: 0; right: 0; top: 0; bottom: 4vh;
+    display: none; flex-direction: column; justify-content: center; }
+  .slide.explain .step p { margin: 0; font-size: 1.32em; line-height: 1.5;
+    color: #1f1f1c; max-width: 40em; }
+  .slide.explain .step.on { display: flex;
+    animation: slidein .5s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes slidein { from { opacity: 0; transform: translateX(72px); }
+                        to   { opacity: 1; transform: none; } }
+  .slide.explain .dots { position: absolute; left: 0; bottom: .6vh; display: flex; gap: 11px; }
+  .slide.explain .dots i { width: 9px; height: 9px; border-radius: 50%;
+    background: rgba(255,255,255,.16); transition: background .3s, transform .3s; }
+  .slide.explain .dots i.on { background: #d97757; transform: scale(1.15); }
+  #n { position: fixed; bottom: 2.4vh; right: 2.5vw; font-size: .48em; color: #81796e;
+    font-variant-numeric: tabular-nums; }
+  .nav { position: fixed; bottom: 2vh; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 14px; }
+  .nav button { font: inherit; font-size: .6em; line-height: 1; color: #6f675c;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+    border-radius: 10px; padding: .45em .9em; cursor: pointer; }
+  .nav button:hover { background: rgba(255,255,255,.14); color: #1f1f1c; }
+  #bar { position: fixed; top: 0; left: 0; height: 3px; width: 0;
+    background: linear-gradient(90deg, #d97757, #8a6252); transition: width .3s; }
+</style></head><body>
+<div class="orb" style="width:34vw;height:34vw;left:-10vw;top:-12vh;background:rgba(64,110,255,.13)"></div>
+<div class="orb" style="width:26vw;height:26vw;right:-8vw;bottom:-10vh;background:rgba(255,140,60,.07);animation-delay:-13s"></div>
+<div id="bar"></div>
+<div data-slide-id="build-and-train-glm-5-3-flash-from-scratch" class="slide title opening-slide"><h1>Build &amp; Train GLM-5.3-Flash From Scratch</h1>
+<p>Watch our model change from random output to generated Python.</p>
+<video class="opening-generation" src="pretraining-before-after.mp4" autoplay muted loop playsinline aria-label="Our model generating Python before and after pretraining"></video>
+<small class="source-note">The same prompt · random initialization → 100 pretraining steps</small>
+<a class="repo-url" href="https://github.com/vukrosic/glm-5.3-flash-from-scratch" target="_blank" rel="noopener">github.com/vukrosic/glm-5.3-flash-from-scratch</a></div>
+<div data-slide-id="what-we-will-do" class="slide title intro-roadmap-slide"><h1>What are we going to do?</h1>
+<p>Follow one model through the complete learning process.</p>
+<div class="intro-roadmap">
+  <span><b>1</b><strong>Build</strong><small>implement the architecture</small></span><i>→</i>
+  <span><b>2</b><strong>Pretrain</strong><small>learn by predicting code</small></span><i>→</i>
+  <span><b>3</b><strong>Reinforce</strong><small>learn from executable tests</small></span><i>→</i>
+  <span><b>4</b><strong>Verify</strong><small>measure untouched tasks</small></span>
+</div></div>
+<div data-slide-id="what-you-will-finish-with" class="slide title intro-outcomes-slide"><h1>What will you finish with?</h1>
+<div class="intro-outcomes">
+  <span><strong>A working model</strong><small>architecture and training code you can run</small></span>
+  <span><strong>Visible learning</strong><small>generations before and after training</small></span>
+  <span><strong>A real experiment</strong><small>controls, held-out tasks, charts, and limitations</small></span>
+</div>
+<p>You will understand the mechanism well enough to change the experiment yourself.</p></div>
+<div data-slide-id="research-results-preview" class="slide title research-preview-slide"><h1>We will measure every claim</h1>
+<p>These are the real training and held-out results we will reproduce and explain.</p>
+<div class="research-preview-grid">
+  <figure class="preview-curve"><figcaption>Does the policy improve during training?</figcaption>
+    <div class="preview-line-chart"><span>50%</span><svg viewBox="0 0 640 300" role="img" aria-label="Exact rollout rate rises from 4.2 to 45.8 percent"><line x1="45" y1="265" x2="610" y2="265"/><line x1="45" y1="30" x2="45" y2="265"/><polyline points="45,244 185,160 325,138 465,108 610,52"/><circle cx="45" cy="244" r="8"/><circle cx="610" cy="52" r="10"/></svg><b class="preview-start">4.2%</b><b class="preview-end">45.8%</b></div>
+    <small>Exact dev rollout rate · 1,536 sampled programs</small></figure>
+  <figure class="preview-confirm"><figcaption>Does the gain survive untouched tasks?</figcaption>
+    <div class="preview-result-bars"><div><span>BEFORE RL</span><i style="height:3px"></i><strong>0 / 24</strong></div><b>→</b><div class="after"><span>AFTER RL</span><i style="height:210px"></i><strong>16 / 24</strong></div></div>
+    <small>Same held-out tasks · same generation settings</small></figure>
+</div></div>
+<div data-slide-id="what-are-we-trying-to-build" class="slide title intro-goal"><h1>What are we trying to build?</h1>
+<p>A small, untrained language model that learns to write simple Python.</p>
+<div class="intro-flow"><span>untrained model</span><b>→</b><span>learn from code</span><b>→</b><span>write simple code</span></div>
+<small class="source-note">The goal is to see the entire learning process – not to reproduce the 320B model at full scale.</small></div>
+<div data-slide-id="why-make-it-tiny" class="slide title intro-scale"><h1>Why make it tiny?</h1>
+<p>The real model is too large for a hands-on tutorial. This version keeps the main architectural ideas while making every step visible.</p>
+<div class="scale-compare"><div><span>RELEASED MODEL</span><strong>320B</strong><small>production scale</small></div><b>→</b><div class="teaching"><span>OUR MODEL</span><strong>25.7M</strong><small>MacBook M-series · NVIDIA GPU · CPU</small></div></div></div>
+<div data-slide-id="what-does-frontier-model-work-look-like" class="slide title frontier-work"><h1>What does frontier-model work look like?</h1>
+<div class="frontier-work-grid">
+  <img src="assets/anthropic-domain-scaling-job.png" alt="Recruiting post for Anthropic Research Engineer, Domain Scaling">
+  <div class="frontier-statement">
+    <p><strong>Most frontier-model training roles focus on data and environments – not inventing new model algorithms.</strong></p>
+    <p>Researchers choose what the model should practice, build tasks with automatically verifiable outcomes, and turn those checks into rewards.</p>
+    <p>Algorithms control how weights update. Data and environments control what the model learns.</p>
+  </div>
+</div>
+<small class="source-note">Recruiting post for Anthropic · Research Engineer, Domain Scaling</small></div>
+<div data-slide-id="pretraining-progress" class="slide title pretraining-chart"><h1>Pretraining progress</h1>
+<img src="assets/pretraining-progress.png" alt="Measured pretraining progress">
+<p>1.38M tokens · 400 steps · 63 seconds</p></div>
+<div data-slide-id="learn-by-predicting-the-next-token" class="slide title"><h1>Learn by predicting the next token</h1>
+<p>At every position, the model predicts what comes next and updates whenever it is wrong.</p>
+<div class="next-token"><div><small>INPUT</small><code>return&nbsp; x&nbsp; +</code></div><b>→</b><div class="target"><small>NEXT TOKEN</small><code>1</code></div></div>
+<style>.next-token{display:flex;justify-content:center;align-items:center;gap:55px;margin-top:8vh}.next-token>div{display:grid;gap:22px;padding:38px 52px;border-radius:20px;background:#e9e3d8;border:2px solid #c7beb0}.next-token small{color:#6f675c;font-size:21px;font-weight:800;letter-spacing:.14em}.next-token code{font-size:50px;color:#1f1f1c}.next-token b{font-size:58px;color:#d97757}.next-token .target{border-color:#68785c;box-shadow:0 0 36px #68785c44}.next-token .target code{color:#68785c}</style></div>
+<div data-slide-id="we-will-also-do-real-research" class="slide title research-question"><h1>Research question</h1>
+<p>Which reinforcement-learning choice produces the largest improvement on unseen coding tasks?</p>
+<div class="research-variable-grid">
+  <span><b>REWARD</b><strong>binary or partial?</strong><small>How much credit does an imperfect program receive?</small></span>
+  <span><b>PENALTY</b><strong>soft or hard?</strong><small>How strongly should invalid Python be punished?</small></span>
+  <span><b>TEMPERATURE</b><strong>0.20 or 0.80?</strong><small>How much variety should generation explore?</small></span>
+  <span><b>GROUP SIZE</b><strong>4 or 16?</strong><small>How many attempts should be compared together?</small></span>
+</div>
+<small class="source-note">Outcome: coding tasks solved on data never used for training.</small></div>
+<div data-slide-id="research-change-one-variable" class="slide title research-control-slide"><h1>Change one variable at a time</h1>
+<p>A fair experiment keeps every other source of advantage fixed.</p>
+<div class="research-control-visual">
+  <section><b>KEEP FIXED</b><span>starting checkpoint</span><span>training prompts</span><span>rollout budget</span><span>evaluation tasks</span></section>
+  <i>+</i>
+  <section class="changed"><b>CHANGE ONE THING</b><strong>reward</strong><em>or</em><strong>penalty</strong><em>or</em><strong>temperature</strong><em>or</em><strong>group size</strong></section>
+</div>
+<small class="source-note">If two settings change together, we cannot know which one caused the result.</small></div>
+<div data-slide-id="research-verify-the-result" class="slide title research-verify-slide"><h1>A dev win is only a hypothesis</h1>
+<p>The first score chooses what to retest. It does not prove the conclusion.</p>
+<div class="research-verification-flow">
+  <span><b>1</b><strong>Screen on dev</strong><small>find the apparent winner</small></span><i>→</i>
+  <span><b>2</b><strong>Train fresh seeds</strong><small>repeat from new randomness</small></span><i>→</i>
+  <span><b>3</b><strong>Open untouched tasks</strong><small>evaluate once</small></span><i>→</i>
+  <span class="decision"><b>4</b><strong>Check uncertainty</strong><small>does the interval cross zero?</small></span>
+</div>
+<div class="research-decision"><span>interval stays above zero <b>→ evidence of improvement</b></span><span>interval crosses zero <b>→ no reliable winner</b></span></div></div>
+<div data-slide-id="want-to-join-the-real-ai-research-lab" class="slide title research-lab-ad"><h1>Want to join the Real AI Research Lab?</h1>
+<p>Join our Skool community and work through AI research tasks like a small research lab.</p>
+<div class="lab-ad-flow"><span><b>1</b><strong>Get a research task</strong></span><i>→</i><span><b>2</b><strong>Run the experiment</strong></span><i>→</i><span><b>3</b><strong>Share the evidence</strong></span></div>
+<small class="source-note">Build models. Test ideas. Measure results.</small>
+<a class="school-cta" href="https://www.skool.com/become-ai-researcher-2669/about" target="_blank" rel="noopener">Join Become AI Researcher on Skool</a></div>
+<div data-slide-id="the-real-model-predicts-bpe-tokens" class="slide title real-tokenizer"><h1>The real model predicts BPE tokens</h1>
+<p>Frequent byte sequences are merged into reusable chunks.</p>
+<div class="tokenizer-example"><code>def increment(x):</code><b>→</b><div><span>def</span><span> increment</span><span>(x</span><span>):</span></div></div>
+<div class="tokenizer-facts"><span><strong>4 tokens</strong> for this string</span><span><strong>154,880</strong> model vocabulary</span><span><strong>shorter sequences</strong> for common text</span></div>
+<small class="source-note">Exact encoding from the released GLM-5.3-Flash tokenizer</small></div>
+<div data-slide-id="our-model-predicts-the-next-byte" class="slide title our-tokenizer"><h1>Our model predicts the next byte</h1>
+<p>For ASCII code, one byte is one character. Unicode characters may use multiple bytes.</p>
+<div class="byte-flow">
+  <div class="byte-row byte-chars"><span>d</span><span>e</span><span>f</span><span class="space">SPACE</span><span>i</span><span>n</span><span>…</span></div>
+  <div class="byte-labels"><span>characters in this ASCII example</span><b>↓</b><span>one token per byte</span></div>
+  <div class="byte-row byte-ids"><span>104</span><span>105</span><span>106</span><span>36</span><span>109</span><span>114</span><span>…</span></div>
+</div>
+<div class="byte-reasons"><span><strong>260-token vocabulary</strong> keeps the model tiny</span><span><strong>No tokenizer training</strong> or vocabulary download</span><span><strong>Tradeoff:</strong> 17 tokens instead of 4</span></div>
+<small class="source-note">IDs 0–3 are control tokens, so each byte value is stored as token ID +4.</small>
+<style>
+  .byte-flow{display:grid;gap:18px;margin-top:5vh}.byte-row{display:flex;justify-content:center;gap:16px}
+  .byte-row span{display:grid;place-items:center;width:112px;height:92px;border:1px solid var(--line);
+    border-radius:4px;background:var(--soft);font:500 40px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+    animation:bytePulse 3.2s ease-in-out infinite}.byte-row .space{color:var(--muted);font-size:30px}
+  .byte-row span:nth-child(2){animation-delay:.16s}.byte-row span:nth-child(3){animation-delay:.32s}
+  .byte-row span:nth-child(4){animation-delay:.48s}.byte-row span:nth-child(5){animation-delay:.64s}
+  .byte-row span:nth-child(6){animation-delay:.8s}.byte-ids span{height:70px;color:var(--accent-dark);font-size:28px}
+  .byte-labels{display:flex;align-items:center;justify-content:center;gap:22px;color:var(--muted);font-size:18px;
+    letter-spacing:.04em;text-transform:uppercase}.byte-labels b{color:var(--accent);font-size:32px;font-weight:400}
+  .byte-note{max-width:none;margin-top:4vh;font-size:20px}.byte-note code{font-size:.95em}
+  @keyframes bytePulse{0%,42%,100%{transform:translateY(0);border-color:var(--line)}
+    18%{transform:translateY(-7px);border-color:var(--accent);box-shadow:0 0 18px #d9775733}}
+</style></div>
+<div data-slide-id="what-we-built" class="slide title model-summary"><h1>The core language model we built</h1>
+<table><tr><th></th><th>Released model</th><th>Teaching model</th></tr><tr><td>Parameters</td><td>320B</td><td><strong>25.7M</strong></td></tr><tr><td>Layers</td><td>45</td><td><strong>12</strong></td></tr><tr><td>Active experts</td><td>8 of 288</td><td><strong>2 of 8</strong></td></tr><tr><td>Tokenizer</td><td>BPE · 154,880</td><td><strong>bytes · 260</strong></td></tr><tr><td>Context</td><td>1M</td><td><strong>192</strong></td></tr></table>
+<p>Small enough for Mac, NVIDIA GPU, or CPU · trained from random initialization</p>
+<small class="source-note">Next, we attach a separate 60,924-parameter GLM-like vision miniature.</small></div>
+<div data-slide-id="glm-vision-path" class="slide title vision-path-slide"><h1>GLM-5.3-Flash also sees images</h1>
+<p>The production model and our miniature use the same high-level path.</p>
+<div class="vision-scale-path">
+  <span><b>RGB IMAGE</b><strong>patch embedding</strong><small>turn pixels into a grid of vectors</small></span><i>→</i>
+  <span><b>VISION TOWER</b><strong>transformer blocks</strong><small>let every image patch interact</small></span><i>→</i>
+  <span><b>SPATIAL MERGE</b><strong>2 × 2 neighborhoods</strong><small>compress nearby patches</small></span><i>→</i>
+  <span><b>PROJECTOR</b><strong>language width</strong><small>match the LM embedding size</small></span><i>→</i>
+  <span class="vision-lm"><b>LANGUAGE MODEL</b><strong>image tokens</strong><small>predict the answer autoregressively</small></span>
+</div>
+<div class="vision-scale-note"><span>Released GLM: 24 vision blocks · width 1024</span><span>Our miniature: 2 vision blocks · width 24</span></div></div>
+<div data-slide-id="image-becomes-visual-tokens" class="slide title vision-mechanism-slide"><h1>How an image becomes 16 visual tokens</h1>
+<div class="vision-mechanism">
+  <span class="vision-image"><small>32 × 32 RGB</small><svg viewBox="0 0 120 120" role="img" aria-label="A colored seven-segment digit"><rect width="120" height="120" fill="#24231f"/><g stroke="#efb19a" stroke-width="10" stroke-linecap="round"><path d="M30 18H90M92 24V55M92 65V96M30 102H90M28 65V96M28 24V55M30 60H90"/></g></svg></span><b>→</b>
+  <span class="vision-patches"><small>8 × 8 PATCH GRID</small><i></i></span><b>→</b>
+  <span class="vision-blocks"><small>2 VISION BLOCKS</small><i>full attention</i><i>SwiGLU MLP</i></span><b>→</b>
+  <span class="vision-merge"><small>2 × 2 MERGE</small><i></i></span><b>→</b>
+  <span class="vision-tokens"><small>16 IMAGE TOKENS</small><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+</div>
+<p>Spatial merging reduces 64 patch vectors to 16 language-width image vectors.</p></div>
+<div data-slide-id="image-tokens-enter-the-language-model" class="slide title vision-sequence-slide"><h1>Image tokens enter the language sequence</h1>
+<p>Special tokens mark exactly where the image belongs.</p>
+<div class="vision-sequence">
+  <span class="control">BOS</span><span class="boundary">IMAGE START</span>
+  <span class="visual">IMAGE × 16</span><span class="boundary">IMAGE END</span>
+  <span class="text">Digit:</span><b>→</b><span class="answer">7</span>
+</div>
+<div class="vision-scatter"><span>placeholder positions</span><b>↓ replace with projected image vectors ↓</b><span>one causal embedding stream</span></div>
+<pre>embeddings[image_mask] = vision_encoder(images)
+logits = language_model.forward_embeddings(embeddings)</pre></div>
+<div data-slide-id="vision-training-task" class="slide title vision-training-slide"><h1>What did the vision model learn?</h1>
+<p>Read noisy, shifted RGB seven-segment digits and answer with the correct character.</p>
+<div class="vision-training-visual">
+  <section><b>TRAIN</b><strong>4,800 generated images</strong><small>new position, color, and noise every step</small><div class="vision-digit-row"><i>1</i><i>4</i><i>7</i><i>8</i></div></section>
+  <i>→</i>
+  <section class="heldout"><b>HELD OUT</b><strong>200 new renderings</strong><small>never used for optimization</small><div class="vision-digit-row"><i>2</i><i>5</i><i>6</i><i>9</i></div></section>
+</div>
+<div class="vision-training-facts"><span>120 optimizer steps</span><span>batch size 40</span><span>CPU training</span><span>4.3 seconds for both models</span></div></div>
+<div data-slide-id="vision-experiment-result" class="slide title vision-result-slide"><h1>The GLM-like vision path learned</h1>
+<p>Same data, seed, steps, batch size, and held-out images.</p>
+<div class="vision-result-bars">
+  <div><span>BEFORE TRAINING</span><i style="--score:2px"></i><strong>0%</strong><small>faithful miniature</small></div>
+  <div class="faithful"><span>AFTER · GLM-LIKE</span><i style="--score:94px"></i><strong>59.5%</strong><small>119 / 200 correct</small></div>
+  <div class="baseline"><span>AFTER · DIRECT PATCH</span><i style="--score:149px"></i><strong>94.5%</strong><small>189 / 200 correct</small></div>
+</div>
+<div class="vision-result-conclusion"><strong>Result:</strong> under a 120-step budget, the simpler adapter learned this tiny task faster.</div>
+<small class="source-note">One synthetic dataset and one seed · useful pilot, not a general architecture ranking.</small></div>
+<div data-slide-id="how-the-experiment-works" class="slide title experiment-overview"><h1>How the experiment works</h1>
+<div class="experiment-steps">
+  <article><strong>1</strong><h2>Build</h2><p>Initialize the 25.7M-parameter model with random weights.</p></article>
+  <article><strong>2</strong><h2>Pretrain</h2><p>Predict the next byte across complete Python programs.</p></article>
+  <article><strong>3</strong><h2>Reinforce</h2><p>Generate code and reward only programs that pass hidden tests.</p></article>
+  <article><strong>4</strong><h2>Verify</h2><p>Compare the same frozen unseen tasks before and after training.</p></article>
+</div></div>
+<div data-slide-id="how-one-byte-becomes-a-prediction" class="slide title"><h1>How one byte becomes a prediction</h1>
+<div class="data-path">
+  <span class="path-byte"><small>INPUT BYTE</small><code>+</code><em>43 → token 47</em></span><b>→</b>
+  <span class="path-vector"><small>LEARNED VECTOR</small><i></i><i></i><i></i><i></i><i></i></span><b>→</b>
+  <span class="model-blocks"><small>12 MODEL BLOCKS</small><i></i><i></i><i></i><em>attention + experts</em></span><b>→</b>
+  <span class="path-scores"><small>NEXT-BYTE SCORES</small><i><b style="width:92%"></b><em>1</em></i><i><b style="width:47%"></b><em>)</em></i><i><b style="width:24%"></b><em>:</em></i></span>
+</div>
+<p>The model turns one byte into numbers, transforms them, and ranks every possible next byte.</p>
+<style>
+  .data-path{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:7vh}
+  .data-path>span{display:grid;align-content:center;gap:11px;width:230px;height:210px;padding:24px;
+    border:2px solid #c7beb0;background:#e9e3d8;text-align:left}
+  .data-path>span>small{font-size:14px;font-weight:800;letter-spacing:.12em;color:#6f675c}
+  .data-path>span>em{font-size:16px;color:#6f675c}
+  .data-path>.path-byte code{width:max-content;font-size:64px;line-height:1;background:none!important;color:var(--ink)!important;padding:0}
+  .data-path>.path-vector{grid-template-columns:repeat(5,1fr);align-items:end}
+  .data-path>.path-vector small{grid-column:1/-1;align-self:start}
+  .path-vector i{display:block;height:82px;background:var(--accent);opacity:.82}
+  .path-vector i:nth-of-type(2){height:42px}.path-vector i:nth-of-type(3){height:105px}
+  .path-vector i:nth-of-type(4){height:64px}.path-vector i:nth-of-type(5){height:92px}
+  .data-path>.model-blocks{border-color:#8a6252}
+  .model-blocks>i{display:block;height:18px;border:1px solid var(--accent);background:#2b211e}
+  .data-path>.path-scores{gap:15px}
+  .path-scores>i{display:grid;grid-template-columns:1fr 18px;align-items:center;gap:8px;height:18px;background:#3d3a34}
+  .path-scores>i>b{display:block;height:100%;background:var(--olive)}
+  .path-scores>i>em{color:var(--ink);font:700 16px/1 ui-monospace,SFMono-Regular,Menlo,monospace}
+  .data-path>b{font-size:38px;color:#d97757}
+</style></div>
+<div data-slide-id="four-ideas-define-the-architecture" class="slide title architecture-map-slide"><h1>Four ideas define the language model</h1>
+<p>We will build each one from scratch.</p>
+<div class="architecture-map"><span><b>1</b>hybrid attention<small>linear + sparse</small></span><span><b>2</b>mixture of experts<small>choose specialists</small></span><span><b>3</b>four residual streams<small>parallel workspaces</small></span><span><b>4</b>shared embeddings<small>one input/output matrix</small></span></div></div>
+<div data-slide-id="the-forward-pass-in-code" class="slide code-pair"><h1>The forward pass in code</h1>
+<p>AI can write syntax. Your job is to understand the algorithm.</p>
+<pre>embedded = self.embedding(input_ids)
+streams = embedded.unsqueeze(2).expand(
+    -1, -1, self.config.streams, -1
+).contiguous()
+usages = []
+
+for layer in self.layers:
+    streams, usage = layer(streams)
+    usages.append(usage)
+
+hidden = self.final_norm(streams.mean(dim=2))
+return self.output(hidden), torch.stack(usages)</pre></div>
+<div data-slide-id="read-the-algorithm-not-the-syntax" class="slide title algorithm-walkthrough"><h1>Read the algorithm, not the syntax</h1>
+<div class="walkthrough-steps">
+  <div class="step"><code>self.embedding(input_ids)</code><p><strong>1. Represent:</strong> convert byte-token IDs into learned vectors.</p></div>
+  <div class="step"><code>expand(-1, -1, self.config.streams, -1)</code><p><strong>2. Branch:</strong> copy each token representation into four residual streams.</p></div>
+  <div class="step"><code>streams, usage = layer(streams)</code><p><strong>3. Transform:</strong> every hybrid block reads, mixes, and updates those streams.</p></div>
+  <div class="step"><code>self.final_norm(streams.mean(dim=2))</code><p><strong>4. Merge:</strong> average the streams and normalize the combined representation.</p></div>
+  <div class="step"><code>self.output(hidden)</code><p><strong>5. Predict:</strong> score every possible next byte.</p></div>
+</div><div class="walkthrough-dots dots"><i></i><i></i><i></i><i></i><i></i></div></div>
+<div data-slide-id="rmsnorm-sets-the-scale-before-each-sublayer" class="slide"><h1>RMSNorm sets the scale before each sublayer</h1>
+<pre>x = x + self.attention(self.attention_norm(x))
+ffn, usage = self.moe(self.ffn_norm(x))</pre>
+<p>Normalize activation magnitude before attention and MoE.</p></div>
+<div data-slide-id="rope-writes-position-into-queries-and-keys" class="slide title"><h1>RoPE writes position into queries and keys</h1>
+<pre>q, k = apply_rope(q, k)</pre>
+<div class="rope-path"><span>token position</span><b>→</b><span>rotate q + k</span><b>→</b><span>position-aware attention</span></div>
+<p>Linear and sparse attention use the same positional mechanism.</p>
+<style>.rope-path{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:8vh}.rope-path span{padding:28px 36px;border-top:3px solid #d97757;background:#e9e3d8;font-size:29px;font-weight:700}.rope-path b{font-size:42px;color:#d97757}</style></div>
+<div data-slide-id="3-linear-1-sparse" class="slide title"><h1>3 linear + 1 sparse</h1>
+<p>The four-layer rhythm repeats three times</p>
+<div class="layer-stack"><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div><div><span>L</span><span>L</span><span>L</span><span class="sparse">S</span></div></div>
+<style>.layer-stack{display:flex;justify-content:center;gap:45px;margin-top:9vh}.layer-stack>div{display:flex;gap:12px;padding:18px;border-radius:22px;background:#e9e3d8}.layer-stack span{display:grid;place-items:center;width:84px;height:120px;border-radius:15px;background:#ead4c7;border:2px solid #d97757;color:#d97757;font-size:40px;font-weight:800}.layer-stack .sparse{background:#ded4c8;border-color:#8a6252;color:#8a6252;box-shadow:0 0 28px #8a625255}</style></div>
+<div data-slide-id="the-attention-rhythm-in-code" class="slide code-pair"><h1>The attention rhythm in code</h1>
+<p>One condition selects the attention algorithm for every layer.</p>
+<pre>self.layers = nn.ModuleList([
+    HyperConnection(
+        config,
+        HybridBlock(
+            config,
+            sparse=((index + 1) % 4 == 0),
+        ),
+    )
+    for index in range(config.layers)
+])
+
+self.attention = (
+    SparseAttention(config) if sparse
+    else LinearAttention(config)
+)</pre></div>
+<div data-slide-id="one-expression-creates-the-rhythm" class="slide title algorithm-walkthrough"><h1>One expression creates the rhythm</h1>
+<div class="walkthrough-steps">
+  <div class="step"><code>index + 1</code><p><strong>1. Count naturally:</strong> convert zero-based indices into layers 1 through 12.</p></div>
+  <div class="step"><code>(index + 1) % 4 == 0</code><p><strong>2. Mark every fourth layer:</strong> layers 4, 8, and 12 become sparse.</p></div>
+  <div class="step"><code>SparseAttention if sparse else LinearAttention</code><p><strong>3. Choose the mechanism:</strong> all other layers use linear attention.</p></div>
+</div><div class="walkthrough-dots dots"><i></i><i></i><i></i></div></div>
+<div data-slide-id="linear-attention-carries-a-running-memory" class="slide title"><h1>Linear attention carries a running memory</h1>
+<p>Each token updates one compact prefix state</p>
+<div class="linear-memory"><div class="lm-tokens"><span>x₁</span><span>x₂</span><span>x₃</span><span>x₄</span><span>x₅</span></div><div class="lm-arrows">↘ &nbsp;&nbsp; ↓ &nbsp;&nbsp; ↓ &nbsp;&nbsp; ↓ &nbsp;&nbsp; ↙</div><div class="lm-state">running key–value state</div></div>
+<style>.linear-memory{margin-top:7vh}.lm-tokens{display:flex;justify-content:center;gap:42px}.lm-tokens span{display:grid;place-items:center;width:96px;height:96px;border-radius:50%;background:#e9e3d8;border:3px solid #d97757;font-size:32px}.lm-arrows{margin:24px 0;color:#d97757;font-size:58px;letter-spacing:28px}.lm-state{display:inline-block;padding:30px 80px;border-radius:20px;background:linear-gradient(90deg,#ded4c8,#ded4c8);border:2px solid #8a6252;font-size:34px;font-weight:700;box-shadow:0 0 45px #d9775733}</style></div>
+<div data-slide-id="sparse-attention-retrieves-selected-positions" class="slide title"><h1>Sparse attention retrieves selected positions</h1>
+<p>Local window + regularly spaced anchors</p>
+<div class="sparse-row"><span class="anchor">0</span><span>1</span><span>2</span><span>3</span><span class="anchor">4</span><span>5</span><span>6</span><span>7</span><span class="anchor">8</span><span>9</span><span class="local">10</span><span class="local">11</span><span class="local">12</span><span class="local">13</span><span class="current">14</span></div>
+<div class="sparse-key"><b>anchors</b> reach far back <i>+</i> <strong>local tokens</strong> preserve detail</div>
+<style>.sparse-row{display:flex;justify-content:center;gap:10px;margin-top:12vh}.sparse-row span{display:grid;place-items:center;width:72px;height:82px;border-radius:12px;background:#e9e3d8;border:2px solid #c7beb0;color:#6f675c;font-size:25px}.sparse-row .anchor{border-color:#8a6252;color:#8a6252;background:#ded4c8}.sparse-row .local{border-color:#d97757;color:#d97757;background:#ead4c7}.sparse-row .current{border-color:#68785c;background:#dce3d7;color:#68785c;box-shadow:0 0 30px #68785c66}.sparse-key{margin-top:60px;font-size:27px;color:#6f675c}.sparse-key b{color:#8a6252}.sparse-key strong{color:#d97757}.sparse-key i{padding:0 24px;color:#1f1f1c}</style></div>
+<div data-slide-id="each-token-chooses-experts" class="slide title"><h1>Each token chooses experts</h1>
+<p>Two routed experts + one shared expert</p>
+<div class="moe-flow"><div class="moe-token">token</div><div class="moe-arrow">→</div><div class="moe-router">router</div><div class="moe-arrow">→</div><div class="experts"><span>E1</span><span class="on">E2</span><span>E3</span><span>E4</span><span>E5</span><span>E6</span><span class="on">E7</span><span>E8</span><strong>shared</strong></div></div>
+<style>.moe-flow{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:8vh}.moe-token,.moe-router{display:grid;place-items:center;width:150px;height:110px;border-radius:18px;background:#e9e3d8;border:2px solid #d97757;font-size:30px;font-weight:700}.moe-router{border-color:#8a6252}.moe-arrow{font-size:48px;color:#d97757}.experts{display:grid;grid-template-columns:repeat(4,82px);gap:12px}.experts span,.experts strong{display:grid;place-items:center;height:72px;border-radius:12px;background:#e9e3d8;border:2px solid #c7beb0;color:#6f675c;font-size:22px}.experts .on{background:#dce3d7;border-color:#68785c;color:#68785c;box-shadow:0 0 25px #68785c44}.experts strong{grid-column:1/5;background:#ded4c8;border-color:#8a6252;color:#8a6252}</style></div>
+<div data-slide-id="four-residual-streams" class="slide title"><h1>Four residual streams</h1>
+<p>Mix before the block · route the update back afterward</p>
+<div class="streams"><div class="stream-lines"><i></i><i></i><i></i><i></i></div><b>mix</b><em>→</em><strong>attention + MoE</strong><em>→</em><b>route</b><div class="stream-lines out"><i></i><i></i><i></i><i></i></div></div>
+<style>.streams{display:flex;align-items:center;justify-content:center;gap:26px;margin-top:12vh}.stream-lines{display:grid;gap:18px;width:210px}.stream-lines i{height:10px;border-radius:8px;background:linear-gradient(90deg,#d97757,#8a6252);box-shadow:0 0 16px #d9775744}.stream-lines.out i:nth-child(2){transform:translateX(16px)}.stream-lines.out i:nth-child(3){transform:translateX(-12px)}.streams b{display:grid;place-items:center;width:110px;height:110px;border-radius:50%;background:#ded4c8;border:2px solid #8a6252;font-size:28px}.streams strong{padding:34px 46px;border-radius:18px;background:#e9e3d8;border:2px solid #d97757;font-size:30px}.streams em{font-style:normal;font-size:42px;color:#d97757}</style></div>
+<div data-slide-id="the-model-configuration" class="slide"><h1>The model configuration</h1>
+<pre>ModelConfig(
+    vocab_size=260,
+    dim=192,
+    layers=12,
+    heads=6,
+    experts=8,
+    top_k=2,
+    streams=4,
+    max_sequence_length=192,
+)</pre></div>
+<div data-slide-id="one-hybrid-block" class="slide"><h1>One hybrid block</h1>
+<pre>def forward(self, x):
+    x = x + self.attention(self.attention_norm(x))
+
+    ffn, usage = self.moe(self.ffn_norm(x))
+
+    return x + ffn, usage</pre>
+<p>Attention reads tokens. MoE transforms them.</p></div>
+<div data-slide-id="the-input-and-output-share-one-matrix" class="slide title"><h1>The input and output share one matrix</h1>
+<pre>self.output.weight = self.embedding.weight</pre>
+<div class="tie-path"><span>read byte tokens</span><b>↔</b><span>shared weights</span><b>↔</b><span>predict next byte</span></div>
+<p>One matrix learns both token embeddings and output logits.</p>
+<style>.tie-path{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:8vh}.tie-path span{padding:28px 36px;border-bottom:3px solid #d97757;background:#e9e3d8;font-size:29px;font-weight:700}.tie-path b{font-size:46px;color:#d97757}</style></div>
+<div data-slide-id="prove-the-model-is-wired-correctly" class="slide title"><h1>Prove the model is wired correctly</h1>
+<div class="checks"><span>✓ tokenizer round-trip</span><span>✓ causal outputs</span><span>✓ 3:1 attention rhythm</span><span>✓ expert usage sums to 1</span><span>✓ active &lt; total parameters</span></div>
+<style>.checks{display:grid;grid-template-columns:repeat(2,minmax(380px,1fr));gap:24px;max-width:1050px;margin:9vh auto 0}.checks span{padding:25px 30px;border-radius:16px;background:#e9e3d8;border-left:6px solid #68785c;text-align:left;font-size:27px}.checks span:last-child{grid-column:1/3}</style></div>
+<div data-slide-id="one-pretraining-example" class="slide"><h1>One pretraining example</h1>
+<pre># Complete this Python function.
+# Return x plus one.
+def increment_qrdadnk(x):
+    return x + 1</pre>
+<p>The model sees complete Python programs.</p></div>
+<div data-slide-id="the-pretraining-step" class="slide"><h1>The pretraining step</h1>
+<pre>logits, usage = model(inputs)
+
+loss = cross_entropy(logits, labels)
+loss += 0.01 * router_balance_loss(usage)
+
+loss.backward()
+clip_grad_norm_(model.parameters(), 1.0)
+optimizer.step()</pre>
+<p>Predict → compare → backpropagate → update</p></div>
+<div data-slide-id="pretraining-makes-code-shaped-text" class="slide title"><h1>Pretraining makes code-shaped text</h1>
+<p>But the programs still fail hidden tests</p>
+<div class="bad-code"><code>return x * * 0 0</code><strong>INVALID PYTHON</strong></div>
+<style>.bad-code{display:grid;gap:35px;margin-top:10vh}.bad-code code{padding:40px 70px;border-radius:20px;background:#e9e3d8;border:2px solid #a94f3d;font-size:52px;color:#1f1f1c}.bad-code strong{font-size:32px;color:#a94f3d;letter-spacing:.08em}</style></div>
+<div data-slide-id="turn-execution-into-reward" class="slide title"><h1>Turn execution into reward</h1>
+<div class="reward-pipe"><span>generate code</span><b>→</b><span>run tests</span><b>→</b><span>score it</span><b>→</b><span>update model</span></div>
+<style>.reward-pipe{display:flex;align-items:center;justify-content:center;gap:24px;margin-top:13vh}.reward-pipe span{padding:30px 34px;border-radius:18px;background:#e9e3d8;border:2px solid #c7beb0;font-size:29px;font-weight:700}.reward-pipe span:nth-of-type(2){border-color:#d97757}.reward-pipe span:nth-of-type(3){border-color:#68785c}.reward-pipe span:nth-of-type(4){border-color:#8a6252}.reward-pipe b{font-size:43px;color:#d97757}</style></div>
+<div data-slide-id="reinforcement-learning-improves-the-attempts" class="slide title native-rl-progress"><h1>Reinforcement learning improves the attempts</h1>
+<p>The model tries many answers. As training continues, more of them work.</p>
+<div class="native-line-chart"><span class="axis-label top">50%</span><span class="axis-label bottom">0%</span><svg viewBox="0 0 900 360" role="img" aria-label="Exact rollout rate rises from 4.2 percent to 45.8 percent"><line x1="45" y1="315" x2="860" y2="315"/><line x1="45" y1="35" x2="45" y2="315"/><polyline points="45,292 180,270 315,226 450,190 585,142 720,91 860,58"/><circle cx="45" cy="292" r="9"/><circle cx="860" cy="58" r="11"/></svg><b class="line-start">4.2%</b><b class="line-end">45.8%</b></div>
+<small class="source-note">Exact rollout rate on dev · 1,536 sampled programs</small></div>
+<div data-slide-id="before-and-after-reinforcement-learning" class="slide title native-before-after"><h1>Before and after reinforcement learning</h1>
+<p>We gave the model the same unseen problems before and after training.</p>
+<div class="native-result-bars"><div><span>BEFORE RL</span><i style="--height:2px"></i><strong>0 / 24</strong></div><b>→</b><div class="after"><span>AFTER RL</span><i style="--height:32vh"></i><strong>16 / 24</strong></div></div>
+<small class="source-note">Same tasks · same generation settings · three trained coding families</small></div>
+<div data-slide-id="the-same-prompt-before-and-after-rl" class="slide title sampled-before-after"><h1>The same prompt before and after RL</h1>
+<p><code># Return two times x.</code></p>
+<div class="code-comparison"><div class="failed"><span>BEFORE RL · FAIL</span><code>return x * x</code></div><b>→</b><div class="passed"><span>AFTER RL · PASS</span><code>return x * 2</code></div></div>
+<small class="source-note">Exact sampled outputs from the immutable confirmation receipts</small></div>
+<div data-slide-id="the-reward-is-executable" class="slide title"><h1>The reward is executable</h1>
+<div class="reward-values"><div class="pass"><b>+1</b><span>all tests pass</span></div><div><b>0</b><span>valid but wrong</span></div><div class="invalid"><b>−0.1</b><span>invalid Python</span></div></div>
+<style>.reward-values{display:flex;justify-content:center;gap:30px;margin-top:11vh}.reward-values>div{display:grid;gap:18px;width:310px;padding:38px 24px;border-radius:20px;background:#e9e3d8;border:2px solid #c7beb0}.reward-values b{font-size:66px}.reward-values span{font-size:25px;color:#6f675c}.reward-values .pass{border-color:#68785c}.reward-values .pass b{color:#68785c}.reward-values .invalid{border-color:#a94f3d}.reward-values .invalid b{color:#a94f3d}</style></div>
+<div data-slide-id="the-verifier-runs-hidden-tests" class="slide"><h1>The verifier runs hidden tests</h1>
+<pre>tree = validate_source(source, task.entry_point)
+exec(compile(tree, &quot;candidate.py&quot;, &quot;exec&quot;), namespace)
+function = namespace[task.entry_point]
+
+for arguments, expected in task.cases:
+    actual = function(*arguments)
+    passed += int(type(actual) is type(expected)
+                  and actual == expected)</pre>
+<p>Unsafe syntax and imports are rejected before execution.</p></div>
+<div data-slide-id="generate-16-attempts-for-one-prompt" class="slide title"><h1>Generate 16 attempts for one prompt</h1>
+<div class="rollouts"><span class="good">+1</span><span>0</span><span class="bad">−.1</span><span>0</span><span class="good">+1</span><span>0</span><span>0</span><span class="good">+1</span><span>0</span><span class="bad">−.1</span><span class="good">+1</span><span>0</span><span>0</span><span class="good">+1</span><span>0</span><span class="bad">−.1</span></div>
+<style>.rollouts{display:grid;grid-template-columns:repeat(8,82px);gap:18px;justify-content:center;margin-top:10vh}.rollouts span{display:grid;place-items:center;width:82px;height:82px;border-radius:50%;background:#e9e3d8;border:2px solid #b8aea0;color:#6f675c;font-size:24px;font-weight:800}.rollouts .good{border-color:#68785c;background:#dce3d7;color:#68785c;box-shadow:0 0 22px #68785c44}.rollouts .bad{border-color:#a94f3d;background:#ead7d0;color:#a94f3d}</style></div>
+<div data-slide-id="compare-each-attempt-with-the-others" class="slide title"><h1>Compare each attempt with the others</h1>
+<div class="advantage"><code>advantageᵢ = rewardᵢ − mean(other rewards)</code><div><span class="up">better → more likely</span><span class="down">worse → less likely</span></div></div>
+<style>.advantage{display:grid;gap:60px;margin-top:11vh}.advantage code{padding:38px 55px;border-radius:20px;background:#e9e3d8;border:2px solid #8a6252;font-size:40px}.advantage>div{display:flex;justify-content:center;gap:35px}.advantage span{padding:22px 32px;border-radius:14px;font-size:27px;font-weight:700}.advantage .up{background:#dce3d7;color:#68785c}.advantage .down{background:#ead7d0;color:#a94f3d}</style></div>
+<div data-slide-id="update-only-2-19m-parameters" class="slide title"><h1>Update only 2.19M parameters</h1>
+<p>Last block + final normalization + tied output head</p>
+<div class="train-scope"><div class="frozen"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="trainable">block 12</div><b>→</b><div class="head">output head</div></div>
+<style>.train-scope{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:10vh}.frozen{display:flex;gap:7px}.frozen span{width:28px;height:95px;border-radius:7px;background:#c7beb0;border:2px solid #b8aea0}.trainable,.head{display:grid;place-items:center;height:112px;padding:0 28px;border-radius:14px;background:#dce3d7;border:2px solid #68785c;color:#68785c;font-size:25px;font-weight:800;box-shadow:0 0 28px #68785c44}.train-scope b{font-size:42px;color:#d97757}</style></div>
+<div data-slide-id="the-rloo-update" class="slide"><h1>The RLOO update</h1>
+<pre>generations = generate_group(model, task, group_size=16)
+rewards = [reward_for(task, g) for g in generations]
+advantages = leave_one_out(rewards)
+
+log_probs = completion_log_probabilities(model, generations)
+loss = -(advantages * log_probs).mean()
+
+loss.backward()
+optimizer.step()</pre>
+<p>No reference completion is shown during RL.</p></div>
+<div data-slide-id="open-the-confirmation-set-once" class="slide title"><h1>Open the confirmation set once</h1>
+<div class="split-lock"><div><span>TRAIN</span><b>learn</b></div><i>→</i><div><span>DEV</span><b>choose checkpoint</b></div><i>→</i><div class="locked"><span>CONFIRM</span><b>🔒 unseen tasks</b></div></div>
+<style>.split-lock{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:12vh}.split-lock>div{display:grid;gap:15px;width:260px;padding:32px;border-radius:18px;background:#e9e3d8;border:2px solid #c7beb0}.split-lock span{font-size:30px;font-weight:800;color:#d97757}.split-lock b{font-size:22px;color:#6f675c}.split-lock i{font-style:normal;font-size:45px;color:#d97757}.split-lock .locked{border-color:#68785c}.split-lock .locked span{color:#68785c}</style></div>
+<div data-slide-id="the-gains-are-not-uniform" class="slide title"><h1>The gains are not uniform</h1>
+<img src="assets/family-results.png" alt="Per-family measured results" style="max-height:58vh;max-width:88vw;width:auto"></div>
+<div data-slide-id="what-changed" class="slide title"><h1>What changed</h1>
+<div class="family-summary"><span class="gain">increment ↑</span><span class="gain">double ↑</span><span class="flat">even –</span><span class="loss">square ↓</span><span class="loss">list sum ↓</span></div>
+<style>.family-summary{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;max-width:1100px;margin:13vh auto 0}.family-summary span{padding:26px 34px;border-radius:16px;background:#e9e3d8;border:2px solid #c7beb0;font-size:30px;font-weight:800}.family-summary .gain{border-color:#68785c;color:#68785c}.family-summary .flat{border-color:#8a6252;color:#8a6252}.family-summary .loss{border-color:#a94f3d;color:#a94f3d}</style></div>
+<div data-slide-id="the-result" class="slide title"><h1>The result</h1>
+<p>Executable feedback made narrow coding behaviors more reliable</p>
+<div class="result-final"><strong>0 / 24</strong><b>→</b><strong>16 / 24</strong></div>
+<style>.result-final{display:flex;justify-content:center;align-items:center;gap:55px;margin-top:10vh}.result-final strong{font-size:92px}.result-final strong:last-child{color:#68785c;text-shadow:0 0 35px #68785c55}.result-final b{font-size:70px;color:#d97757}</style></div>
+<div data-slide-id="which-rl-choice-works-best" class="slide title rl-ablation-screen"><h1>Which RL choice works best?</h1>
+<p>Same checkpoint · same data · exactly 128 sampled programs per arm</p>
+<div class="ablation-bars">
+  <div><span>binary</span><i style="--height:23.5vh">5</i></div>
+  <div><span>partial reward</span><i style="--height:23.5vh">5</i></div>
+  <div><span>no invalid penalty</span><i style="--height:23.5vh">5</i></div>
+  <div><span>hard invalid penalty</span><i style="--height:23.5vh">5</i></div>
+  <div><span>temperature .20</span><i style="--height:32.9vh">7</i></div>
+  <div><span>temperature .80</span><i style="--height:28.2vh">6</i></div>
+  <div class="screen-winner"><span>group size 4</span><i style="--height:37.6vh">8</i></div>
+  <div><span>group size 16</span><i style="--height:28.2vh">6</i></div>
+</div>
+<small class="source-note">Dev tasks solved out of 20 · exploratory screen</small></div>
+<div data-slide-id="the-apparent-winner-did-not-replicate" class="slide title rl-confirmation-study"><h1>The apparent winner did not replicate</h1>
+<p>Group size 4 looked best on dev. Fresh seeds reversed the conclusion.</p>
+<table class="confirmation-table"><thead><tr><th>Training seed</th><th>Group 8</th><th>Group 4</th><th>Difference</th></tr></thead><tbody><tr><td>31415</td><td>12 / 40</td><td>13 / 40</td><td class="positive">+1</td></tr><tr><td>27182</td><td>14 / 40</td><td>13 / 40</td><td class="negative">−1</td></tr><tr><td>16180</td><td>11 / 40</td><td>8 / 40</td><td class="negative">−3</td></tr></tbody></table>
+<div class="confidence-interval"><span>95% interval</span><b>−6.7%</b><i></i><b>+1.7%</b><strong>crosses zero</strong></div>
+<small class="source-note">40 untouched executable tasks · paired evaluation · three RL seeds</small></div>
+<div data-slide-id="a-dev-win-is-not-a-discovery" class="slide title rl-research-conclusion"><h1>A dev win is not a discovery</h1>
+<div class="research-verdict"><div><span>SCREEN</span><strong>8 / 20</strong><small>group 4 looked best</small></div><b>→</b><div class="rejected"><span>CONFIRM</span><strong>11.3 vs 12.3</strong><small>lost on average</small></div></div>
+<p>None of the four RL changes produced statistically significant improvement.</p>
+<small class="source-note">Next question: does temperature 0.20 replicate across fresh seeds?</small></div>
+<style>
+  .intro-roadmap { display:flex; align-items:center; justify-content:center; gap:18px; width:min(94vw,1450px); margin:8vh auto 0; }
+  .intro-roadmap>span { display:grid; gap:10px; width:250px; min-height:170px; align-content:center; padding:25px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .intro-roadmap>span:last-of-type { border-top-color:var(--olive); }
+  .intro-roadmap b { color:var(--muted); font-size:18px; }
+  .intro-roadmap strong { color:var(--ink) !important; font:700 34px/1.1 Georgia,serif; }
+  .intro-roadmap small { color:var(--muted); font-size:17px; line-height:1.35; }
+  .intro-roadmap>i { color:var(--accent); font-style:normal; font-size:34px; }
+  .intro-outcomes { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; width:min(90vw,1320px); margin:8vh auto 4vh; }
+  .intro-outcomes>span { display:grid; gap:18px; align-content:center; min-height:230px; padding:35px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .intro-outcomes>span:last-child { border-top-color:var(--olive); }
+  .intro-outcomes strong { color:var(--ink) !important; font:700 34px/1.15 Georgia,serif; }
+  .intro-outcomes small { color:var(--muted); font-size:20px; line-height:1.45; }
+  .intro-outcomes-slide>p { max-width:46em; }
+  .research-preview-slide { padding:4vh 6vw !important; }
+  .research-preview-slide>p { margin-top:0; }
+  .research-preview-grid { display:grid; grid-template-columns:1fr 1fr; gap:26px; width:min(92vw,1360px); height:63vh; margin:2vh auto 0; }
+  .research-preview-grid figure { display:grid; grid-template-rows:auto minmax(0,1fr) auto; min-height:0; margin:0; padding:25px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
+  .research-preview-grid figure:last-child { border-top-color:var(--olive); }
+  .research-preview-grid figcaption { color:var(--ink); font:700 22px/1.3 Georgia,serif; text-align:left; }
+  .research-preview-grid figure>small { color:var(--muted); font-size:15px; text-align:left; }
+  .preview-line-chart { position:relative; min-height:0; }
+  .preview-line-chart svg { width:100%; height:100%; overflow:visible; }
+  .preview-line-chart line { stroke:var(--line); stroke-width:2; }
+  .preview-line-chart polyline { fill:none; stroke:var(--accent); stroke-width:8; stroke-linecap:round; stroke-linejoin:round; }
+  .preview-line-chart circle { fill:var(--accent); stroke:var(--soft); stroke-width:4; }
+  .preview-line-chart>span { position:absolute; left:0; top:7%; color:var(--muted); font-size:14px; }
+  .preview-line-chart>b { position:absolute; color:var(--ink) !important; font:700 28px/1 Georgia,serif; }
+  .preview-start { left:2%; bottom:8%; }.preview-end { right:2%; top:11%; color:#efb19a !important; }
+  .preview-result-bars { display:grid; grid-template-columns:1fr auto 1fr; align-items:end; justify-content:center; gap:32px; min-height:0; padding:30px 28px 0; }
+  .preview-result-bars>div { display:grid; grid-template-rows:auto 1fr auto; align-items:end; gap:10px; height:100%; }
+  .preview-result-bars span { color:var(--muted); font:700 14px/1 Arial,sans-serif; letter-spacing:.12em; }
+  .preview-result-bars i { width:150px; align-self:end; background:#342824; border-top:5px solid var(--accent); }
+  .preview-result-bars .after i { background:#303324; border-color:var(--olive); }
+  .preview-result-bars strong { color:var(--ink) !important; font:700 40px/1 Georgia,serif; }
+  .preview-result-bars>b { align-self:center; color:var(--accent); font-size:46px; }
+  .research-variable-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; width:min(92vw,1400px); margin:7vh auto 0; }
+  .research-variable-grid>span { display:grid; align-content:center; gap:13px; min-height:235px; padding:27px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .research-variable-grid>span:last-child { border-top-color:var(--olive); }
+  .research-variable-grid b { color:var(--muted); font:700 14px/1 Arial,sans-serif; letter-spacing:.13em; }
+  .research-variable-grid strong { color:var(--ink) !important; font:700 30px/1.15 Georgia,serif; }
+  .research-variable-grid small { color:var(--muted); font-size:17px; line-height:1.4; }
+  .research-control-visual { display:grid; grid-template-columns:1.15fr auto 1fr; align-items:stretch; gap:26px; width:min(88vw,1260px); margin:7vh auto 0; }
+  .research-control-visual>section { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:30px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--olive); }
+  .research-control-visual>section>b { grid-column:1/-1; color:var(--muted); font:700 15px/1 Arial,sans-serif; letter-spacing:.13em; text-align:left; }
+  .research-control-visual>section>span { display:grid; place-items:center; min-height:65px; padding:12px; background:#303324; border:1px solid var(--olive); font-size:18px; }
+  .research-control-visual>i { align-self:center; color:var(--accent); font-style:normal; font-size:48px; }
+  .research-control-visual>.changed { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; border-top-color:var(--accent); }
+  .research-control-visual>.changed>b { grid-column:1/-1; }
+  .research-control-visual>.changed strong { color:var(--ink) !important; font-size:21px; }
+  .research-control-visual>.changed em { color:var(--muted); font-size:14px; }
+  .research-verification-flow { display:flex; align-items:stretch; justify-content:center; gap:16px; width:min(94vw,1450px); margin:7vh auto 3vh; }
+  .research-verification-flow>span { display:grid; align-content:center; gap:10px; width:240px; min-height:190px; padding:25px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .research-verification-flow>.decision { border-top-color:var(--olive); }
+  .research-verification-flow b { color:var(--muted); font-size:16px; }
+  .research-verification-flow strong { color:var(--ink) !important; font:700 27px/1.15 Georgia,serif; }
+  .research-verification-flow small { color:var(--muted); font-size:16px; line-height:1.35; }
+  .research-verification-flow>i { align-self:center; color:var(--accent); font-style:normal; font-size:32px; }
+  .research-decision { display:flex; justify-content:center; gap:18px; }
+  .research-decision>span { padding:15px 22px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:16px; }
+  .research-decision>span:first-child { border-color:var(--olive); }.research-decision>span:last-child { border-color:var(--danger); }
+  .research-decision b { color:var(--ink); }
+  .vision-scale-path { display:flex; align-items:stretch; justify-content:center; gap:13px; width:min(95vw,1500px); margin:7vh auto 3vh; }
+  .vision-scale-path>span { display:grid; align-content:center; gap:10px; width:205px; min-height:205px; padding:24px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .vision-scale-path>.vision-lm { border-top-color:var(--olive); }
+  .vision-scale-path span>b { color:var(--muted); font:700 13px/1 Arial,sans-serif; letter-spacing:.12em; }
+  .vision-scale-path span>strong { color:var(--ink) !important; font:700 26px/1.15 Georgia,serif; }
+  .vision-scale-path span>small { color:var(--muted); font-size:15px; line-height:1.35; }
+  .vision-scale-path>i { align-self:center; color:var(--accent); font-style:normal; font-size:30px; }
+  .vision-scale-note { display:flex; justify-content:center; gap:18px; }
+  .vision-scale-note span { padding:12px 18px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:15px; }
+  .vision-mechanism { display:flex; align-items:stretch; justify-content:center; gap:13px; width:min(96vw,1510px); margin:7vh auto 3vh; }
+  .vision-mechanism>span { display:grid; align-content:center; gap:13px; width:190px; min-height:225px; padding:20px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
+  .vision-mechanism>span:last-child { border-top-color:var(--olive); }
+  .vision-mechanism span>small { color:var(--muted); font:700 13px/1 Arial,sans-serif; letter-spacing:.11em; }
+  .vision-mechanism>b { align-self:center; color:var(--accent); font-size:28px; }
+  .vision-image svg { width:120px; height:120px; margin:auto; border:1px solid var(--line); }
+  .vision-patches>i { display:block; width:132px; height:132px; margin:auto;
+    background:repeating-linear-gradient(0deg,transparent 0 15px,var(--line) 15px 16px),repeating-linear-gradient(90deg,#2b211e 0 15px,var(--line) 15px 16px); }
+  .vision-blocks>i { display:grid; place-items:center; min-height:55px; border:1px solid var(--accent); color:var(--ink); font-style:normal; font-size:16px; }
+  .vision-merge>i { display:block; width:132px; height:132px; margin:auto;
+    background:repeating-linear-gradient(0deg,transparent 0 31px,var(--olive) 31px 33px),repeating-linear-gradient(90deg,#303324 0 31px,var(--olive) 31px 33px); }
+  .vision-tokens { grid-template-columns:repeat(4,1fr); align-items:center; }
+  .vision-tokens small { grid-column:1/-1; }.vision-tokens i { display:block; width:25px; height:25px; background:var(--olive); opacity:.82; }
+  .vision-sequence { display:flex; align-items:center; justify-content:center; gap:11px; margin:8vh auto 4vh; }
+  .vision-sequence>span { display:grid; place-items:center; min-height:92px; padding:18px 24px; background:var(--soft);
+    border:1px solid var(--line); font:700 18px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .vision-sequence>.boundary { border-color:var(--accent); color:#efb19a; }
+  .vision-sequence>.visual { min-width:270px; border-color:var(--olive); color:#bcc39c; background:#303324; }
+  .vision-sequence>.answer { min-width:75px; color:#151513; background:var(--olive); font-size:34px; }
+  .vision-sequence>b { color:var(--accent); font-size:38px; }
+  .vision-scatter { display:flex; justify-content:center; align-items:center; gap:20px; color:var(--muted); font-size:16px; }
+  .vision-scatter>b { color:var(--accent); }.vision-sequence-slide pre { margin:4vh auto 0; font-size:.56em; }
+  .vision-training-visual { display:grid; grid-template-columns:1fr auto 1fr; align-items:stretch; gap:28px; width:min(86vw,1250px); margin:7vh auto 4vh; }
+  .vision-training-visual>section { display:grid; gap:12px; padding:28px; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .vision-training-visual>.heldout { border-top-color:var(--olive); }
+  .vision-training-visual section>b { color:var(--muted); font:700 14px/1 Arial,sans-serif; letter-spacing:.12em; }
+  .vision-training-visual section>strong { color:var(--ink) !important; font:700 29px/1.1 Georgia,serif; }
+  .vision-training-visual section>small { color:var(--muted); font-size:16px; }
+  .vision-training-visual>i { align-self:center; color:var(--accent); font-style:normal; font-size:40px; }
+  .vision-digit-row { display:flex; gap:12px; margin-top:8px; }.vision-digit-row i { display:grid; place-items:center; width:62px; height:62px;
+    background:#2b211e; border:1px solid var(--line); color:#efb19a; font:700 33px/1 ui-monospace,SFMono-Regular,Menlo,monospace; font-style:normal; }
+  .heldout .vision-digit-row i { background:#303324; color:#bcc39c; }
+  .vision-training-facts { display:flex; justify-content:center; gap:13px; }.vision-training-facts span { padding:12px 17px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:15px; }
+  .vision-result-slide h1 { max-width:760px; margin-right:auto; text-align:left; font-size:56px; }
+  .vision-result-bars { display:grid; grid-template-columns:repeat(3,220px); align-items:end; justify-content:center; gap:55px; margin:2.5vh auto 2vh; }
+  .vision-result-bars>div { display:grid; grid-template-rows:auto 150px auto auto; align-items:end; gap:7px; }
+  .vision-result-bars span { color:var(--muted); font:700 13px/1 Arial,sans-serif; letter-spacing:.11em; }
+  .vision-result-bars i { display:block; width:200px; height:var(--score); align-self:end; background:#342824; border-top:5px solid var(--accent); }
+  .vision-result-bars .faithful i { background:#342824; }.vision-result-bars .baseline i { background:#303324; border-color:var(--olive); }
+  .vision-result-bars strong { color:var(--ink) !important; font:700 42px/1 Georgia,serif; }.vision-result-bars small { color:var(--muted); font-size:15px; }
+  .vision-result-conclusion { display:inline-block; padding:14px 22px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:17px; }
+  .vision-result-conclusion strong { color:var(--ink) !important; }
+  [data-slide-id="the-attention-rhythm-in-code"] { padding-top:2vh; padding-bottom:6vh; }
+  [data-slide-id="the-attention-rhythm-in-code"] h1 { font-size:1.45em; margin-bottom:.15em; }
+  [data-slide-id="the-attention-rhythm-in-code"] p { margin:.1em 0 .45em; font-size:.82em; }
+  [data-slide-id="the-attention-rhythm-in-code"] pre { margin:.25em 0 0; font-size:.56em; line-height:1.38; }
+  .intro-flow { display:flex; align-items:center; justify-content:center; gap:28px; margin-top:11vh; }
+  .intro-flow span { padding:30px 38px; border:2px solid #c7beb0; background:#e9e3d8;
+    border-radius:8px; font-size:28px; font-weight:750; }
+  .intro-flow span:last-of-type { border-color:#68785c; }
+  .intro-flow b { color:#d97757; font-size:44px; }
+  .scale-compare { display:flex; align-items:center; justify-content:center; gap:55px; margin-top:8vh; }
+  .scale-compare > div { display:grid; gap:12px; min-width:310px; padding:35px 45px;
+    border:2px solid #c7beb0; background:#e9e3d8; border-radius:8px; }
+  .scale-compare > div.teaching { border-color:#d97757; }
+  .scale-compare span { color:#6f675c; font-size:18px; letter-spacing:.12em; font-weight:800; }
+  .scale-compare strong { font-size:68px; line-height:1; }
+  .scale-compare small { color:#6f675c; font-size:20px; }
+  .scale-compare > b { color:#d97757; font-size:50px; }
+  .frontier-work-grid { width:min(1180px, 88vw); display:grid; grid-template-columns:1.15fr .85fr;
+    align-items:center; gap:44px; margin-top:2vh; text-align:left; }
+  .frontier-work-grid img { width:100%; max-width:none !important; max-height:58vh !important;
+    object-fit:contain; margin:0; border-radius:8px; }
+  .frontier-work-grid p { text-align:left !important; font-size:24px; margin:0 0 20px; }
+  .frontier-work-grid ul { margin:0; padding-left:1.1em; font-size:26px; line-height:1.45; }
+  .frontier-work-grid li { margin:.45em 0; }
+  .frontier-statement { display:grid; gap:20px; }
+  .frontier-statement p { margin:0; line-height:1.42; }
+  .frontier-statement p:first-child { font-size:25px; }
+  .frontier-statement p:not(:first-child) { font-size:21px; }
+  .teaching-loop { width:min(1260px, 92vw); display:flex; align-items:stretch; justify-content:center;
+    gap:14px; margin-top:8vh; }
+  .teaching-loop > span { min-width:150px; display:flex; flex-direction:column; justify-content:center;
+    gap:9px; padding:25px 20px; border:2px solid #c7beb0; background:#e9e3d8;
+    border-radius:8px; font-size:23px; font-weight:750; }
+  .teaching-loop > span:first-child { min-width:260px; border-color:#d97757; }
+  .teaching-loop small { color:#6f675c; font-size:15px; font-weight:500; }
+  .teaching-loop b { align-self:center; color:#d97757; font-size:36px; }
+  .course-halves { display:flex; align-items:center; justify-content:center; gap:38px; margin-top:8vh; }
+  .course-halves>div { display:grid; gap:14px; min-width:390px; padding:38px 42px;
+    border:2px solid #c7beb0; background:#e9e3d8; border-radius:8px; text-align:left; }
+  .course-halves>div:last-child { border-color:#d97757; }
+  .course-halves span { color:#6f675c; font-size:17px; font-weight:800; letter-spacing:.12em; }
+  .course-halves strong { font-size:34px; }
+  .course-halves small { color:#6f675c; font-size:19px; }
+  .course-halves>b { color:#d97757; font-size:50px; }
+  .architecture-map { display:grid; grid-template-columns:repeat(4,1fr); gap:18px;
+    width:min(1250px,92vw); margin-top:8vh; }
+  .architecture-map>span { display:grid; gap:12px; padding:30px 22px; border:2px solid #c7beb0;
+    background:#e9e3d8; border-radius:8px; font-size:25px; font-weight:750; }
+  .architecture-map b { color:#d97757; font-size:42px; }
+  .architecture-map small { color:#6f675c; font-size:17px; font-weight:500; }
+  .model-summary table { margin:2vh auto; }
+  .model-summary p { max-width:44em; }
+  .byte-row .space { font-size:16px; font-weight:800; letter-spacing:.08em; }
+</style>
+<style id="anthropic-editorial-theme">
+  :root { --paper:#f4f1e8; --ink:#1f1f1c; --muted:#6f675c; --line:#c7beb0;
+    --soft:#e9e3d8; --accent:#d97757; --accent-dark:#8a6252; }
+  html, body { background:var(--paper); color:var(--ink); }
+  .slide, .slide.bg0, .slide.bg1, .slide.bg2, .slide.bg3 { background:var(--paper) !important; }
+  .bg1::before, .bg2::before, .bg3::before, .orb { display:none !important; }
+  .slide * { box-shadow:none !important; text-shadow:none !important; }
+  h1, h2 { background:none !important; color:var(--ink) !important;
+    -webkit-text-fill-color:var(--ink) !important; }
+  h2 { color:var(--accent) !important; }
+  h2::after { background:var(--accent); }
+  p { color:var(--muted); }
+  strong { color:var(--accent-dark); }
+  img { border:1px solid var(--line); border-radius:4px; }
+  pre { color:var(--paper); background:#262521; border:0; border-left:6px solid var(--accent);
+    border-radius:2px; padding:1.15em 1.4em; }
+  code { color:#5f392d; background:#ead4c7; border-radius:2px; }
+  th { color:var(--accent-dark); }
+  th, td { border-color:var(--line); }
+  .lm-state, .stream-lines i { background:var(--soft) !important; }
+  .nav button { color:var(--ink); background:transparent; border-color:var(--line); border-radius:2px; }
+  .nav button:hover { color:var(--paper); background:var(--ink); }
+  #bar { background:var(--accent); }
+  .source-note { margin-top:.5em; color:var(--muted); font-size:.52em; }
+  .research-lab-ad .in { justify-content:center; }
+  .lab-ad-flow { display:flex; align-items:center; justify-content:center; gap:22px; width:min(90vw,1400px); margin:5vh auto 3vh; }
+  .lab-ad-flow span { display:flex; align-items:center; gap:18px; min-height:90px; padding:20px 28px; background:#ece6dc; border:1px solid #c8bdae; color:#24231f; }
+  .lab-ad-flow span b { display:grid; place-items:center; flex:0 0 42px; height:42px; border-radius:50%; background:var(--accent); color:#fff; font-size:.55em; }
+  .lab-ad-flow span strong { color:#24231f; font-size:.62em; white-space:nowrap; }
+  .lab-ad-flow > i { color:var(--accent); font-size:.9em; font-style:normal; }
+  .school-cta { display:inline-block; padding:.35em .75em; border-bottom:4px solid var(--accent);
+    color:var(--accent-dark); font-size:.9em; font-weight:700; text-decoration:none; }
+  #filmstrip-panel { position:fixed; z-index:200; left:0; right:0; bottom:0; height:476px;
+    display:grid; grid-template-rows:44px minmax(0,1fr); background:rgba(244,241,232,.99);
+    border-top:1px solid var(--line); transform:translateY(calc(100% - 44px));
+    transition:transform .24s cubic-bezier(.2,.75,.25,1); }
+  #filmstrip-panel:hover, #filmstrip-panel:focus-within, body.thumbnails-pinned #filmstrip-panel {
+    transform:translateY(0); }
+  #filmstrip-head { display:flex; align-items:center; gap:14px; padding:0 16px;
+    border-bottom:1px solid var(--line); font:700 12px/1 Arial,sans-serif; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--muted); cursor:default; }
+  #filmstrip-head strong { color:var(--ink); font-size:12px; }
+  #filmstrip-head .hint { margin-right:auto; font-weight:400; letter-spacing:0; text-transform:none; }
+  #filmstrip { display:grid; grid-template-columns:repeat(auto-fit, 176px); grid-auto-rows:99px;
+    justify-content:center; align-content:start; gap:8px; padding:10px 14px 16px;
+    overflow:auto; scrollbar-width:thin; }
+  #thumb-toggle { min-width:58px; height:27px; padding:0 9px; border:1px solid var(--line);
+    background:var(--paper); color:var(--ink); cursor:pointer; font:700 11px/1 Arial,sans-serif; }
+  .film-thumb { position:relative; width:176px; height:99px; overflow:hidden;
+    background:var(--paper); border:2px solid var(--line); cursor:pointer; }
+  .film-thumb.active { border-color:var(--accent); outline:2px solid rgba(217,119,87,.22); }
+  .film-thumb.dragging { opacity:.42; }
+  .thumb-preview { position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  .thumb-canvas { position:absolute !important; left:0 !important; top:0 !important; width:1920px !important;
+    height:1080px !important; min-height:1080px !important; display:flex !important; transform:scale(.0917);
+    transform-origin:top left; padding:6vh 11vw; }
+  .thumb-canvas.title { padding:4vh 8vw; }
+  .thumb-canvas .in { animation:none !important; transition:none !important; }
+  .thumb-controls { position:absolute; z-index:5; top:3px; right:3px; display:flex; gap:3px; }
+  .thumb-controls button { width:24px; height:22px; padding:0; border:0; background:var(--ink);
+    color:var(--paper); font:700 13px/1 Arial,sans-serif; cursor:pointer; }
+  .thumb-number { position:absolute; z-index:5; left:3px; bottom:3px; min-width:22px; padding:2px 5px;
+    background:var(--ink); color:var(--paper); font:700 11px/1.25 Arial,sans-serif; text-align:center; }
+  #save-toast { position:fixed; z-index:220; right:18px; bottom:54px; padding:7px 11px;
+    background:var(--ink); color:var(--paper); font:700 12px/1 Arial,sans-serif; opacity:0;
+    transform:translateY(5px); transition:opacity .2s,transform .2s; pointer-events:none; }
+  #save-toast.on { opacity:1; transform:none; }
+  [data-edit-element-id] { transition:outline-color .12s, opacity .12s; }
+  [data-edit-element-id].element-hovered { outline:2px solid var(--danger) !important;
+    outline-offset:5px; cursor:crosshair; }
+  .element-deleted { display:none !important; }
+  #element-delete-hint { position:fixed; z-index:260; display:none; padding:7px 10px;
+    background:var(--danger); color:#151513; font:800 12px/1 Arial,sans-serif;
+    letter-spacing:.03em; pointer-events:auto; cursor:pointer; transform:translate(-100%,-92%); }
+  #element-delete-hint.on { display:block; }
+  #edit-toast { position:fixed; z-index:260; left:50%; bottom:58px; padding:9px 14px;
+    background:#0e0e0d; color:var(--ink); border:1px solid var(--line);
+    font:700 12px/1 Arial,sans-serif; opacity:0; transform:translate(-50%,8px);
+    transition:opacity .18s,transform .18s; pointer-events:none; }
+  #edit-toast.on { opacity:1; transform:translate(-50%,0); }
+  .nav { display:none; }
+  #n { z-index:210; bottom:54px; right:2.5vw; }
+  #bar { z-index:210; }
+  @media print {
+    html, body { overflow:visible; }
+    .slide { display:flex !important; break-after:page; page-break-after:always; }
+    .nav, #bar, #n, .orb, #filmstrip-panel, #thumb-toggle, #save-toast,
+    #element-delete-hint, #edit-toast { display:none !important; }
+  }
+</style>
+<style id="dark-editorial-theme">
+  :root {
+    --paper:#151513; --ink:#f0ece3; --muted:#aaa397; --line:#3d3a34;
+    --soft:#24231f; --accent:#d97757; --accent-dark:#e39a7e;
+    --olive:#9aa17b; --danger:#cf7666;
+  }
+  html, body, .slide, .slide.bg0, .slide.bg1, .slide.bg2, .slide.bg3 {
+    background:#151513 !important; color:var(--ink) !important;
+  }
+  h1, h2 { color:var(--ink) !important; -webkit-text-fill-color:var(--ink) !important; }
+  h2, strong { color:var(--accent-dark) !important; }
+  p, em, small, .source-note { color:var(--muted) !important; }
+  img { border-color:var(--line) !important; }
+  pre { background:#0e0e0d !important; color:#eee9df !important; border-left-color:var(--accent) !important; }
+  code { background:#2b211e !important; color:#efb19a !important; }
+  th { color:var(--accent-dark) !important; }
+  th, td { border-color:var(--line) !important; }
+
+  .intro-flow span, .scale-compare>div, .teaching-loop>span, .course-halves>div, .architecture-map>span {
+    background:#f0ece3 !important; color:#1f1f1c !important; border-color:#b8b0a4 !important;
+  }
+  .intro-flow span:last-of-type, .scale-compare>div.teaching, .teaching-loop>span:first-child,
+  .course-halves>div:last-child, .architecture-map>span:first-child {
+    border-color:var(--accent) !important;
+  }
+  .scale-compare span, .scale-compare small, .teaching-loop small,
+  .course-halves span, .course-halves small, .architecture-map small { color:#6f675c !important; }
+  .scale-compare strong, .teaching-loop>span, .course-halves strong { color:#1f1f1c !important; }
+
+  .token-row span, .data-path span, .rope-path span, .layer-stack>div,
+  .lm-tokens span, .lm-state, .sparse-row span, .moe-token, .moe-router,
+  .experts span, .experts strong, .streams b, .streams strong,
+  .checks span, .next-token>div, .reward-pipe span, .reward-values>div,
+  .rollouts span, .advantage code, .train-scope .frozen span,
+  .split-lock>div, .family-summary span {
+    background:var(--soft) !important; border-color:var(--line) !important; color:var(--ink) !important;
+  }
+  .nn-node { fill:#24231f !important; stroke:var(--accent) !important; }
+  .nn-spark { fill:#f0ece3 !important; }
+  .token-row.ids span, .data-path b, .rope-path b, .lm-arrows,
+  .moe-arrow, .streams em, .train-scope b, .split-lock i {
+    color:var(--accent) !important;
+  }
+  .layer-stack span { background:#2b211e !important; border-color:var(--accent) !important; color:#efb19a !important; }
+  .layer-stack .sparse, .sparse-row .anchor, .moe-router, .experts strong, .streams b {
+    background:#29241f !important; border-color:#9b7d6e !important; color:#d3b7a8 !important;
+  }
+  .tie-path span { background:var(--soft) !important; border-color:var(--accent) !important; color:var(--ink) !important; }
+  .sparse-row .local { background:#2b211e !important; border-color:var(--accent) !important; color:#efb19a !important; }
+  .sparse-row .current, .experts .on, .reward-values .pass,
+  .rollouts .good, .trainable, .head, .split-lock .locked, .family-summary .gain {
+    background:#25291f !important; border-color:var(--olive) !important; color:#bcc39c !important;
+  }
+  .reward-values .invalid, .rollouts .bad, .family-summary .loss {
+    background:#2b1f1d !important; border-color:var(--danger) !important; color:#e69a8d !important;
+  }
+  .family-summary .flat { background:#29241f !important; border-color:#9b7d6e !important; color:#d3b7a8 !important; }
+  .advantage .up { background:#25291f !important; color:#bcc39c !important; }
+  .advantage .down { background:#2b1f1d !important; color:#e69a8d !important; }
+  .result-final strong:last-child { color:#bcc39c !important; }
+  .stream-lines i { background:var(--accent) !important; }
+
+  #filmstrip-panel { background:rgba(21,21,19,.985) !important; border-color:var(--line) !important; }
+  #filmstrip-head { border-color:var(--line) !important; color:var(--muted) !important; }
+  #filmstrip-head strong { color:var(--ink) !important; }
+  #thumb-toggle, .nav button { background:#1d1c19 !important; color:var(--ink) !important; border-color:var(--line) !important; }
+  #thumb-toggle:hover, .nav button:hover { background:var(--accent) !important; color:#151513 !important; }
+  .film-thumb { background:#151513 !important; border-color:#48443d !important; }
+  .film-thumb.active { border-color:var(--accent) !important; outline-color:rgba(217,119,87,.35) !important; }
+  .thumb-controls button, .thumb-number, #save-toast { background:#0e0e0d !important; color:var(--ink) !important; }
+  #n { color:#8d877c !important; }
+  .research-lab-ad .school-cta { color:#f0ece3 !important; border-color:#efb19a !important; }
+  .research-lab-ad .lab-ad-flow span strong { color:#24231f !important; }
+  .repo-url { display:inline-block; margin-top:7px; color:#efb19a; font:600 13px/1.25 ui-monospace,SFMono-Regular,Menlo,monospace;
+    text-decoration:none; border-bottom:1px solid var(--accent); }
+  .final-repo { margin-top:12px; color:var(--muted); border-color:var(--line); }
+  .opening-slide { justify-content:flex-start !important; padding:2.5vh 4vw 2vh !important; }
+  .opening-slide h1 { margin-top:0; margin-bottom:.15em; font-size:1.65em; }
+  .opening-slide p { margin:.05em 0 .35em; }
+  .opening-generation { display:block; width:min(1060px,88vw); height:58vh; margin:.5vh auto 0;
+    object-fit:contain; background:#151513; border:1px solid var(--line); }
+  .research-opening img { max-height:58vh; width:auto; }
+  .split-result h1 { display:none; }
+  .split-result img { width:auto; height:82vh; max-width:92vw !important; max-height:none !important; margin:0; }
+  .split-result p { margin-top:.35em; }
+  .pretraining-chart img { width:auto; height:68vh; max-width:90vw !important; max-height:none !important; margin:0; }
+  .pretraining-chart p { margin-top:.25em; }
+  .research-branches { display:flex; align-items:center; justify-content:center; gap:18px;
+    margin-top:9vh; font-size:.92em; }
+  .research-branches>i { color:var(--accent); font-style:normal; }
+  .research-branches .checkpoint, .research-branches .branch { display:grid; place-items:center;
+    min-width:180px; min-height:104px; padding:18px 22px; border:1px solid var(--line);
+    background:var(--soft); color:var(--ink); }
+  .research-branches .checkpoint { border-color:#9b7d6e; }
+  .research-branches .heldout { border-color:var(--olive); }
+  .research-branches .branch { min-width:190px; gap:8px; border-top:3px solid var(--accent); }
+  .research-branches .branch.rl { border-top-color:var(--olive); }
+  .research-branches .branch strong { font:700 1.4em Georgia,serif; color:var(--accent) !important; }
+  .research-branches .branch.rl strong { color:#bcc39c !important; }
+  .research-branches .branch span { line-height:1.2; }
+  .research-method { display:grid; grid-template-columns:1fr auto 1.35fr auto 1fr; align-items:stretch;
+    gap:18px; width:min(1180px,92vw); margin-top:9vh; }
+  .research-method>span { display:grid; place-items:center; gap:12px; min-height:160px; padding:24px;
+    background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
+  .research-method>span:last-of-type { border-top-color:var(--olive); }
+  .research-method b { color:var(--muted); font:700 15px/1 Arial,sans-serif; letter-spacing:.14em; }
+  .research-method i { align-self:center; color:var(--accent); font-style:normal; font-size:38px; }
+  .native-line-chart { position:relative; width:min(950px,82vw); height:48vh; margin-top:2vh; }
+  .native-line-chart svg { width:100%; height:100%; overflow:visible; }
+  .native-line-chart line { stroke:var(--line); stroke-width:2; }
+  .native-line-chart polyline { fill:none; stroke:var(--accent); stroke-width:8; stroke-linecap:round;
+    stroke-linejoin:round; filter:drop-shadow(0 8px 15px #d9775744); }
+  .native-line-chart circle { fill:var(--accent); stroke:#151513; stroke-width:4; }
+  .native-line-chart .axis-label { position:absolute; left:-12px; color:var(--muted); font-size:15px; }
+  .native-line-chart .top { top:4%; }.native-line-chart .bottom { bottom:4%; }
+  .native-line-chart>b { position:absolute; color:var(--ink) !important; font:700 31px/1 Georgia,serif; }
+  .native-line-chart .line-start { left:2%; bottom:3%; }.native-line-chart .line-end { right:1%; top:4%; color:#efb19a !important; }
+  .native-result-bars { display:grid; grid-template-columns:280px auto 280px; align-items:end; justify-content:center;
+    gap:55px; height:48vh; margin-top:3vh; }
+  .native-result-bars>div { display:grid; grid-template-rows:auto 1fr auto; align-items:end; gap:13px; height:100%; }
+  .native-result-bars span { color:var(--muted); font:700 15px/1 Arial,sans-serif; letter-spacing:.14em; }
+  .native-result-bars i { width:230px; height:var(--height); align-self:end; background:#342824; border-top:5px solid var(--accent); }
+  .native-result-bars .after i { background:#303324; border-color:var(--olive); }
+  .native-result-bars strong { color:var(--ink) !important; font:700 48px/1 Georgia,serif; }
+  .native-result-bars>b { align-self:center; color:var(--accent); font-size:58px; }
+  .tokenizer-example { display:flex; align-items:center; justify-content:center; gap:30px; margin-top:7vh; }
+  .tokenizer-example>code { padding:22px 28px; font-size:29px; }.tokenizer-example>b { color:var(--accent); font-size:42px; }
+  .tokenizer-example>div { display:flex; gap:10px; }.tokenizer-example span { padding:20px 18px; background:var(--soft);
+    border:1px solid var(--line); border-top:4px solid var(--accent); font:600 24px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .tokenizer-facts,.byte-reasons { display:flex; justify-content:center; gap:18px; margin-top:7vh; }
+  .tokenizer-facts>span,.byte-reasons>span { max-width:290px; padding:20px 24px; background:var(--soft);
+    border:1px solid var(--line); color:var(--muted); font-size:18px; line-height:1.35; }
+  .tokenizer-facts strong,.byte-reasons strong { display:block; margin-bottom:6px; color:var(--ink) !important; font-size:22px; }
+  .byte-reasons { margin-top:4vh; }.byte-reasons>span:last-child { border-color:#9b7d6e; }
+  .code-comparison { display:grid; grid-template-columns:minmax(320px,1fr) auto minmax(320px,1fr); align-items:center;
+    gap:32px; width:min(1050px,88vw); margin-top:8vh; }
+  .code-comparison>div { display:grid; gap:24px; padding:32px; background:var(--soft); border:1px solid var(--line);
+    border-top:5px solid var(--danger); }.code-comparison>.passed { border-top-color:var(--olive); }
+  .code-comparison span { color:#e69a8d; font:700 15px/1 Arial,sans-serif; letter-spacing:.12em; }
+  .code-comparison .passed span { color:#bcc39c; }.code-comparison code { padding:18px; font-size:28px; }
+  .code-comparison>b { color:var(--accent); font-size:46px; }
+  .ablation-bars { display:grid; grid-template-columns:repeat(8,1fr); align-items:end; gap:14px;
+    width:min(1260px,94vw); height:48vh; margin-top:3vh; }
+  .ablation-bars>div { display:flex; flex-direction:column; justify-content:end; gap:10px; height:100%; }
+  .ablation-bars span { min-height:48px; color:var(--muted); font-size:15px; line-height:1.15; }
+  .ablation-bars i { display:grid; place-items:start center; height:var(--height); padding-top:12px;
+    background:#3a302b; border-top:4px solid #9b7d6e; color:var(--ink); font:700 29px/1 Georgia,serif;
+    font-style:normal; }
+  .ablation-bars .screen-winner i { background:#3b3d2f; border-color:var(--olive); color:#d8ddb9; }
+  .confirmation-table { margin:3vh auto 2vh; min-width:min(880px,88vw); font-size:23px; }
+  .confirmation-table th,.confirmation-table td { padding:13px 24px; text-align:center; }
+  .confirmation-table .positive { color:#bcc39c; }.confirmation-table .negative { color:#e69a8d; }
+  .confidence-interval { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:2vh; }
+  .confidence-interval span,.confidence-interval strong { color:var(--muted); font-size:16px; text-transform:uppercase;
+    letter-spacing:.08em; }.confidence-interval b { color:var(--ink); font-size:25px; }
+  .confidence-interval i { position:relative; width:310px; height:4px; background:var(--accent); }
+  .confidence-interval i::after { content:'0'; position:absolute; left:80%; top:-18px; width:2px; height:40px;
+    background:var(--ink); color:var(--ink); font:14px Arial,sans-serif; padding-left:5px; }
+  .research-verdict { display:flex; align-items:center; justify-content:center; gap:35px; margin:8vh 0 3vh; }
+  .research-verdict>div { display:grid; gap:10px; min-width:330px; padding:30px; background:var(--soft);
+    border-top:4px solid var(--olive); }.research-verdict>.rejected { border-top-color:var(--danger); }
+  .research-verdict span { color:var(--muted); font-size:16px; letter-spacing:.14em; }
+  .research-verdict strong { color:var(--ink) !important; font:700 48px/1 Georgia,serif; }
+  .research-verdict small { color:var(--muted); }.research-verdict>b { color:var(--accent); font-size:45px; }
+  .experiment-steps { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px;
+    width:min(86vw,1320px); margin:4vh auto 0; text-align:left; }
+  .experiment-steps article { display:grid; grid-template-columns:54px 1fr; column-gap:18px;
+    align-items:start; padding:24px 28px; background:var(--soft); border:1px solid var(--line);
+    border-top:3px solid var(--accent); }
+  .experiment-steps article>strong { grid-row:1/3; display:grid; place-items:center; width:48px; height:48px;
+    border-radius:50%; background:var(--accent); color:#151513 !important; font:700 24px/1 Arial,sans-serif; }
+  .experiment-steps h2 { margin:0 0 6px; color:var(--ink); font-size:1.05em; }
+  .experiment-steps h2::after { display:none; }
+  .experiment-steps p { margin:0; max-width:none; font-size:.72em; line-height:1.4; text-align:left !important; }
+  .code-pair p { margin:.1em 0 1em; color:var(--muted); }
+  .code-pair pre { width:min(82vw,1240px); font-size:.76em; }
+  .algorithm-walkthrough .walkthrough-steps { position:relative; width:min(82vw,1180px); height:42vh;
+    margin:7vh auto 0; }
+  .algorithm-walkthrough .step { display:none; position:absolute; inset:0; align-content:center;
+    justify-items:center; gap:34px; }
+  .algorithm-walkthrough .step.on { display:grid; animation:slidein .45s cubic-bezier(.2,.7,.2,1) both; }
+  .algorithm-walkthrough .step code { padding:.7em 1em; background:#24231f; color:#efb19a;
+    border:1px solid var(--line); font-size:1.2em; white-space:nowrap; }
+  .algorithm-walkthrough .step p { max-width:34em; margin:0; font-size:1em; line-height:1.45; }
+  .algorithm-walkthrough .walkthrough-dots { display:flex; justify-content:center; gap:12px; margin-top:2vh; }
+  .algorithm-walkthrough .walkthrough-dots i { width:10px; height:10px; border-radius:50%;
+    background:#4a4640; }
+  .algorithm-walkthrough .walkthrough-dots i.on { background:var(--accent); transform:scale(1.15); }
+  .thumb-canvas.algorithm-walkthrough .step { display:none !important; }
+  .thumb-canvas.algorithm-walkthrough .step:first-child { display:grid !important; }
+  .data-path span { animation:mechanismPulse 5s ease-in-out infinite; }
+  .data-path span:nth-of-type(2) { animation-delay:.55s; }
+  .data-path span:nth-of-type(3) { animation-delay:1.1s; }
+  .data-path span:nth-of-type(4) { animation-delay:1.65s; }
+  .data-path span:nth-of-type(5) { animation-delay:2.2s; }
+  .layer-stack span { animation:mechanismPulse 4.8s ease-in-out infinite; }
+  .layer-stack span:nth-child(2) { animation-delay:.35s; }
+  .layer-stack span:nth-child(3) { animation-delay:.7s; }
+  .layer-stack span:nth-child(4) { animation-delay:1.05s; }
+  @keyframes mechanismPulse { 0%,18%,100% { transform:translateY(0); filter:none; }
+    8% { transform:translateY(-7px); filter:brightness(1.35); } }
+  #slide-feedback-panel { position:fixed; z-index:320; top:18px; right:18px; width:min(330px,30vw);
+    padding:9px; background:rgba(14,14,13,.38); border:1px solid rgba(240,236,227,.16);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:var(--ink);
+    font:500 12px/1.3 Arial,sans-serif; opacity:.68;
+    transition:opacity .18s, background .18s, transform .18s; }
+  #slide-feedback-panel:hover, #slide-feedback-panel:focus-within {
+    opacity:1; background:rgba(14,14,13,.82); }
+  #slide-feedback-panel header { display:flex; align-items:center; gap:7px; margin-bottom:7px;
+    cursor:grab; user-select:none; touch-action:none; }
+  #slide-feedback-panel.dragging { opacity:1; transition:none; }
+  #slide-feedback-panel.dragging header { cursor:grabbing; }
+  .feedback-drag-handle { color:var(--muted); font:800 13px/1 Arial,sans-serif; letter-spacing:-3px; }
+  #slide-feedback-panel header strong { color:var(--ink) !important; font-size:12px; letter-spacing:.08em;
+    text-transform:uppercase; white-space:nowrap; }
+  #feedback-save-state { margin-left:auto; color:#bcc39c; font-size:11px; white-space:nowrap; }
+  #feedback-archive-count { color:#d9a182; font-size:10px; white-space:nowrap; }
+  #feedback-collapse { width:25px; height:25px; padding:0; border:1px solid var(--line);
+    background:transparent; color:var(--ink); cursor:pointer; font:700 15px/1 Arial,sans-serif; }
+  #feedback-backend-state { color:#bcc39c; font-size:10px; white-space:nowrap; }
+  #slide-feedback-input { display:block; width:100%; min-height:72px; resize:vertical; padding:8px 9px;
+    border:1px solid rgba(240,236,227,.16); outline:0; background:rgba(36,35,31,.48);
+    color:var(--ink); font:500 13px/1.4 Arial,sans-serif; }
+  #slide-feedback-input:focus { border-color:var(--accent); }
+  #slide-feedback-input::placeholder { color:#777168; }
+  #feedback-collapse:hover { border-color:var(--accent); }
+  #slide-feedback-panel.collapsed { width:auto; padding:8px 9px; opacity:.72; top:auto; bottom:54px; }
+  #slide-feedback-panel.collapsed header { margin:0; }
+  #slide-feedback-panel.collapsed #feedback-save-state,
+  #slide-feedback-panel.collapsed #feedback-archive-count,
+  #slide-feedback-panel.collapsed #slide-feedback-input,
+  #slide-feedback-panel.collapsed footer { display:none; }
+  .film-thumb.has-feedback::after { content:''; position:absolute; z-index:7; top:6px; left:6px;
+    width:10px; height:10px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 2px #151513; }
+  @media print { #slide-feedback-panel { display:none !important; } }
+</style>
+<div id="n"></div>
+<div class="nav">
+  <button onclick="go(-1)" aria-label="previous">←</button>
+  <button onclick="go(1)" aria-label="next">→</button>
+</div>
+<div id="save-toast">Order saved</div>
+<div id="element-delete-hint">X · remove</div>
+<div id="edit-toast"></div>
+<section id="slide-feedback-panel" class="collapsed" aria-label="Feedback for the current slide">
+  <header title="Drag to move · double-click to reset"><span class="feedback-drag-handle" aria-hidden="true">⋮⋮</span><strong id="feedback-slide-number">Slide 1</strong><span id="feedback-save-state">Saved</span><span id="feedback-backend-state">Local file</span><span id="feedback-archive-count" title="Notes retained for slides that are no longer in this deck"></span><button id="feedback-collapse" type="button" title="Expand feedback panel" aria-label="Expand feedback panel">+</button></header>
+  <textarea id="slide-feedback-input" placeholder="Feedback for this slide…" spellcheck="true"></textarea>
+</section>
+<aside id="filmstrip-panel" aria-label="Slide editor">
+  <div id="filmstrip-head"><strong>Slides</strong><span id="thumb-total"></span><span class="hint">Drag slides to reorder · hover an element + X to remove · ⌘Z to undo</span><button id="thumb-toggle" type="button" aria-label="Pin slide thumbnails open" title="Pin thumbnails (T)">Pin</button></div>
+  <div id="filmstrip" aria-label="Slide thumbnails"></div>
+</aside>
+<script>
+  // Each slide has 1+ "steps". Normal slides = 1 step. An `explain` slide has
+  // one step per sentence: → reveals the next sentence with the image pinned,
+  // and only rolls to the next slide once the last sentence is shown.
+  const ORDER_KEY = 'glm53-slide-order-v17';
+  const THUMBS_KEY = 'glm53-thumbnails-visible-v1';
+  const DELETED_KEY = 'glm53-deleted-elements-v1';
+  const FEEDBACK_KEY = 'glm53-slide-feedback-v1';
+  const FEEDBACK_CATALOG_KEY = 'glm53-slide-feedback-catalog-v1';
+  const FEEDBACK_PANEL_POS_KEY = 'glm53-feedback-panel-position-v2';
+  const filmstripPanel = document.getElementById('filmstrip-panel');
+  const filmstrip = document.getElementById('filmstrip');
+  const thumbToggle = document.getElementById('thumb-toggle');
+  const feedbackPanel = document.getElementById('slide-feedback-panel');
+  const feedbackInput = document.getElementById('slide-feedback-input');
+  const feedbackSlideNumber = document.getElementById('feedback-slide-number');
+  const feedbackSaveState = document.getElementById('feedback-save-state');
+  const feedbackBackendState = document.getElementById('feedback-backend-state');
+  const feedbackArchiveCount = document.getElementById('feedback-archive-count');
+  let slideFeedback = {};
+  let feedbackCatalog = {};
+  const feedbackServerEnabled = location.protocol === 'http:' || location.protocol === 'https:';
+  let feedbackSyncTimer = null;
+  try { slideFeedback = JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '{}'); } catch (_) {}
+  try { feedbackCatalog = JSON.parse(localStorage.getItem(FEEDBACK_CATALOG_KEY) || '{}'); } catch (_) {}
+  // Each feedback implementation gets a one-time migration. It clears only the resolved
+  // slide notes once; later feedback on the same slide is preserved.
+  try {
+    const resolutionKey = 'glm53-feedback-resolution-2026-08-27-v3';
+    if (localStorage.getItem(resolutionKey) !== '1') {
+      [
+        'what-are-we-trying-to-build',
+        'why-make-it-tiny',
+        'what-does-frontier-model-work-look-like',
+        'the-architecture-is-the-foundation',
+        'want-to-join-the-real-ai-research-lab',
+        'what-we-built',
+        'how-one-byte-becomes-a-prediction',
+        'we-will-also-do-real-research',
+        'research-results-preview',
+        'before-after-video',
+        'what-you-will-learn'
+      ].forEach(id => delete slideFeedback[id]);
+      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(slideFeedback));
+      localStorage.setItem(resolutionKey, '1');
+    }
+  } catch (_) {}
+  let s = [...document.querySelectorAll('.slide:not(.thumb-canvas)')];
+  const usedIds = new Set();
+  s.forEach((el, index) => {
+    const title = el.querySelector('h1')?.textContent.trim();
+    let base = el.dataset.slideId || (title
+      ? title.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      : (el.querySelector('video') ? 'before-after-video' : `slide-${index + 1}`));
+    let id = base || `slide-${index + 1}`;
+    let suffix = 2;
+    while (usedIds.has(id)) id = `${base}-${suffix++}`;
+    usedIds.add(id);
+    el.dataset.slideId = id;
+  });
+
+  const openingOrder = [
+    'build-and-train-glm-5-3-flash-from-scratch',
+    'research-results-preview',
+    'what-we-will-do',
+    'what-you-will-finish-with',
+    'what-are-we-trying-to-build',
+    'why-make-it-tiny',
+    'what-does-frontier-model-work-look-like',
+    'we-will-also-do-real-research',
+    'research-change-one-variable',
+    'research-verify-the-result',
+    'want-to-join-the-real-ai-research-lab',
+    'learn-by-predicting-the-next-token',
+    'the-real-model-predicts-bpe-tokens',
+    'our-model-predicts-the-next-byte',
+    'how-one-byte-becomes-a-prediction',
+    'four-ideas-define-the-architecture',
+    'what-we-built',
+    'glm-vision-path',
+    'image-becomes-visual-tokens',
+    'image-tokens-enter-the-language-model',
+    'vision-training-task',
+    'vision-experiment-result',
+    'how-the-experiment-works'
+  ];
+  const defaultById = new Map(s.map(el => [el.dataset.slideId, el]));
+  const openingSlides = openingOrder.map(id => defaultById.get(id)).filter(Boolean);
+  const openingSet = new Set(openingSlides);
+  const pretrainingChart = defaultById.get('pretraining-progress');
+  let remainingSlides = s.filter(el => !openingSet.has(el) && el !== pretrainingChart);
+  const pretrainingStepIndex = remainingSlides.findIndex(el => el.dataset.slideId === 'the-pretraining-step');
+  if (pretrainingChart && pretrainingStepIndex >= 0) remainingSlides.splice(pretrainingStepIndex + 1, 0, pretrainingChart);
+  s = [...openingSlides, ...remainingSlides];
+  s.forEach(el => filmstripPanel.before(el));
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(ORDER_KEY) || '[]');
+    const byId = new Map(s.map(el => [el.dataset.slideId, el]));
+    const ordered = saved.map(id => byId.get(id)).filter(Boolean);
+    const seen = new Set(ordered);
+    ordered.push(...s.filter(el => !seen.has(el)));
+    ordered.forEach(el => filmstripPanel.before(el));
+    s = ordered;
+  } catch (_) {}
+
+  s.forEach((el, j) => {
+    if (![...el.classList].some(c => /^bg\d$/.test(c))) el.classList.add('bg' + (j % 4));
+    el.innerHTML = '<div class="in">' + el.innerHTML + '</div>'; });
+
+  let feedbackPanelSlideId = null;
+  function feedbackTitle(slide) {
+    return slide.querySelector('h1')?.textContent.trim() ||
+      (slide.querySelector('video') ? 'Pretraining generation video' : 'Untitled slide');
+  }
+
+  function currentSlideIds() {
+    return new Set(s.map(slide => slide.dataset.slideId));
+  }
+
+  function archivedFeedbackEntries() {
+    const currentIds = currentSlideIds();
+    return Object.entries(slideFeedback)
+      .filter(([id, note]) => !currentIds.has(id) && String(note || '').trim())
+      .map(([id, note]) => ({
+        id,
+        note: String(note).trim(),
+        title: feedbackCatalog[id]?.title || id.replace(/-/g, ' '),
+        lastSeenAt: feedbackCatalog[id]?.lastSeenAt || null
+      }));
+  }
+
+  function saveFeedbackCatalog() {
+    try { localStorage.setItem(FEEDBACK_CATALOG_KEY, JSON.stringify(feedbackCatalog)); } catch (_) {}
+  }
+
+  async function syncFeedbackToDisk() {
+    if (!feedbackServerEnabled) return;
+    feedbackSaveState.textContent = 'Saving…';
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({feedback: slideFeedback, catalog: feedbackCatalog})
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      feedbackSaveState.textContent = 'Saved';
+      feedbackBackendState.textContent = 'Saved to disk';
+    } catch (_) {
+      feedbackSaveState.textContent = 'Browser backup';
+      feedbackBackendState.textContent = 'Server offline';
+    }
+  }
+
+  function queueFeedbackSync() {
+    if (!feedbackServerEnabled) return;
+    clearTimeout(feedbackSyncTimer);
+    feedbackSyncTimer = setTimeout(syncFeedbackToDisk, 180);
+  }
+
+  async function hydrateFeedbackFromDisk() {
+    if (!feedbackServerEnabled) {
+      feedbackBackendState.textContent = 'Open localhost to save notes';
+      return;
+    }
+    try {
+      const response = await fetch('/api/feedback', {cache: 'no-store'});
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const saved = await response.json();
+      slideFeedback = {...slideFeedback, ...(saved.feedback || {})};
+      feedbackCatalog = {...feedbackCatalog, ...(saved.catalog || {})};
+      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(slideFeedback));
+      localStorage.setItem(FEEDBACK_CATALOG_KEY, JSON.stringify(feedbackCatalog));
+      feedbackPanelSlideId = null;
+      feedbackBackendState.textContent = 'Saved to disk';
+      updateFeedbackPanel();
+      queueFeedbackSync();
+    } catch (_) {
+      feedbackBackendState.textContent = 'Server offline';
+    }
+  }
+
+  function rememberCurrentSlides() {
+    const now = new Date().toISOString();
+    s.forEach((slide, index) => {
+      const id = slide.dataset.slideId;
+      if (!slideFeedback[id]) return;
+      feedbackCatalog[id] = {
+        ...(feedbackCatalog[id] || {}),
+        title: feedbackTitle(slide),
+        lastKnownPosition: index + 1,
+        lastSeenAt: now
+      };
+    });
+    saveFeedbackCatalog();
+  }
+
+  rememberCurrentSlides();
+
+  function updateFeedbackBadges() {
+    [...filmstrip.querySelectorAll('.film-thumb')].forEach(thumb => {
+      thumb.classList.toggle('has-feedback', Boolean((slideFeedback[thumb.dataset.slideId] || '').trim()));
+    });
+  }
+
+  function updateFeedbackPanel() {
+    const slide = s[i];
+    if (!slide) return;
+    const id = slide.dataset.slideId;
+    feedbackSlideNumber.textContent = `Slide ${i + 1}`;
+    if (feedbackPanelSlideId !== id) {
+      feedbackInput.value = slideFeedback[id] || '';
+      feedbackPanelSlideId = id;
+    }
+    const archivedCount = archivedFeedbackEntries().length;
+    feedbackArchiveCount.textContent = archivedCount ? `${archivedCount} archived` : '';
+    updateFeedbackBadges();
+  }
+
+  function saveCurrentFeedback() {
+    const slide = s[i];
+    if (!slide) return;
+    const id = slide.dataset.slideId;
+    const value = feedbackInput.value;
+    // Merge with the newest browser copy before writing so notes entered in another
+    // open deck tab are not erased while the HTML is being edited.
+    try {
+      const latest = JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '{}');
+      if (latest && typeof latest === 'object' && !Array.isArray(latest)) slideFeedback = latest;
+    } catch (_) {}
+    if (value.trim()) slideFeedback[id] = value;
+    else delete slideFeedback[id];
+    feedbackCatalog[id] = {
+      ...(feedbackCatalog[id] || {}),
+      title: feedbackTitle(slide),
+      lastKnownPosition: i + 1,
+      lastSeenAt: new Date().toISOString()
+    };
+    try {
+      localStorage.setItem(FEEDBACK_KEY, JSON.stringify(slideFeedback));
+      saveFeedbackCatalog();
+      feedbackSaveState.textContent = 'Saved';
+    } catch (_) {
+      feedbackSaveState.textContent = 'Save failed';
+    }
+    queueFeedbackSync();
+    updateFeedbackPanel();
+  }
+
+  function allFeedbackMarkdown() {
+    const sections = ['# GLM-5.3-Flash slide feedback', ''];
+    s.forEach((slide, index) => {
+      const note = (slideFeedback[slide.dataset.slideId] || '').trim();
+      if (!note) return;
+      sections.push(`## Slide ${index + 1}: ${feedbackTitle(slide)}`, '', note, '');
+    });
+    const archived = archivedFeedbackEntries();
+    if (archived.length) {
+      sections.push('# Archived notes from removed or replaced slides', '');
+      archived.forEach(entry => {
+        sections.push(`## Removed slide: ${entry.title}`, '', entry.note, '');
+      });
+    }
+    if (sections.length === 2) sections.push('No feedback has been added yet.', '');
+    return sections.join('\n');
+  }
+
+  async function copyAllFeedback() {
+    const text = allFeedbackMarkdown();
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (_) {
+      const helper = document.createElement('textarea');
+      helper.value = text; helper.style.position = 'fixed'; helper.style.opacity = '0';
+      document.body.appendChild(helper); helper.select(); document.execCommand('copy'); helper.remove();
+    }
+    feedbackSaveState.textContent = 'Copied';
+    setTimeout(() => { feedbackSaveState.textContent = 'Saved'; }, 1000);
+  }
+
+  window.getSlideFeedback = () => ({...slideFeedback});
+  window.getSlideFeedbackMarkdown = allFeedbackMarkdown;
+  window.getArchivedSlideFeedback = archivedFeedbackEntries;
+
+  const editableSelector = [
+    'h1', 'h2', 'p', 'small', 'pre', 'table', 'figure', 'img', 'video', 'a',
+    '.data-path > *', '.research-branches > *', '.research-method > *', '.byte-row > span',
+    '.research-variable-grid > *', '.research-control-visual > *',
+    '.research-verification-flow > *', '.research-decision > *',
+    '.tokenizer-example > *', '.tokenizer-facts > *', '.byte-reasons > *',
+    '.native-line-chart > *', '.native-result-bars > *', '.code-comparison > *',
+    '.next-token > *', '.experiment-steps > article', '.layer-stack > div',
+    '.linear-memory > *', '.sparse-row > span', '.moe-flow > *', '.experts > *',
+    '.streams > *', '.checks > span', '.walkthrough-steps code', '.walkthrough-steps p',
+    '.reward-pipe > *', '.reward-values > div', '.family-summary > span',
+    '.result-final > *', '.lab-ad-flow > *',
+    '.vision-scale-path > *', '.vision-mechanism > *', '.vision-sequence > *',
+    '.vision-training-visual > *', '.vision-training-facts > *', '.vision-result-bars > *'
+  ].join(',');
+  let deletedElementIds = [];
+  try { deletedElementIds = JSON.parse(localStorage.getItem(DELETED_KEY) || '[]'); } catch (_) {}
+  const deletedElementSet = new Set(deletedElementIds);
+  const deleteHint = document.getElementById('element-delete-hint');
+  const editToast = document.getElementById('edit-toast');
+  let hoveredElement = null;
+  let hoverClearTimer = null;
+
+  function elementSlug(value) {
+    return (value || 'element').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 56) || 'element';
+  }
+
+  function setupElementEditing() {
+    s.forEach(slide => {
+      const collisions = new Map();
+      slide.querySelectorAll(editableSelector).forEach(element => {
+        if (element.closest('style, script, .dots')) return;
+        const identity = element.getAttribute('src') || element.getAttribute('href') || element.textContent;
+        const base = `${element.tagName.toLowerCase()}-${elementSlug(identity)}`;
+        const occurrence = (collisions.get(base) || 0) + 1;
+        collisions.set(base, occurrence);
+        const id = `${slide.dataset.slideId}::${base}::${occurrence}`;
+        element.dataset.editElementId = id;
+        element.classList.toggle('element-deleted', deletedElementSet.has(id));
+      });
+    });
+  }
+
+  function saveDeletedElements() {
+    try { localStorage.setItem(DELETED_KEY, JSON.stringify(deletedElementIds)); } catch (_) {}
+  }
+
+  function showEditToast(message) {
+    editToast.textContent = message;
+    editToast.classList.add('on');
+    clearTimeout(showEditToast.timer);
+    showEditToast.timer = setTimeout(() => editToast.classList.remove('on'), 1300);
+  }
+
+  function clearElementHover() {
+    clearTimeout(hoverClearTimer);
+    if (hoveredElement) hoveredElement.classList.remove('element-hovered');
+    hoveredElement = null;
+    deleteHint.classList.remove('on');
+  }
+
+  function scheduleElementHoverClear() {
+    clearTimeout(hoverClearTimer);
+    hoverClearTimer = setTimeout(clearElementHover, 140);
+  }
+
+  function setElementHover(element) {
+    clearTimeout(hoverClearTimer);
+    if (element === hoveredElement) return;
+    clearElementHover();
+    if (!element || element.classList.contains('element-deleted')) return;
+    hoveredElement = element;
+    hoveredElement.classList.add('element-hovered');
+    const rect = hoveredElement.getBoundingClientRect();
+    deleteHint.style.left = `${Math.min(innerWidth - 8, rect.right)}px`;
+    deleteHint.style.top = `${Math.max(28, rect.top)}px`;
+    deleteHint.classList.add('on');
+  }
+
+  function removeHoveredElement() {
+    if (!hoveredElement) return false;
+    const id = hoveredElement.dataset.editElementId;
+    hoveredElement.classList.add('element-deleted');
+    if (!deletedElementSet.has(id)) {
+      deletedElementSet.add(id);
+      deletedElementIds.push(id);
+    }
+    clearElementHover();
+    saveDeletedElements();
+    buildFilmstrip();
+    render();
+    showEditToast('Element removed · ⌘Z to undo');
+    return true;
+  }
+
+  function undoElementRemoval() {
+    const id = deletedElementIds.pop();
+    if (!id) return false;
+    deletedElementSet.delete(id);
+    const element = document.querySelector(`[data-edit-element-id="${CSS.escape(id)}"]`);
+    if (element) element.classList.remove('element-deleted');
+    saveDeletedElements();
+    buildFilmstrip();
+    render();
+    showEditToast('Element restored');
+    return true;
+  }
+
+  setupElementEditing();
+  addEventListener('pointermove', event => {
+    if (event.target.closest('#element-delete-hint')) {
+      clearTimeout(hoverClearTimer);
+      return;
+    }
+    if (event.target.closest('#filmstrip-panel, #edit-toast')) {
+      clearElementHover();
+      return;
+    }
+    const candidate = event.target.closest('[data-edit-element-id]');
+    const activeSlide = candidate?.closest('.slide.on:not(.thumb-canvas)');
+    if (activeSlide) setElementHover(candidate);
+    else scheduleElementHoverClear();
+  });
+  deleteHint.addEventListener('pointerenter', () => clearTimeout(hoverClearTimer));
+  deleteHint.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    removeHoveredElement();
+  });
+  addEventListener('blur', clearElementHover);
+
+  let stepEls = [], dotEls = [], steps = [], total = 0;
+  let i = 0, k = 0;
+
+  function rebuildMetadata() {
+    s = [...document.querySelectorAll('.slide:not(.thumb-canvas)')];
+    stepEls = s.map(el => [...el.querySelectorAll('.step')]);
+    dotEls = s.map(el => [...el.querySelectorAll('.dots i')]);
+    steps = stepEls.map(a => a.length || 1);
+    total = steps.reduce((a, b) => a + b, 0);
+    document.getElementById('thumb-total').textContent = `${s.length} total`;
+  }
+
+  function setThumbnailsPinned(pinned, persist = true) {
+    document.body.classList.toggle('thumbnails-pinned', pinned);
+    thumbToggle.textContent = pinned ? 'Unpin' : 'Pin';
+    thumbToggle.setAttribute('aria-label', pinned ? 'Unpin slide thumbnails' : 'Pin slide thumbnails open');
+    if (persist) try { localStorage.setItem(THUMBS_KEY, pinned ? '1' : '0'); } catch (_) {}
+  }
+
+  function showSaved() {
+    const toast = document.getElementById('save-toast');
+    toast.classList.add('on');
+    clearTimeout(showSaved.timer);
+    showSaved.timer = setTimeout(() => toast.classList.remove('on'), 900);
+  }
+
+  function saveOrder() {
+    try {
+      localStorage.setItem(ORDER_KEY, JSON.stringify(s.map(el => el.dataset.slideId)));
+      showSaved();
+    } catch (_) {}
+  }
+
+  function frame() { let f = 0; for (let x = 0; x < i; x++) f += steps[x]; return f + k; }
+
+  function updateFilmstrip() {
+    [...filmstrip.children].forEach((thumb, index) => {
+      thumb.classList.toggle('active', index === i);
+      const number = thumb.querySelector('.thumb-number');
+      if (number) number.textContent = index + 1;
+    });
+    const active = filmstrip.children[i];
+    if (active) active.scrollIntoView({block:'nearest', inline:'nearest'});
+  }
+
+  function render() {
+    s.forEach((el, j) => el.classList.toggle('on', j === i));
+    stepEls[i].forEach((el, x) => el.classList.toggle('on', x === k));
+    dotEls[i].forEach((el, x) => el.classList.toggle('on', x <= k));
+    document.getElementById('n').textContent =
+      (i + 1) + ' / ' + s.length + (steps[i] > 1 ? '  \u00b7  ' + (k + 1) + '/' + steps[i] : '');
+    document.getElementById('bar').style.width = (100 * (frame() + 1) / total) + '%';
+    updateFilmstrip();
+    updateFeedbackPanel();
+  }
+
+  function go(d) {
+    if (d > 0) { if (k < steps[i] - 1) k++; else if (i < s.length - 1) { i++; k = 0; } }
+    else       { if (k > 0) k--;         else if (i > 0) { i--; k = steps[i] - 1; } }
+    render();
+  }
+
+  function finishReorder(currentSlide) {
+    rebuildMetadata();
+    i = Math.max(0, s.indexOf(currentSlide));
+    k = 0;
+    saveOrder();
+    buildFilmstrip();
+    render();
+  }
+
+  function moveSlide(id, direction) {
+    const currentSlide = s[i];
+    const el = s.find(slide => slide.dataset.slideId === id);
+    const index = s.indexOf(el);
+    const targetIndex = index + direction;
+    if (!el || targetIndex < 0 || targetIndex >= s.length) return;
+    if (direction < 0) el.parentNode.insertBefore(el, s[targetIndex]);
+    else el.parentNode.insertBefore(el, s[targetIndex].nextSibling);
+    finishReorder(currentSlide);
+  }
+
+  function dropSlide(dragId, targetId, after) {
+    const currentSlide = s[i];
+    const dragged = s.find(el => el.dataset.slideId === dragId);
+    const target = s.find(el => el.dataset.slideId === targetId);
+    if (!dragged || !target || dragged === target) return;
+    target.parentNode.insertBefore(dragged, after ? target.nextSibling : target);
+    finishReorder(currentSlide);
+  }
+
+  let draggingId = null;
+  function buildFilmstrip() {
+    filmstrip.replaceChildren();
+    s.forEach((el, index) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'film-thumb';
+      thumb.dataset.slideId = el.dataset.slideId;
+      thumb.classList.toggle('has-feedback', Boolean((slideFeedback[el.dataset.slideId] || '').trim()));
+      thumb.draggable = true;
+
+      const preview = document.createElement('div');
+      preview.className = 'thumb-preview';
+      const canvas = document.createElement('div');
+      canvas.className = `${el.className} on thumb-canvas`;
+      const clone = el.querySelector('.in').cloneNode(true);
+      clone.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
+      clone.querySelectorAll('script').forEach(node => node.remove());
+      clone.querySelectorAll('video').forEach(video => {
+        video.removeAttribute('autoplay');
+        video.muted = true;
+      });
+      canvas.appendChild(clone);
+      preview.appendChild(canvas);
+      thumb.appendChild(preview);
+
+      const number = document.createElement('span');
+      number.className = 'thumb-number';
+      number.textContent = index + 1;
+      thumb.appendChild(number);
+
+      const controls = document.createElement('div');
+      controls.className = 'thumb-controls';
+      const left = document.createElement('button');
+      left.textContent = '←';
+      left.title = 'Move slide left';
+      left.disabled = index === 0;
+      left.addEventListener('click', event => {
+        event.stopPropagation();
+        moveSlide(el.dataset.slideId, -1);
+      });
+      const right = document.createElement('button');
+      right.textContent = '→';
+      right.title = 'Move slide right';
+      right.disabled = index === s.length - 1;
+      right.addEventListener('click', event => {
+        event.stopPropagation();
+        moveSlide(el.dataset.slideId, 1);
+      });
+      controls.append(left, right);
+      thumb.appendChild(controls);
+
+      thumb.addEventListener('click', () => {
+        i = s.indexOf(el);
+        k = 0;
+        render();
+      });
+      thumb.addEventListener('dragstart', event => {
+        draggingId = el.dataset.slideId;
+        thumb.classList.add('dragging');
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', draggingId);
+      });
+      thumb.addEventListener('dragend', () => {
+        draggingId = null;
+        thumb.classList.remove('dragging');
+      });
+      thumb.addEventListener('dragover', event => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+      });
+      thumb.addEventListener('drop', event => {
+        event.preventDefault();
+        const rect = thumb.getBoundingClientRect();
+        dropSlide(draggingId || event.dataTransfer.getData('text/plain'), el.dataset.slideId,
+          event.clientX > rect.left + rect.width / 2);
+      });
+      filmstrip.appendChild(thumb);
+    });
+  }
+
+  addEventListener('keydown', e => {
+    if (e.target.closest('#slide-feedback-panel')) return;
+    if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
+      if (undoElementRemoval()) e.preventDefault();
+      return;
+    }
+    if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'x' && hoveredElement) {
+      e.preventDefault();
+      removeHoveredElement();
+      return;
+    }
+    if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key.toLowerCase() === 't') {
+      e.preventDefault();
+      setThumbnailsPinned(!document.body.classList.contains('thumbnails-pinned'));
+      return;
+    }
+    if (e.shiftKey && e.key === 'ArrowLeft') { e.preventDefault(); moveSlide(s[i].dataset.slideId, -1); return; }
+    if (e.shiftKey && e.key === 'ArrowRight') { e.preventDefault(); moveSlide(s[i].dataset.slideId, 1); return; }
+    if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); go(1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(-1); }
+  });
+
+  feedbackInput.addEventListener('input', () => {
+    feedbackSaveState.textContent = 'Saving…';
+    saveCurrentFeedback();
+  });
+  addEventListener('storage', event => {
+    if (event.key === FEEDBACK_KEY) {
+      try { slideFeedback = JSON.parse(event.newValue || '{}'); } catch (_) { return; }
+      if (document.activeElement !== feedbackInput) feedbackPanelSlideId = null;
+      updateFeedbackPanel();
+    }
+    if (event.key === FEEDBACK_CATALOG_KEY) {
+      try { feedbackCatalog = JSON.parse(event.newValue || '{}'); } catch (_) { return; }
+      updateFeedbackPanel();
+    }
+  });
+  document.getElementById('feedback-collapse').addEventListener('click', () => {
+    const collapsed = feedbackPanel.classList.toggle('collapsed');
+    document.getElementById('feedback-collapse').textContent = collapsed ? '+' : '−';
+    document.getElementById('feedback-collapse').setAttribute('aria-label',
+      collapsed ? 'Expand feedback panel' : 'Collapse feedback panel');
+  });
+
+  const feedbackHeader = feedbackPanel.querySelector('header');
+  let feedbackDrag = null;
+
+  function clampFeedbackPanel(left, top) {
+    const rect = feedbackPanel.getBoundingClientRect();
+    return {
+      left: Math.max(8, Math.min(left, innerWidth - rect.width - 8)),
+      top: Math.max(8, Math.min(top, innerHeight - rect.height - 8))
+    };
+  }
+
+  function setFeedbackPanelPosition(left, top, persist = true) {
+    const position = clampFeedbackPanel(left, top);
+    feedbackPanel.style.left = `${position.left}px`;
+    feedbackPanel.style.top = `${position.top}px`;
+    feedbackPanel.style.right = 'auto';
+    if (persist) {
+      try { localStorage.setItem(FEEDBACK_PANEL_POS_KEY, JSON.stringify(position)); } catch (_) {}
+    }
+  }
+
+  function resetFeedbackPanelPosition() {
+    feedbackPanel.style.left = '';
+    feedbackPanel.style.top = '18px';
+    feedbackPanel.style.right = '18px';
+    try { localStorage.removeItem(FEEDBACK_PANEL_POS_KEY); } catch (_) {}
+  }
+
+  try {
+    const savedFeedbackPosition = JSON.parse(localStorage.getItem(FEEDBACK_PANEL_POS_KEY) || 'null');
+    if (Number.isFinite(savedFeedbackPosition?.left) && Number.isFinite(savedFeedbackPosition?.top)) {
+      setFeedbackPanelPosition(savedFeedbackPosition.left, savedFeedbackPosition.top, false);
+    }
+  } catch (_) {}
+
+  feedbackHeader.addEventListener('pointerdown', event => {
+    if (event.target.closest('button, a, input, textarea')) return;
+    const rect = feedbackPanel.getBoundingClientRect();
+    feedbackDrag = {
+      pointerId: event.pointerId,
+      offsetX: event.clientX - rect.left,
+      offsetY: event.clientY - rect.top
+    };
+    try { feedbackHeader.setPointerCapture(event.pointerId); } catch (_) {}
+    feedbackPanel.classList.add('dragging');
+    event.preventDefault();
+  });
+  addEventListener('pointermove', event => {
+    if (!feedbackDrag || event.pointerId !== feedbackDrag.pointerId) return;
+    setFeedbackPanelPosition(event.clientX - feedbackDrag.offsetX, event.clientY - feedbackDrag.offsetY, false);
+  });
+  function finishFeedbackDrag(event) {
+    if (!feedbackDrag || event.pointerId !== feedbackDrag.pointerId) return;
+    const rect = feedbackPanel.getBoundingClientRect();
+    setFeedbackPanelPosition(rect.left, rect.top, true);
+    feedbackDrag = null;
+    feedbackPanel.classList.remove('dragging');
+  }
+  addEventListener('pointerup', finishFeedbackDrag);
+  addEventListener('pointercancel', finishFeedbackDrag);
+  feedbackHeader.addEventListener('dblclick', event => {
+    if (!event.target.closest('button')) resetFeedbackPanelPosition();
+  });
+  addEventListener('resize', () => {
+    if (feedbackPanel.style.left) {
+      const rect = feedbackPanel.getBoundingClientRect();
+      setFeedbackPanelPosition(rect.left, rect.top, true);
+    }
+  });
+
+  const reviewParams = new URLSearchParams(location.search);
+  var START = Math.max(0, Number.parseInt(reviewParams.get('slide') || '0', 10) || 0);
+  var STEP = Math.max(0, Number.parseInt(reviewParams.get('step') || '0', 10) || 0);
+  thumbToggle.addEventListener('click', () =>
+    setThumbnailsPinned(!document.body.classList.contains('thumbnails-pinned')));
+  let initialThumbs = reviewParams.get('thumbs') === '1';
+  if (!reviewParams.has('thumbs')) {
+    try { initialThumbs = localStorage.getItem(THUMBS_KEY) === '1'; } catch (_) {}
+  }
+  setThumbnailsPinned(initialThumbs, false);
+  rebuildMetadata();
+  buildFilmstrip();
+  i = Math.min(START, s.length - 1); k = 0; render();
+  hydrateFeedbackFromDisk();
+  for (let z = 0; z < STEP; z++) go(1);
+</script></body></html>

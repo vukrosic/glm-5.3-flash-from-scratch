@@ -1,0 +1,16 @@
+{
+  "experiment": "mac-pretraining-before-after-001",
+  "model_parameters": 25730592,
+  "device": "Apple M4 MPS",
+  "seed": 42,
+  "training_steps": 100,
+  "training_tokens": 173237,
+  "elapsed_seconds": 103.022,
+  "decoding": "greedy",
+  "max_new_tokens": 40,
+  "task_id": "confirm-double-000",
+  "prompt": "# Complete this Python function.\n# Return two times x.\ndef double_ywkaoot(x):",
+  "random_initialization": "::::::::::::::::::::::::::::::::::::::::",
+  "after_pretraining": "\n    return x * 2\n",
+  "hidden_tests_passed": "3/3"
+}

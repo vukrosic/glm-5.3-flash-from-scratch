@@ -27,10 +27,15 @@ def main() -> int:
     parser.add_argument("--max-new-tokens", type=int, default=48)
     parser.add_argument("--seed", type=int, default=2026)
     parser.add_argument("--families", default="")
+    parser.add_argument("--device", choices=("auto", "cuda", "mps", "cpu"), default="auto")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError(args.output)
-    device = torch.device("cuda")
+    if args.device == "auto":
+        device_name = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+    else:
+        device_name = args.device
+    device = torch.device(device_name)
     tokenizer = ByteTokenizer()
     model = load_checkpoint(args.checkpoint, device)
     tasks = frozen_tasks(args.split, per_family=args.per_family)
@@ -41,7 +46,8 @@ def main() -> int:
             raise ValueError("unknown or missing requested family")
     episodes = []
     started = time.perf_counter()
-    torch.cuda.reset_peak_memory_stats()
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats()
     for index, task in enumerate(tasks):
         generated = generate_group(
             model, tokenizer, task, group_size=1, max_new_tokens=args.max_new_tokens,
@@ -60,7 +66,8 @@ def main() -> int:
             "evaluation": evaluation,
         })
         print(json.dumps({"task": task.task_id, "passed": evaluation["passed"], "tests": evaluation["tests_passed"]}), flush=True)
-    torch.cuda.synchronize()
+    if device.type == "cuda":
+        torch.cuda.synchronize()
     cap_hits = sum(row["hit_token_cap"] for row in episodes)
     solved = sum(row["evaluation"]["passed"] for row in episodes)
     tests_passed = sum(row["evaluation"]["tests_passed"] for row in episodes)
@@ -99,7 +106,7 @@ def main() -> int:
         "summary": summary,
         "by_family": by_family,
         "elapsed_seconds": round(time.perf_counter() - started, 3),
-        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3),
+        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3) if device.type == "cuda" else None,
         "episodes": episodes,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

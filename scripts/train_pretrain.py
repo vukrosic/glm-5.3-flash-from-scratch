@@ -45,6 +45,7 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--dim", type=int, default=192)
     parser.add_argument("--layers", type=int, default=12)
+    parser.add_argument("--device", choices=("auto", "cuda", "mps", "cpu"), default="auto")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError(args.output)
@@ -54,9 +55,14 @@ def main() -> int:
         raise ValueError("final checkpoint must equal steps")
     random.seed(args.seed)
     torch.manual_seed(args.seed)
-    torch.cuda.manual_seed_all(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
     torch.set_float32_matmul_precision("high")
-    device = torch.device("cuda")
+    if args.device == "auto":
+        device_name = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+    else:
+        device_name = args.device
+    device = torch.device(device_name)
     tokenizer = ByteTokenizer()
     config = ModelConfig(dim=args.dim, layers=args.layers, max_sequence_length=max(192, args.sequence_length))
     model = GLM53FlashFromScratch(config).to(device)
@@ -69,7 +75,8 @@ def main() -> int:
     checkpoint_rows = [dict(step=0, **initial)]
     tokens_seen = 0
     started = time.perf_counter()
-    torch.cuda.reset_peak_memory_stats()
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats()
     for step in range(1, args.steps + 1):
         step_started = time.perf_counter()
         inputs, labels, tokens = batch_for(
@@ -77,7 +84,11 @@ def main() -> int:
             sequence_length=args.sequence_length, seed=args.seed, device=device,
         )
         optimizer.zero_grad(set_to_none=True)
-        with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+        with torch.autocast(
+            device_type="cuda",
+            dtype=torch.bfloat16,
+            enabled=device.type == "cuda",
+        ):
             logits, usage = model(inputs)
             language_loss = F.cross_entropy(logits.reshape(-1, config.vocab_size), labels.reshape(-1), ignore_index=-100)
             balance = ((usage.mean(dim=0) - 1.0 / config.experts) ** 2).mean() * config.experts
@@ -106,7 +117,8 @@ def main() -> int:
                 "tokens_seen": tokens_seen, "parameter_counts": counts,
             })
             checkpoint_rows.append(dict(step=step, **saved))
-    torch.cuda.synchronize()
+    if device.type == "cuda":
+        torch.cuda.synchronize()
     receipt = {
         "schema_version": "1.0",
         "status": "complete",
@@ -120,7 +132,8 @@ def main() -> int:
         "learning_rate": args.learning_rate,
         "tokens_seen": tokens_seen,
         "elapsed_seconds": round(time.perf_counter() - started, 3),
-        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3),
+        "device": device.type,
+        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3) if device.type == "cuda" else None,
         "checkpoints": checkpoint_rows,
         "training_curve": rows,
     }

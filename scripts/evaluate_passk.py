@@ -29,11 +29,16 @@ def main() -> int:
     parser.add_argument("--temperature", type=float, default=0.35)
     parser.add_argument("--families", default="")
     parser.add_argument("--seed", type=int, default=8675309)
+    parser.add_argument("--device", choices=("auto", "cuda", "mps", "cpu"), default="auto")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError(args.output)
 
-    device = torch.device("cuda")
+    if args.device == "auto":
+        device_name = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+    else:
+        device_name = args.device
+    device = torch.device(device_name)
     tokenizer = ByteTokenizer()
     model = load_checkpoint(args.checkpoint, device)
     tasks = frozen_tasks(args.split, per_family=args.per_family)
@@ -44,7 +49,8 @@ def main() -> int:
             raise ValueError("unknown or missing requested family")
     episodes = []
     started = time.perf_counter()
-    torch.cuda.reset_peak_memory_stats()
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats()
     for task_index, task in enumerate(tasks):
         generations = generate_group(
             model,
@@ -74,7 +80,8 @@ def main() -> int:
             "valid": sum(row["evaluation"]["status"] != "invalid" for row in samples),
         }), flush=True)
 
-    torch.cuda.synchronize()
+    if device.type == "cuda":
+        torch.cuda.synchronize()
     rollouts = [sample for episode in episodes for sample in episode["samples"]]
     tests_passed = sum(row["evaluation"]["tests_passed"] for row in rollouts)
     tests_total = sum(row["evaluation"]["tests_total"] for row in rollouts)
@@ -118,7 +125,7 @@ def main() -> int:
         "summary": summary,
         "by_family": by_family,
         "elapsed_seconds": round(time.perf_counter() - started, 3),
-        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3),
+        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3) if device.type == "cuda" else None,
         "episodes": episodes,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
