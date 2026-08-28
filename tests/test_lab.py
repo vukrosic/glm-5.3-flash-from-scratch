@@ -56,6 +56,20 @@ def test_forward_shape_usage_and_causality():
     assert torch.allclose(logits_a[:, :8], logits_b[:, :8], atol=1e-5, rtol=1e-5)
 
 
+def test_router_balance_loss_has_router_gradients():
+    torch.manual_seed(0)
+    model = GLM53FlashFromScratch(tiny_config())
+    _, usage = model(torch.randint(0, 260, (2, 12)))
+    balance = ((usage.mean(dim=0) - 1.0 / model.config.experts) ** 2).mean()
+
+    balance.backward()
+
+    for layer in model.layers:
+        gradient = layer.block.moe.router.weight.grad
+        assert gradient is not None
+        assert torch.count_nonzero(gradient) > 0
+
+
 def test_parameter_count_is_reported():
     counts = GLM53FlashFromScratch(tiny_config()).parameter_counts()
     assert 0 < counts["active_per_token_estimate"] < counts["total"]
