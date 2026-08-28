@@ -1,21 +1,20 @@
 STATUS: PASS
-Pass: 9
-Slides: 62
-Animated frames: 68
+Pass: 13
+Slides: 76
 Blocking issues: None
 
 ## Checks completed
 
-- Rendered every slide and every progressive animation state at 1280 × 720.
-- Detected no horizontal overflow, vertical overflow, or elements outside the viewport.
-- Replaced small white-background chart images with native dark-theme charts.
-- Added plain-language purpose explanations through the architecture, pretraining, and RL sections.
-- Distinguished the miniature teaching implementation from the released GLM-5.3-Flash architecture where they differ.
-- Added a separate NoPE slide and clarified where the released model uses RoPE.
-- Verified the model, experiment, and vision numbers against local source, configs, and reports.
-- Checked the slide feedback endpoint after editing. No unresolved notes remained.
+- Rendered all 76 slides in recording mode after their entrance animations completed.
+- Checked the eight pre-training research slides separately in editing mode with the bottom slide selector visible.
+- Reserved 44 pixels for the collapsed editor bar so it no longer covers slide content.
+- Removed the redundant bottom research-question box from slide 41.
+- Confirmed the research sequence fits without clipping: shared setup, diversity design and result, ordering design and result, curriculum design and result, and conclusions.
+- Confirmed charts, code, diagrams, source notes, slide counters, and navigation remain inside the viewport.
+- Verified the low-visibility DEV / VIEW button toggles editing controls in both directions.
+- Confirmed no unresolved slide feedback notes remain.
 
-## Remaining polish
+## Optional polish
 
-- The deck is intentionally dense after the introduction. During recording, pause on mechanism visuals before advancing to their code slides.
-- The reported RL gain is narrow and family-specific. The slides now state this limitation directly.
+- The source notes are intentionally small supporting evidence and should not be read aloud during the recording.
+- The DEV / VIEW button is deliberately faint until hovered so it does not distract during recording.

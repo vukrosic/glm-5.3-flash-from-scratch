@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="560" viewBox="0 0 1120 560">
+<rect width="100%" height="100%" fill="#171714"/>
+<text x="100" y="45" fill="#f4f0e8" font-family="Arial" font-size="29" font-weight="700">Nine of ten seeds improved at 200 updates</text>
+<text x="100" y="72" fill="#aaa69d" font-family="Arial" font-size="15">Each bar is 88 unique structures minus 8 repeated structures on the same initialization seed</text>
+<line x1="100" y1="393.3" x2="1020" y2="393.3" stroke="#353530" stroke-width="1"/>
+<text x="85" y="398.3" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">-4</text>
+<line x1="100" y1="340.0" x2="1020" y2="340.0" stroke="#353530" stroke-width="1"/>
+<text x="85" y="345.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">-2</text>
+<line x1="100" y1="286.7" x2="1020" y2="286.7" stroke="#696960" stroke-width="2"/>
+<text x="85" y="291.7" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">+0</text>
+<line x1="100" y1="233.3" x2="1020" y2="233.3" stroke="#353530" stroke-width="1"/>
+<text x="85" y="238.3" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">+2</text>
+<line x1="100" y1="180.0" x2="1020" y2="180.0" stroke="#353530" stroke-width="1"/>
+<text x="85" y="185.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">+4</text>
+<line x1="100" y1="126.7" x2="1020" y2="126.7" stroke="#353530" stroke-width="1"/>
+<text x="85" y="131.7" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">+6</text>
+<rect x="119.3" y="232.0" width="53.4" height="54.7" rx="4" fill="#9eb67b"/>
+<text x="146.0" y="224.0" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+2.1</text>
+<text x="146.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">11</text>
+<rect x="211.3" y="286.7" width="53.4" height="100.3" rx="4" fill="#d97757"/>
+<text x="238.0" y="278.7" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">-3.8</text>
+<text x="238.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">22</text>
+<rect x="303.3" y="163.6" width="53.4" height="123.1" rx="4" fill="#9eb67b"/>
+<text x="330.0" y="155.6" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+4.6</text>
+<text x="330.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">33</text>
+<rect x="395.3" y="172.7" width="53.4" height="114.0" rx="4" fill="#9eb67b"/>
+<text x="422.0" y="164.7" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+4.3</text>
+<text x="422.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">44</text>
+<rect x="487.3" y="254.8" width="53.4" height="31.9" rx="4" fill="#9eb67b"/>
+<text x="514.0" y="246.8" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+1.2</text>
+<text x="514.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">55</text>
+<rect x="579.3" y="195.5" width="53.4" height="91.2" rx="4" fill="#9eb67b"/>
+<text x="606.0" y="187.5" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+3.4</text>
+<text x="606.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">66</text>
+<rect x="671.3" y="140.8" width="53.4" height="145.9" rx="4" fill="#9eb67b"/>
+<text x="698.0" y="132.8" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+5.5</text>
+<text x="698.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">77</text>
+<rect x="763.3" y="118.0" width="53.4" height="168.7" rx="4" fill="#9eb67b"/>
+<text x="790.0" y="110.0" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+6.3</text>
+<text x="790.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">88</text>
+<rect x="855.3" y="213.7" width="53.4" height="72.9" rx="4" fill="#9eb67b"/>
+<text x="882.0" y="205.7" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+2.7</text>
+<text x="882.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">99</text>
+<rect x="947.3" y="131.7" width="53.4" height="155.0" rx="4" fill="#9eb67b"/>
+<text x="974.0" y="123.7" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="13">+5.8</text>
+<text x="974.0" y="455" fill="#aaa69d" text-anchor="middle" font-family="Arial" font-size="13">110</text>
+<text x="28" y="310" fill="#aaa69d" font-family="Arial" font-size="14" transform="rotate(-90 28 310)">Accuracy difference · percentage points</text>
+<text x="100" y="495" fill="#aaa69d" font-family="Arial" font-size="13">Initialization seed</text>
+<text x="100" y="530" fill="#f4f0e8" font-family="Arial" font-size="17" font-weight="700">Mean +3.2 points · exact paired permutation p = 0.0137</text>
+</svg>

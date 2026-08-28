@@ -1,0 +1,3089 @@
+{
+  "schema_version": "1.0",
+  "status": "complete",
+  "steps": 200,
+  "batch_size": 24,
+  "learning_rate": 0.0008,
+  "conditions": [
+    "curriculum-8-to-88",
+    "diverse-blocked"
+  ],
+  "seeds": [
+    11,
+    22,
+    33,
+    44,
+    55,
+    66,
+    77,
+    88,
+    99,
+    110
+  ],
+  "device": "cpu",
+  "elapsed_seconds": 219.53007700000308,
+  "held_out_structures": [
+    [
+      "neg",
+      "neg",
+      "add"
+    ],
+    [
+      "neg",
+      "add",
+      "abs"
+    ],
+    [
+      "sub",
+      "neg",
+      "add"
+    ],
+    [
+      "sub",
+      "sub",
+      "mul"
+    ],
+    [
+      "abs",
+      "sub",
+      "neg"
+    ],
+    [
+      "abs",
+      "sub",
+      "sub"
+    ],
+    [
+      "sub",
+      "add",
+      "neg"
+    ],
+    [
+      "abs",
+      "add",
+      "neg"
+    ],
+    [
+      "add",
+      "abs",
+      "abs"
+    ],
+    [
+      "neg",
+      "add",
+      "add"
+    ],
+    [
+      "sub",
+      "add",
+      "mul"
+    ],
+    [
+      "abs",
+      "mul",
+      "add"
+    ],
+    [
+      "neg",
+      "neg",
+      "abs"
+    ],
+    [
+      "add",
+      "abs",
+      "mul"
+    ],
+    [
+      "neg",
+      "mul",
+      "add"
+    ],
+    [
+      "abs",
+      "neg",
+      "add"
+    ],
+    [
+      "add",
+      "abs",
+      "neg"
+    ],
+    [
+      "abs",
+      "abs",
+      "mul"
+    ],
+    [
+      "neg",
+      "sub",
+      "add"
+    ],
+    [
+      "sub",
+      "mul",
+      "mul"
+    ],
+    [
+      "abs",
+      "neg",
+      "sub"
+    ],
+    [
+      "mul",
+      "neg",
+      "neg"
+    ],
+    [
+      "abs",
+      "neg",
+      "mul"
+    ],
+    [
+      "add",
+      "sub",
+      "neg"
+    ],
+    [
+      "add",
+      "abs",
+      "sub"
+    ],
+    [
+      "sub",
+      "sub",
+      "neg"
+    ],
+    [
+      "add",
+      "mul",
+      "abs"
+    ],
+    [
+      "neg",
+      "add",
+      "neg"
+    ],
+    [
+      "mul",
+      "mul",
+      "abs"
+    ],
+    [
+      "mul",
+      "mul",
+      "sub"
+    ],
+    [
+      "mul",
+      "add",
+      "add"
+    ],
+    [
+      "mul",
+      "neg",
+      "add"
+    ]
+  ],
+  "runs": [
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 11,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 461963,
+      "elapsed_seconds": 10.247871332991053,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.4941116487878,
+        "target_perplexity": 243.2553339767807,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": " abs(((-x) + 4))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 4)\n",
+            "teacher_forced_argmax": " ((-(x - 3)) + 4)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.2310643744519634,
+        "target_perplexity": 3.4248729442336034,
+        "target_byte_accuracy": 0.5794871794871795,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "(((((    - *)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": "(bs((((   ( -)  ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 4)\n",
+            "teacher_forced_argmax": "((((( 4 4)  4 4) ",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.537336349487305,
+          "tokens_seen": 2352
+        },
+        {
+          "step": 20,
+          "training_loss": 4.443138122558594,
+          "tokens_seen": 46131
+        },
+        {
+          "step": 40,
+          "training_loss": 3.676546573638916,
+          "tokens_seen": 92075
+        },
+        {
+          "step": 60,
+          "training_loss": 3.1622519493103027,
+          "tokens_seen": 138127
+        },
+        {
+          "step": 80,
+          "training_loss": 2.717839479446411,
+          "tokens_seen": 184044
+        },
+        {
+          "step": 100,
+          "training_loss": 2.3280632495880127,
+          "tokens_seen": 229934
+        },
+        {
+          "step": 120,
+          "training_loss": 1.9801937341690063,
+          "tokens_seen": 276291
+        },
+        {
+          "step": 140,
+          "training_loss": 1.7218149900436401,
+          "tokens_seen": 322558
+        },
+        {
+          "step": 160,
+          "training_loss": 1.4182027578353882,
+          "tokens_seen": 369161
+        },
+        {
+          "step": 180,
+          "training_loss": 1.2500958442687988,
+          "tokens_seen": 415669
+        },
+        {
+          "step": 200,
+          "training_loss": 1.0939568281173706,
+          "tokens_seen": 461963
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 22,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 461732,
+      "elapsed_seconds": 10.662601999996696,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.492418943714892,
+        "target_perplexity": 242.8439227361264,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 5)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": " abs(((-x) + 3))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 2)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 2)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.288398346839807,
+        "target_perplexity": 3.62697274877948,
+        "target_byte_accuracy": 0.6085470085470085,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": "(((x(x)  ( ()\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": "(bs((((() ( ()  ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 2)) + 5)\n",
+            "teacher_forced_argmax": "((((()( -)  - -)\n",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.554020404815674,
+          "tokens_seen": 2328
+        },
+        {
+          "step": 20,
+          "training_loss": 4.455910682678223,
+          "tokens_seen": 46198
+        },
+        {
+          "step": 40,
+          "training_loss": 3.6728944778442383,
+          "tokens_seen": 92232
+        },
+        {
+          "step": 60,
+          "training_loss": 3.1366655826568604,
+          "tokens_seen": 138275
+        },
+        {
+          "step": 80,
+          "training_loss": 2.682607650756836,
+          "tokens_seen": 184243
+        },
+        {
+          "step": 100,
+          "training_loss": 2.2975120544433594,
+          "tokens_seen": 230220
+        },
+        {
+          "step": 120,
+          "training_loss": 2.027785062789917,
+          "tokens_seen": 276440
+        },
+        {
+          "step": 140,
+          "training_loss": 1.767661452293396,
+          "tokens_seen": 322774
+        },
+        {
+          "step": 160,
+          "training_loss": 1.5587502717971802,
+          "tokens_seen": 368940
+        },
+        {
+          "step": 180,
+          "training_loss": 1.3817836046218872,
+          "tokens_seen": 415458
+        },
+        {
+          "step": 200,
+          "training_loss": 1.2097126245498657,
+          "tokens_seen": 461732
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 33,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 461300,
+      "elapsed_seconds": 10.516238665994024,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.478807756635878,
+        "target_perplexity": 239.56092212561728,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 5)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": " abs(((-x) + 4))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 4)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.33933466841013,
+        "target_perplexity": 3.8165034201722885,
+        "target_byte_accuracy": 0.588034188034188,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": "((( ( )  3 3) ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": "(bs((((   3 -)  ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 5)\n",
+            "teacher_forced_argmax": "((( ()3 3)  3 3) ",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.564568519592285,
+          "tokens_seen": 2318
+        },
+        {
+          "step": 20,
+          "training_loss": 4.484333515167236,
+          "tokens_seen": 45907
+        },
+        {
+          "step": 40,
+          "training_loss": 3.6994729042053223,
+          "tokens_seen": 91815
+        },
+        {
+          "step": 60,
+          "training_loss": 3.1592864990234375,
+          "tokens_seen": 137905
+        },
+        {
+          "step": 80,
+          "training_loss": 2.7182512283325195,
+          "tokens_seen": 183890
+        },
+        {
+          "step": 100,
+          "training_loss": 2.3388736248016357,
+          "tokens_seen": 229884
+        },
+        {
+          "step": 120,
+          "training_loss": 2.0506742000579834,
+          "tokens_seen": 276104
+        },
+        {
+          "step": 140,
+          "training_loss": 1.8501343727111816,
+          "tokens_seen": 322413
+        },
+        {
+          "step": 160,
+          "training_loss": 1.6081880331039429,
+          "tokens_seen": 368718
+        },
+        {
+          "step": 180,
+          "training_loss": 1.4856892824172974,
+          "tokens_seen": 415023
+        },
+        {
+          "step": 200,
+          "training_loss": 1.3049285411834717,
+          "tokens_seen": 461300
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 44,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 461457,
+      "elapsed_seconds": 10.947272332996363,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.462138563954932,
+        "target_perplexity": 235.60073323016007,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 2)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 2)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": " abs(((-x) + 5))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 4)\n",
+            "teacher_forced_argmax": " ((-(x - 4)) + 4)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.1590039457011427,
+        "target_perplexity": 3.186757511243131,
+        "target_byte_accuracy": 0.6324786324786325,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 2)\n",
+            "teacher_forced_argmax": "(((((()\n\n* *)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": "(bs((((() * *)\n\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 4)\n",
+            "teacher_forced_argmax": "((( ( * *)  4 3)\n",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.579014778137207,
+          "tokens_seen": 2345
+        },
+        {
+          "step": 20,
+          "training_loss": 4.5227813720703125,
+          "tokens_seen": 45953
+        },
+        {
+          "step": 40,
+          "training_loss": 3.681976556777954,
+          "tokens_seen": 91853
+        },
+        {
+          "step": 60,
+          "training_loss": 3.1073145866394043,
+          "tokens_seen": 137852
+        },
+        {
+          "step": 80,
+          "training_loss": 2.6433024406433105,
+          "tokens_seen": 183856
+        },
+        {
+          "step": 100,
+          "training_loss": 2.237682580947876,
+          "tokens_seen": 230016
+        },
+        {
+          "step": 120,
+          "training_loss": 1.8842077255249023,
+          "tokens_seen": 276244
+        },
+        {
+          "step": 140,
+          "training_loss": 1.6179536581039429,
+          "tokens_seen": 322622
+        },
+        {
+          "step": 160,
+          "training_loss": 1.3812944889068604,
+          "tokens_seen": 369087
+        },
+        {
+          "step": 180,
+          "training_loss": 1.2653652429580688,
+          "tokens_seen": 415357
+        },
+        {
+          "step": 200,
+          "training_loss": 1.0567303895950317,
+          "tokens_seen": 461457
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 55,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 462425,
+      "elapsed_seconds": 10.65577370900428,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.434910693535438,
+        "target_perplexity": 229.27237185647155,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 4)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 4)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": " abs(((-x) + 3))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 2)\n",
+            "teacher_forced_argmax": " ((-(x - 3)) + 2)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.3086611380943884,
+        "target_perplexity": 3.701214977682453,
+        "target_byte_accuracy": 0.5726495726495726,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 4)\n",
+            "teacher_forced_argmax": "(((((    * *) ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": "(ss((((( \n( -)\n ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 2)\n",
+            "teacher_forced_argmax": "((( ( * *)  * *) ",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.545495986938477,
+          "tokens_seen": 2313
+        },
+        {
+          "step": 20,
+          "training_loss": 4.416062355041504,
+          "tokens_seen": 45967
+        },
+        {
+          "step": 40,
+          "training_loss": 3.668269157409668,
+          "tokens_seen": 92107
+        },
+        {
+          "step": 60,
+          "training_loss": 3.179182291030884,
+          "tokens_seen": 138177
+        },
+        {
+          "step": 80,
+          "training_loss": 2.750150442123413,
+          "tokens_seen": 184189
+        },
+        {
+          "step": 100,
+          "training_loss": 2.3842716217041016,
+          "tokens_seen": 230229
+        },
+        {
+          "step": 120,
+          "training_loss": 2.1149353981018066,
+          "tokens_seen": 276755
+        },
+        {
+          "step": 140,
+          "training_loss": 1.8375022411346436,
+          "tokens_seen": 323064
+        },
+        {
+          "step": 160,
+          "training_loss": 1.6153815984725952,
+          "tokens_seen": 369439
+        },
+        {
+          "step": 180,
+          "training_loss": 1.4358917474746704,
+          "tokens_seen": 415955
+        },
+        {
+          "step": 200,
+          "training_loss": 1.2161126136779785,
+          "tokens_seen": 462425
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 66,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 461769,
+      "elapsed_seconds": 11.092275041999528,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.477629830287053,
+        "target_perplexity": 239.27890313470542,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 5)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": " abs(((-x) + 3))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 5)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 5)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.204762936810143,
+        "target_perplexity": 3.3359681490703634,
+        "target_byte_accuracy": 0.5709401709401709,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": "((( (  \n)- -)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": "(bs(((( ))- -)))",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 5)) + 5)\n",
+            "teacher_forced_argmax": "((( ()- -)\n\n- -)\n",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.527397632598877,
+          "tokens_seen": 2308
+        },
+        {
+          "step": 20,
+          "training_loss": 4.433589458465576,
+          "tokens_seen": 46131
+        },
+        {
+          "step": 40,
+          "training_loss": 3.644169807434082,
+          "tokens_seen": 92284
+        },
+        {
+          "step": 60,
+          "training_loss": 3.113678455352783,
+          "tokens_seen": 138215
+        },
+        {
+          "step": 80,
+          "training_loss": 2.671891689300537,
+          "tokens_seen": 184142
+        },
+        {
+          "step": 100,
+          "training_loss": 2.29266095161438,
+          "tokens_seen": 230116
+        },
+        {
+          "step": 120,
+          "training_loss": 1.9420191049575806,
+          "tokens_seen": 276583
+        },
+        {
+          "step": 140,
+          "training_loss": 1.6609915494918823,
+          "tokens_seen": 323014
+        },
+        {
+          "step": 160,
+          "training_loss": 1.3964462280273438,
+          "tokens_seen": 369130
+        },
+        {
+          "step": 180,
+          "training_loss": 1.2263566255569458,
+          "tokens_seen": 415331
+        },
+        {
+          "step": 200,
+          "training_loss": 1.055319905281067,
+          "tokens_seen": 461769
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 77,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 461875,
+      "elapsed_seconds": 10.7090066249948,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.49420563705966,
+        "target_perplexity": 243.27819819970958,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": " abs(((-x) + 5))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 2)\n",
+            "teacher_forced_argmax": " ((-(x - 3)) + 2)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.1983371772317806,
+        "target_perplexity": 3.314600744208905,
+        "target_byte_accuracy": 0.6102564102564103,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "(((((()  * *)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": "(bs((((() ( ()  ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 2)\n",
+            "teacher_forced_argmax": "((( ( * *)  * *) ",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.539375305175781,
+          "tokens_seen": 2251
+        },
+        {
+          "step": 20,
+          "training_loss": 4.43915319442749,
+          "tokens_seen": 45998
+        },
+        {
+          "step": 40,
+          "training_loss": 3.686629295349121,
+          "tokens_seen": 92088
+        },
+        {
+          "step": 60,
+          "training_loss": 3.177940607070923,
+          "tokens_seen": 138079
+        },
+        {
+          "step": 80,
+          "training_loss": 2.7446088790893555,
+          "tokens_seen": 184158
+        },
+        {
+          "step": 100,
+          "training_loss": 2.34150767326355,
+          "tokens_seen": 230206
+        },
+        {
+          "step": 120,
+          "training_loss": 2.00614857673645,
+          "tokens_seen": 276523
+        },
+        {
+          "step": 140,
+          "training_loss": 1.7453296184539795,
+          "tokens_seen": 322834
+        },
+        {
+          "step": 160,
+          "training_loss": 1.4382160902023315,
+          "tokens_seen": 369050
+        },
+        {
+          "step": 180,
+          "training_loss": 1.2679105997085571,
+          "tokens_seen": 415509
+        },
+        {
+          "step": 200,
+          "training_loss": 1.1101144552230835,
+          "tokens_seen": 461875
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 88,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 461927,
+      "elapsed_seconds": 11.02415787501377,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.504798156379635,
+        "target_perplexity": 245.86882361653915,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": " abs(((-x) + 4))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 3)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.2880881510229192,
+        "target_perplexity": 3.6258478514830803,
+        "target_byte_accuracy": 0.6017094017094017,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "(((((  \n\n- -)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": "(bs((((  \n- -)\n\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 5)\n",
+            "teacher_forced_argmax": "((((( 4 4)\n\n4 4)\n",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.56001091003418,
+          "tokens_seen": 2323
+        },
+        {
+          "step": 20,
+          "training_loss": 4.462270259857178,
+          "tokens_seen": 46048
+        },
+        {
+          "step": 40,
+          "training_loss": 3.6851696968078613,
+          "tokens_seen": 92060
+        },
+        {
+          "step": 60,
+          "training_loss": 3.1509523391723633,
+          "tokens_seen": 138115
+        },
+        {
+          "step": 80,
+          "training_loss": 2.747713565826416,
+          "tokens_seen": 184253
+        },
+        {
+          "step": 100,
+          "training_loss": 2.347346544265747,
+          "tokens_seen": 230278
+        },
+        {
+          "step": 120,
+          "training_loss": 2.020594835281372,
+          "tokens_seen": 276460
+        },
+        {
+          "step": 140,
+          "training_loss": 1.8069746494293213,
+          "tokens_seen": 322871
+        },
+        {
+          "step": 160,
+          "training_loss": 1.5603915452957153,
+          "tokens_seen": 369266
+        },
+        {
+          "step": 180,
+          "training_loss": 1.4028493165969849,
+          "tokens_seen": 415665
+        },
+        {
+          "step": 200,
+          "training_loss": 1.205112099647522,
+          "tokens_seen": 461927
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 99,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 462174,
+      "elapsed_seconds": 10.771360084007028,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.469629529806284,
+        "target_perplexity": 237.37223713103026,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 2))\n",
+            "teacher_forced_argmax": " abs(((-x) + 2))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 4)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.3315274112244957,
+        "target_perplexity": 3.786823008484541,
+        "target_byte_accuracy": 0.5897435897435898,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "(((((()\n\n* *)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 2))\n",
+            "teacher_forced_argmax": "(bs((((()\n* *)\n\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 5)\n",
+            "teacher_forced_argmax": "((((()3 3)  3 3) ",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.561151027679443,
+          "tokens_seen": 2348
+        },
+        {
+          "step": 20,
+          "training_loss": 4.4826273918151855,
+          "tokens_seen": 46088
+        },
+        {
+          "step": 40,
+          "training_loss": 3.6938464641571045,
+          "tokens_seen": 91984
+        },
+        {
+          "step": 60,
+          "training_loss": 3.158602476119995,
+          "tokens_seen": 138162
+        },
+        {
+          "step": 80,
+          "training_loss": 2.6982157230377197,
+          "tokens_seen": 184214
+        },
+        {
+          "step": 100,
+          "training_loss": 2.3111677169799805,
+          "tokens_seen": 230277
+        },
+        {
+          "step": 120,
+          "training_loss": 2.0223820209503174,
+          "tokens_seen": 276629
+        },
+        {
+          "step": 140,
+          "training_loss": 1.7335025072097778,
+          "tokens_seen": 322954
+        },
+        {
+          "step": 160,
+          "training_loss": 1.5407285690307617,
+          "tokens_seen": 369426
+        },
+        {
+          "step": 180,
+          "training_loss": 1.4016050100326538,
+          "tokens_seen": 415876
+        },
+        {
+          "step": 200,
+          "training_loss": 1.2392271757125854,
+          "tokens_seen": 462174
+        }
+      ]
+    },
+    {
+      "condition": "curriculum-8-to-88",
+      "seed": 110,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 461799,
+      "elapsed_seconds": 10.834239290998084,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.475555254455306,
+        "target_perplexity": 238.78301546135918,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": " abs(((-x) + 5))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 2)) + 3)\n",
+            "teacher_forced_argmax": " ((-(x - 2)) + 3)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.2359570947722491,
+        "target_perplexity": 3.441670950144477,
+        "target_byte_accuracy": 0.6034188034188034,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "((((( )\n\n* +)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": "abs(((( ))* *)))",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 2)) + 3)\n",
+            "teacher_forced_argmax": "((((( * *)  * +)\n",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.527303218841553,
+          "tokens_seen": 2256
+        },
+        {
+          "step": 20,
+          "training_loss": 4.426036834716797,
+          "tokens_seen": 46043
+        },
+        {
+          "step": 40,
+          "training_loss": 3.6723525524139404,
+          "tokens_seen": 92106
+        },
+        {
+          "step": 60,
+          "training_loss": 3.15916109085083,
+          "tokens_seen": 138087
+        },
+        {
+          "step": 80,
+          "training_loss": 2.708428144454956,
+          "tokens_seen": 184143
+        },
+        {
+          "step": 100,
+          "training_loss": 2.3172659873962402,
+          "tokens_seen": 230246
+        },
+        {
+          "step": 120,
+          "training_loss": 2.002020835876465,
+          "tokens_seen": 276549
+        },
+        {
+          "step": 140,
+          "training_loss": 1.736191987991333,
+          "tokens_seen": 322889
+        },
+        {
+          "step": 160,
+          "training_loss": 1.4504139423370361,
+          "tokens_seen": 369219
+        },
+        {
+          "step": 180,
+          "training_loss": 1.3311363458633423,
+          "tokens_seen": 415510
+        },
+        {
+          "step": 200,
+          "training_loss": 1.147082805633545,
+          "tokens_seen": 461799
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 11,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463786,
+      "elapsed_seconds": 11.176890791000915,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.4941116487878,
+        "target_perplexity": 243.2553339767807,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": " abs(((-x) + 4))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 4)\n",
+            "teacher_forced_argmax": " ((-(x - 3)) + 4)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.6904629794450907,
+        "target_perplexity": 5.42199039422315,
+        "target_byte_accuracy": 0.4324786324786325,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "i(( (    i i) ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": "its((((( )i i)))",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 4)\n",
+            "teacher_forced_argmax": "i(( ( i i)))i i))",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.515799045562744,
+          "tokens_seen": 2348
+        },
+        {
+          "step": 20,
+          "training_loss": 4.491359233856201,
+          "tokens_seen": 45471
+        },
+        {
+          "step": 40,
+          "training_loss": 3.7261481285095215,
+          "tokens_seen": 90726
+        },
+        {
+          "step": 60,
+          "training_loss": 3.2749288082122803,
+          "tokens_seen": 140547
+        },
+        {
+          "step": 80,
+          "training_loss": 2.866603136062622,
+          "tokens_seen": 186573
+        },
+        {
+          "step": 100,
+          "training_loss": 2.6525392532348633,
+          "tokens_seen": 231666
+        },
+        {
+          "step": 120,
+          "training_loss": 2.154472589492798,
+          "tokens_seen": 275965
+        },
+        {
+          "step": 140,
+          "training_loss": 1.9629319906234741,
+          "tokens_seen": 320916
+        },
+        {
+          "step": 160,
+          "training_loss": 1.8648098707199097,
+          "tokens_seen": 372153
+        },
+        {
+          "step": 180,
+          "training_loss": 1.655362606048584,
+          "tokens_seen": 419394
+        },
+        {
+          "step": 200,
+          "training_loss": 1.5143098831176758,
+          "tokens_seen": 463786
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 22,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463119,
+      "elapsed_seconds": 10.960774917009985,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.492418943714892,
+        "target_perplexity": 242.8439227361264,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 5)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": " abs(((-x) + 3))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 2)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 2)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.513574057435378,
+        "target_perplexity": 4.542938536615583,
+        "target_byte_accuracy": 0.5452991452991452,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": "(((((( \n\n2 2)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": "(bs((((  )( ()))",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 2)) + 5)\n",
+            "teacher_forced_argmax": "((( ( 2 2)\n\n2 2)\n",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.551123142242432,
+          "tokens_seen": 2366
+        },
+        {
+          "step": 20,
+          "training_loss": 4.4954705238342285,
+          "tokens_seen": 45477
+        },
+        {
+          "step": 40,
+          "training_loss": 3.7266387939453125,
+          "tokens_seen": 90689
+        },
+        {
+          "step": 60,
+          "training_loss": 3.242277145385742,
+          "tokens_seen": 140233
+        },
+        {
+          "step": 80,
+          "training_loss": 2.790395975112915,
+          "tokens_seen": 186460
+        },
+        {
+          "step": 100,
+          "training_loss": 2.5980541706085205,
+          "tokens_seen": 231440
+        },
+        {
+          "step": 120,
+          "training_loss": 2.073427200317383,
+          "tokens_seen": 275822
+        },
+        {
+          "step": 140,
+          "training_loss": 1.9242725372314453,
+          "tokens_seen": 320604
+        },
+        {
+          "step": 160,
+          "training_loss": 1.8170928955078125,
+          "tokens_seen": 371556
+        },
+        {
+          "step": 180,
+          "training_loss": 1.5843708515167236,
+          "tokens_seen": 418935
+        },
+        {
+          "step": 200,
+          "training_loss": 1.4186303615570068,
+          "tokens_seen": 463119
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 33,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463011,
+      "elapsed_seconds": 11.049038999990444,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.478807756635878,
+        "target_perplexity": 239.56092212561728,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 5)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": " abs(((-x) + 4))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 4)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.5568945932337361,
+        "target_perplexity": 4.744066091678129,
+        "target_byte_accuracy": 0.5042735042735043,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": "((( ( )  ( () ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": "(ss((((   ( ()  ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 5)\n",
+            "teacher_forced_argmax": "((( ( ( ()  ( ())",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.546177387237549,
+          "tokens_seen": 2396
+        },
+        {
+          "step": 20,
+          "training_loss": 4.510344982147217,
+          "tokens_seen": 45588
+        },
+        {
+          "step": 40,
+          "training_loss": 3.7461471557617188,
+          "tokens_seen": 90559
+        },
+        {
+          "step": 60,
+          "training_loss": 3.2577788829803467,
+          "tokens_seen": 140154
+        },
+        {
+          "step": 80,
+          "training_loss": 2.8260409832000732,
+          "tokens_seen": 186057
+        },
+        {
+          "step": 100,
+          "training_loss": 2.6042885780334473,
+          "tokens_seen": 230888
+        },
+        {
+          "step": 120,
+          "training_loss": 2.144151210784912,
+          "tokens_seen": 275089
+        },
+        {
+          "step": 140,
+          "training_loss": 1.9502216577529907,
+          "tokens_seen": 320291
+        },
+        {
+          "step": 160,
+          "training_loss": 1.8531286716461182,
+          "tokens_seen": 371600
+        },
+        {
+          "step": 180,
+          "training_loss": 1.6226249933242798,
+          "tokens_seen": 418866
+        },
+        {
+          "step": 200,
+          "training_loss": 1.4985110759735107,
+          "tokens_seen": 463011
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 44,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463043,
+      "elapsed_seconds": 11.019469708990073,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.462138563954932,
+        "target_perplexity": 235.60073323016007,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 2)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 2)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": " abs(((-x) + 5))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 4)\n",
+            "teacher_forced_argmax": " ((-(x - 4)) + 4)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.4730851963289782,
+        "target_perplexity": 4.362674105616037,
+        "target_byte_accuracy": 0.5145299145299145,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 2)\n",
+            "teacher_forced_argmax": "(((((() )2 2))",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": "its((((())( 2)))",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 4)\n",
+            "teacher_forced_argmax": "i(((( ( 2)  3 2))",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.559593677520752,
+          "tokens_seen": 2375
+        },
+        {
+          "step": 20,
+          "training_loss": 4.545168399810791,
+          "tokens_seen": 45544
+        },
+        {
+          "step": 40,
+          "training_loss": 3.7345664501190186,
+          "tokens_seen": 90628
+        },
+        {
+          "step": 60,
+          "training_loss": 3.225440502166748,
+          "tokens_seen": 140275
+        },
+        {
+          "step": 80,
+          "training_loss": 2.765760660171509,
+          "tokens_seen": 186146
+        },
+        {
+          "step": 100,
+          "training_loss": 2.5610647201538086,
+          "tokens_seen": 231040
+        },
+        {
+          "step": 120,
+          "training_loss": 2.047408103942871,
+          "tokens_seen": 275304
+        },
+        {
+          "step": 140,
+          "training_loss": 1.8319445848464966,
+          "tokens_seen": 320483
+        },
+        {
+          "step": 160,
+          "training_loss": 1.741374135017395,
+          "tokens_seen": 371583
+        },
+        {
+          "step": 180,
+          "training_loss": 1.5327104330062866,
+          "tokens_seen": 418971
+        },
+        {
+          "step": 200,
+          "training_loss": 1.4266140460968018,
+          "tokens_seen": 463043
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 55,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463775,
+      "elapsed_seconds": 10.980796290998114,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.434910693535438,
+        "target_perplexity": 229.27237185647155,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 4)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 4)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": " abs(((-x) + 3))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 2)\n",
+            "teacher_forced_argmax": " ((-(x - 3)) + 2)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.6376461890263436,
+        "target_perplexity": 5.143049487385311,
+        "target_byte_accuracy": 0.48376068376068376,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 4)\n",
+            "teacher_forced_argmax": "(((((( \n\n( ()\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": "(sy((((() ( ()\n\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 2)\n",
+            "teacher_forced_argmax": "((( ( ( ()\n\n( ())",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.534906387329102,
+          "tokens_seen": 2389
+        },
+        {
+          "step": 20,
+          "training_loss": 4.43297004699707,
+          "tokens_seen": 45572
+        },
+        {
+          "step": 40,
+          "training_loss": 3.6995153427124023,
+          "tokens_seen": 90820
+        },
+        {
+          "step": 60,
+          "training_loss": 3.2713465690612793,
+          "tokens_seen": 140389
+        },
+        {
+          "step": 80,
+          "training_loss": 2.8604276180267334,
+          "tokens_seen": 186140
+        },
+        {
+          "step": 100,
+          "training_loss": 2.691423177719116,
+          "tokens_seen": 231281
+        },
+        {
+          "step": 120,
+          "training_loss": 2.1886684894561768,
+          "tokens_seen": 275644
+        },
+        {
+          "step": 140,
+          "training_loss": 1.9841502904891968,
+          "tokens_seen": 320858
+        },
+        {
+          "step": 160,
+          "training_loss": 1.9219344854354858,
+          "tokens_seen": 372000
+        },
+        {
+          "step": 180,
+          "training_loss": 1.6648868322372437,
+          "tokens_seen": 419480
+        },
+        {
+          "step": 200,
+          "training_loss": 1.555328130722046,
+          "tokens_seen": 463775
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 66,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463117,
+      "elapsed_seconds": 10.992500749998726,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.477629830287053,
+        "target_perplexity": 239.27890313470542,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 5)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": " abs(((-x) + 3))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 5)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 5)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.5271116701710938,
+        "target_perplexity": 4.604857249348521,
+        "target_byte_accuracy": 0.517948717948718,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 5)\n",
+            "teacher_forced_argmax": "(((((()\n\n( ()\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 3))\n",
+            "teacher_forced_argmax": "(bs((((() ( ()  ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 5)) + 5)\n",
+            "teacher_forced_argmax": "((((( ((() )( ())",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.5099687576293945,
+          "tokens_seen": 2382
+        },
+        {
+          "step": 20,
+          "training_loss": 4.4629011154174805,
+          "tokens_seen": 45541
+        },
+        {
+          "step": 40,
+          "training_loss": 3.685642719268799,
+          "tokens_seen": 90616
+        },
+        {
+          "step": 60,
+          "training_loss": 3.2097482681274414,
+          "tokens_seen": 140271
+        },
+        {
+          "step": 80,
+          "training_loss": 2.778092861175537,
+          "tokens_seen": 186225
+        },
+        {
+          "step": 100,
+          "training_loss": 2.57059645652771,
+          "tokens_seen": 231189
+        },
+        {
+          "step": 120,
+          "training_loss": 2.081289529800415,
+          "tokens_seen": 275227
+        },
+        {
+          "step": 140,
+          "training_loss": 1.885518193244934,
+          "tokens_seen": 320357
+        },
+        {
+          "step": 160,
+          "training_loss": 1.7841756343841553,
+          "tokens_seen": 371594
+        },
+        {
+          "step": 180,
+          "training_loss": 1.5659549236297607,
+          "tokens_seen": 418880
+        },
+        {
+          "step": 200,
+          "training_loss": 1.4396437406539917,
+          "tokens_seen": 463117
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 77,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 462908,
+      "elapsed_seconds": 10.862998832992162,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.49420563705966,
+        "target_perplexity": 243.27819819970958,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": " abs(((-x) + 5))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 2)\n",
+            "teacher_forced_argmax": " ((-(x - 3)) + 2)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.54331724689557,
+        "target_perplexity": 4.680089561857917,
+        "target_byte_accuracy": 0.5538461538461539,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "((( (    ( () ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": "(bs(((((  ( ()  ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 2)\n",
+            "teacher_forced_argmax": "((( ( ( ()  ( () ",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.519620418548584,
+          "tokens_seen": 2367
+        },
+        {
+          "step": 20,
+          "training_loss": 4.467078685760498,
+          "tokens_seen": 45416
+        },
+        {
+          "step": 40,
+          "training_loss": 3.7387855052948,
+          "tokens_seen": 90481
+        },
+        {
+          "step": 60,
+          "training_loss": 3.276650905609131,
+          "tokens_seen": 140135
+        },
+        {
+          "step": 80,
+          "training_loss": 2.869886636734009,
+          "tokens_seen": 185946
+        },
+        {
+          "step": 100,
+          "training_loss": 2.663132429122925,
+          "tokens_seen": 230992
+        },
+        {
+          "step": 120,
+          "training_loss": 2.1758599281311035,
+          "tokens_seen": 275257
+        },
+        {
+          "step": 140,
+          "training_loss": 1.969854474067688,
+          "tokens_seen": 320419
+        },
+        {
+          "step": 160,
+          "training_loss": 1.8538272380828857,
+          "tokens_seen": 371633
+        },
+        {
+          "step": 180,
+          "training_loss": 1.6200664043426514,
+          "tokens_seen": 418740
+        },
+        {
+          "step": 200,
+          "training_loss": 1.502884030342102,
+          "tokens_seen": 462908
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 88,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463095,
+      "elapsed_seconds": 10.891502124999533,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.504798156379635,
+        "target_perplexity": 245.86882361653915,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": " abs(((-x) + 4))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 3)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.5765322263424213,
+        "target_perplexity": 4.8381490811767796,
+        "target_byte_accuracy": 0.505982905982906,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "((( (    ( () ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 4))\n",
+            "teacher_forced_argmax": "(ss(((( ))( ()))",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 3)) + 5)\n",
+            "teacher_forced_argmax": "((( ( ( (.  ( () ",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.543996810913086,
+          "tokens_seen": 2336
+        },
+        {
+          "step": 20,
+          "training_loss": 4.496861934661865,
+          "tokens_seen": 45618
+        },
+        {
+          "step": 40,
+          "training_loss": 3.7333908081054688,
+          "tokens_seen": 90563
+        },
+        {
+          "step": 60,
+          "training_loss": 3.2596001625061035,
+          "tokens_seen": 140294
+        },
+        {
+          "step": 80,
+          "training_loss": 2.8454580307006836,
+          "tokens_seen": 186218
+        },
+        {
+          "step": 100,
+          "training_loss": 2.631890296936035,
+          "tokens_seen": 231291
+        },
+        {
+          "step": 120,
+          "training_loss": 2.168778419494629,
+          "tokens_seen": 275528
+        },
+        {
+          "step": 140,
+          "training_loss": 1.9653167724609375,
+          "tokens_seen": 320549
+        },
+        {
+          "step": 160,
+          "training_loss": 1.8485844135284424,
+          "tokens_seen": 371566
+        },
+        {
+          "step": 180,
+          "training_loss": 1.6507972478866577,
+          "tokens_seen": 418923
+        },
+        {
+          "step": 200,
+          "training_loss": 1.5139836072921753,
+          "tokens_seen": 463095
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 99,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463799,
+      "elapsed_seconds": 11.195164958000532,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.469629529806284,
+        "target_perplexity": 237.37223713103026,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 2))\n",
+            "teacher_forced_argmax": " abs(((-x) + 2))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 5)\n",
+            "teacher_forced_argmax": " ((-(x - 4)) + 5)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.7437913107056904,
+        "target_perplexity": 5.718984820493136,
+        "target_byte_accuracy": 0.4478632478632479,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "i(((((.  i i) ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 2))\n",
+            "teacher_forced_argmax": "iss(((((.)i i)  ",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 4)) + 5)\n",
+            "teacher_forced_argmax": "i((((.i(i)  i i) ",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.541187286376953,
+          "tokens_seen": 2432
+        },
+        {
+          "step": 20,
+          "training_loss": 4.49614953994751,
+          "tokens_seen": 45770
+        },
+        {
+          "step": 40,
+          "training_loss": 3.735215187072754,
+          "tokens_seen": 90927
+        },
+        {
+          "step": 60,
+          "training_loss": 3.2534027099609375,
+          "tokens_seen": 140606
+        },
+        {
+          "step": 80,
+          "training_loss": 2.8584179878234863,
+          "tokens_seen": 186601
+        },
+        {
+          "step": 100,
+          "training_loss": 2.6513218879699707,
+          "tokens_seen": 231674
+        },
+        {
+          "step": 120,
+          "training_loss": 2.171306848526001,
+          "tokens_seen": 275945
+        },
+        {
+          "step": 140,
+          "training_loss": 1.964231014251709,
+          "tokens_seen": 321138
+        },
+        {
+          "step": 160,
+          "training_loss": 1.8614487648010254,
+          "tokens_seen": 372440
+        },
+        {
+          "step": 180,
+          "training_loss": 1.6654634475708008,
+          "tokens_seen": 419751
+        },
+        {
+          "step": 200,
+          "training_loss": 1.585052251815796,
+          "tokens_seen": 463799
+        }
+      ]
+    },
+    {
+      "condition": "diverse-blocked",
+      "seed": 110,
+      "steps": 200,
+      "batch_size": 24,
+      "tokens_seen": 463526,
+      "elapsed_seconds": 11.027023708011257,
+      "parameter_counts": {
+        "total": 248412,
+        "active_per_token_estimate": 123996
+      },
+      "before": {
+        "target_loss": 5.475555254455306,
+        "target_perplexity": 238.78301546135918,
+        "target_byte_accuracy": 0.1111111111111111,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": " ((-(-x)) + 3)\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": " abs(((-x) + 5))\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 2)) + 3)\n",
+            "teacher_forced_argmax": " ((-(x - 2)) + 3)\n",
+            "exact": false
+          }
+        ]
+      },
+      "after": {
+        "target_loss": 1.5529282609366963,
+        "target_perplexity": 4.72528681616221,
+        "target_byte_accuracy": 0.5452991452991452,
+        "target_exact_accuracy": 0.0,
+        "examples": [
+          {
+            "structure": [
+              "neg",
+              "neg",
+              "add"
+            ],
+            "target": "((-(-x)) + 3)\n",
+            "teacher_forced_argmax": "((( (  \n\n( ()\n",
+            "exact": false
+          },
+          {
+            "structure": [
+              "neg",
+              "add",
+              "abs"
+            ],
+            "target": "abs(((-x) + 5))\n",
+            "teacher_forced_argmax": "(by(((( ))( ()))",
+            "exact": false
+          },
+          {
+            "structure": [
+              "sub",
+              "neg",
+              "add"
+            ],
+            "target": "((-(x - 2)) + 3)\n",
+            "teacher_forced_argmax": "((( ( ( ()\n\n( ()\n",
+            "exact": false
+          }
+        ]
+      },
+      "training_curve": [
+        {
+          "step": 1,
+          "training_loss": 5.508270740509033,
+          "tokens_seen": 2373
+        },
+        {
+          "step": 20,
+          "training_loss": 4.459390163421631,
+          "tokens_seen": 45409
+        },
+        {
+          "step": 40,
+          "training_loss": 3.724468231201172,
+          "tokens_seen": 90659
+        },
+        {
+          "step": 60,
+          "training_loss": 3.3029537200927734,
+          "tokens_seen": 140447
+        },
+        {
+          "step": 80,
+          "training_loss": 2.9081320762634277,
+          "tokens_seen": 186179
+        },
+        {
+          "step": 100,
+          "training_loss": 2.6679370403289795,
+          "tokens_seen": 231184
+        },
+        {
+          "step": 120,
+          "training_loss": 2.1905038356781006,
+          "tokens_seen": 275800
+        },
+        {
+          "step": 140,
+          "training_loss": 1.960542917251587,
+          "tokens_seen": 320898
+        },
+        {
+          "step": 160,
+          "training_loss": 1.906022548675537,
+          "tokens_seen": 371911
+        },
+        {
+          "step": 180,
+          "training_loss": 1.6610653400421143,
+          "tokens_seen": 419287
+        },
+        {
+          "step": 200,
+          "training_loss": 1.5156527757644653,
+          "tokens_seen": 463526
+        }
+      ]
+    }
+  ]
+}

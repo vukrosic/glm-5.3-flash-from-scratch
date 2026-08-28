@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="650" viewBox="0 0 1120 650">
+<rect width="100%" height="100%" fill="#171714"/>
+<text x="110" y="45" fill="#f4f0e8" font-family="Arial" font-size="29" font-weight="700">Data diversity helps only after enough training</text>
+<text x="110" y="72" fill="#aaa69d" font-family="Arial" font-size="15">Tiny 248K-parameter GLM-style model · 10 paired seeds · unseen program structures</text>
+<line x1="110" y1="500.0" x2="960" y2="500.0" stroke="#353530"/>
+<text x="95" y="505.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">20%</text>
+<line x1="110" y1="420.0" x2="960" y2="420.0" stroke="#353530"/>
+<text x="95" y="425.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">30%</text>
+<line x1="110" y1="340.0" x2="960" y2="340.0" stroke="#353530"/>
+<text x="95" y="345.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">40%</text>
+<line x1="110" y1="260.0" x2="960" y2="260.0" stroke="#353530"/>
+<text x="95" y="265.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">50%</text>
+<line x1="110" y1="180.0" x2="960" y2="180.0" stroke="#353530"/>
+<text x="95" y="185.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">60%</text>
+<line x1="110" y1="100.0" x2="960" y2="100.0" stroke="#353530"/>
+<text x="95" y="105.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">70%</text>
+<line x1="180.0" y1="414.7" x2="180.0" y2="461.3" stroke="#d97757" stroke-width="3"/>
+<line x1="173.0" y1="414.7" x2="187.0" y2="414.7" stroke="#d97757" stroke-width="3"/>
+<line x1="173.0" y1="461.3" x2="187.0" y2="461.3" stroke="#d97757" stroke-width="3"/>
+<line x1="535.0" y1="297.5" x2="535.0" y2="328.5" stroke="#d97757" stroke-width="3"/>
+<line x1="528.0" y1="297.5" x2="542.0" y2="297.5" stroke="#d97757" stroke-width="3"/>
+<line x1="528.0" y1="328.5" x2="542.0" y2="328.5" stroke="#d97757" stroke-width="3"/>
+<line x1="890.0" y1="192.7" x2="890.0" y2="213.8" stroke="#d97757" stroke-width="3"/>
+<line x1="883.0" y1="192.7" x2="897.0" y2="192.7" stroke="#d97757" stroke-width="3"/>
+<line x1="883.0" y1="213.8" x2="897.0" y2="213.8" stroke="#d97757" stroke-width="3"/>
+<path d="M 180.0 437.4 L 535.0 312.2 L 890.0 204.3" fill="none" stroke="#d97757" stroke-width="5"/>
+<circle cx="180.0" cy="437.4" r="7" fill="#d97757" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="535.0" cy="312.2" r="7" fill="#d97757" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="890.0" cy="204.3" r="7" fill="#d97757" stroke="#f4f0e8" stroke-width="2"/>
+<line x1="790" y1="53" x2="825" y2="53" stroke="#d97757" stroke-width="5"/>
+<text x="835" y="58" fill="#f4f0e8" font-family="Arial" font-size="14">8 repeated structures</text>
+<line x1="180.0" y1="432.3" x2="180.0" y2="471.7" stroke="#9eb67b" stroke-width="3"/>
+<line x1="173.0" y1="432.3" x2="187.0" y2="432.3" stroke="#9eb67b" stroke-width="3"/>
+<line x1="173.0" y1="471.7" x2="187.0" y2="471.7" stroke="#9eb67b" stroke-width="3"/>
+<line x1="535.0" y1="285.2" x2="535.0" y2="304.3" stroke="#9eb67b" stroke-width="3"/>
+<line x1="528.0" y1="285.2" x2="542.0" y2="285.2" stroke="#9eb67b" stroke-width="3"/>
+<line x1="528.0" y1="304.3" x2="542.0" y2="304.3" stroke="#9eb67b" stroke-width="3"/>
+<line x1="890.0" y1="169.3" x2="890.0" y2="186.8" stroke="#9eb67b" stroke-width="3"/>
+<line x1="883.0" y1="169.3" x2="897.0" y2="169.3" stroke="#9eb67b" stroke-width="3"/>
+<line x1="883.0" y1="186.8" x2="897.0" y2="186.8" stroke="#9eb67b" stroke-width="3"/>
+<path d="M 180.0 452.7 L 535.0 294.5 L 890.0 178.6" fill="none" stroke="#9eb67b" stroke-width="5"/>
+<circle cx="180.0" cy="452.7" r="7" fill="#9eb67b" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="535.0" cy="294.5" r="7" fill="#9eb67b" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="890.0" cy="178.6" r="7" fill="#9eb67b" stroke="#f4f0e8" stroke-width="2"/>
+<line x1="790" y1="133" x2="825" y2="133" stroke="#9eb67b" stroke-width="5"/>
+<text x="835" y="138" fill="#f4f0e8" font-family="Arial" font-size="14">88 unique structures</text>
+<text x="180.0" y="530" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="17">50 updates</text>
+<text x="535.0" y="530" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="17">100 updates</text>
+<text x="890.0" y="530" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="17">200 updates</text>
+<rect x="675" y="555" width="390" height="65" rx="9" fill="#24241f" stroke="#4a4a42"/>
+<text x="695" y="581" fill="#f4f0e8" font-family="Arial" font-size="16" font-weight="700">At 200 updates: +3.2 points</text>
+<text x="695" y="605" fill="#aaa69d" font-family="Arial" font-size="14">paired permutation p = 0.0137</text>
+<text x="110" y="585" fill="#aaa69d" font-family="Arial" font-size="14">Metric: held-out target-byte accuracy. Error bars: bootstrap 95% CI.</text>
+<text x="110" y="609" fill="#d5a26f" font-family="Arial" font-size="14">Exact unseen expressions remained 0% in every condition.</text>
+</svg>

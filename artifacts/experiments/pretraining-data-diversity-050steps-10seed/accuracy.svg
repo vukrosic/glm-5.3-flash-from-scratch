@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560">
+<rect width="100%" height="100%" fill="#171714"/>
+<text x="90" y="40" fill="#f4f0e8" font-family="Arial" font-size="25" font-weight="700">Does more unique pretraining data improve unseen code?</text>
+<text x="90" y="64" fill="#aaa69d" font-family="Arial" font-size="14">Same model, optimizer, steps and batch size. Only unique program structures change.</text>
+<line x1="90" y1="445.0" x2="880" y2="445.0" stroke="#353530"/>
+<text x="78" y="450.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">0%</text>
+<line x1="90" y1="371.0" x2="880" y2="371.0" stroke="#353530"/>
+<text x="78" y="376.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">20%</text>
+<line x1="90" y1="297.0" x2="880" y2="297.0" stroke="#353530"/>
+<text x="78" y="302.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">40%</text>
+<line x1="90" y1="223.0" x2="880" y2="223.0" stroke="#353530"/>
+<text x="78" y="228.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">60%</text>
+<line x1="90" y1="149.0" x2="880" y2="149.0" stroke="#353530"/>
+<text x="78" y="154.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">80%</text>
+<line x1="90" y1="75.0" x2="880" y2="75.0" stroke="#353530"/>
+<text x="78" y="80.0" fill="#aaa69d" text-anchor="end" font-family="Arial" font-size="13">100%</text>
+<rect x="266.7" y="342.0" width="130" height="103.0" rx="8" fill="#d97757"/>
+<circle cx="250.7" cy="330.5" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="268.7" cy="326.1" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="286.7" cy="331.2" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="304.7" cy="322.3" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="322.7" cy="375.4" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="340.7" cy="320.4" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="358.7" cy="352.7" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="376.7" cy="351.4" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="394.7" cy="358.4" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="412.7" cy="352.0" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<text x="331.7" y="330.0" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700">27.8%</text>
+<text x="331.7" y="477" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="16">8 structures</text>
+<rect x="573.3" y="349.1" width="130" height="95.9" rx="8" fill="#e0b45c"/>
+<circle cx="557.3" cy="330.5" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="575.3" cy="343.8" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="593.3" cy="359.6" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="611.3" cy="349.5" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="629.3" cy="375.4" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="647.3" cy="319.8" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="665.3" cy="350.8" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="683.3" cy="350.8" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="701.3" cy="360.2" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<circle cx="719.3" cy="350.8" r="5" fill="#171714" stroke="#f4f0e8" stroke-width="2"/>
+<text x="638.3" y="337.1" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700">25.9%</text>
+<text x="638.3" y="477" fill="#f4f0e8" text-anchor="middle" font-family="Arial" font-size="16">88 structures</text>
+<text x="18" y="270" fill="#aaa69d" font-family="Arial" font-size="14" transform="rotate(-90 18 270)">Held-out target-byte accuracy</text>
+<text x="90" y="515" fill="#aaa69d" font-family="Arial" font-size="13">Dots are independent seeds. Evaluation structures never appear in training.</text>
+</svg>

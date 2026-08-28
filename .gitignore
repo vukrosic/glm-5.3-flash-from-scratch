@@ -14,3 +14,7 @@ __pycache__/
 /slides/.slide-feedback-*.json
 /slides/slide-text-edits.json
 /slides/.slide-text-edits-*.json
+/artifacts/experiments/pretraining-data-diversity-001/
+/artifacts/experiments/pretraining-data-diversity-002/
+/artifacts/experiments/pretraining-data-diversity-050steps/
+/artifacts/experiments/pretraining-data-diversity-200steps/

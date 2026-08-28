@@ -67,6 +67,29 @@ bytes → embedding → four residual streams
 
 The final RL run used 1,536 rollouts, performed 73 reward-bearing updates, took 155.5 seconds, and peaked at 0.936 GiB allocated VRAM on an RTX 3080 Ti.
 
+## Pretraining research: diversity, ordering, and curriculum
+
+Three CPU-scale experiments used a 248,412-parameter miniature and 32 held-out expression structures so each comparison could be repeated across 10 paired seeds.
+
+| Experiment | Matched comparison | Held-out target-byte result |
+|---|---|---:|
+| Data diversity | 8 repeated vs 88 diverse structures, 200 updates | 57.0% vs **60.2%**, p = 0.0137 |
+| Example ordering | Exact same 4,800 examples, blocked vs interleaved | 50.5% vs **60.2%**, p = 0.00195 |
+| Curriculum | 8 structures then 88 vs 88 from the start | 59.6% vs 60.2%, p = 0.2148 |
+
+The strongest result is the ordering comparison: interleaving won across all 10 paired seeds even though the examples and compute were identical. Every condition remained at 0% exact-expression accuracy, so these results measure partial next-byte learning on synthetic code, not reliable program generation.
+
+Reproduce and analyze the experiments:
+
+```bash
+python experiments/pretraining_data_diversity.py --help
+python experiments/pretraining_curriculum_order.py --help
+python experiments/analyze_pretraining_data_diversity.py --help
+python experiments/analyze_pretraining_curriculum_order.py --help
+```
+
+Final raw results, charts, and reports are under [`artifacts/experiments`](artifacts/experiments).
+
 ## Follow-up research: which RL choices matter?
 
 The first experiment established that executable feedback can teach narrow coding behaviors. The follow-up asked a different question:

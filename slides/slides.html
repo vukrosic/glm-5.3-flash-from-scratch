@@ -139,15 +139,18 @@
   <span><strong>A real experiment</strong><small>controls, held-out tasks, charts, and limitations</small></span>
 </div>
 <p>You will understand the mechanism well enough to change the experiment yourself.</p></div>
-<div data-slide-id="experiments-in-this-video" class="slide title experiment-map-slide"><h1>Five experiments, not one demo</h1>
+<div data-slide-id="experiments-in-this-video" class="slide title experiment-map-slide"><h1>Eight experiments, not one demo</h1>
 <div class="experiment-map-grid">
   <article><b>1</b><strong>Pre-training</strong><span>random weights → code completion</span><small>400 steps · 1.38M bytes</small></article>
-  <article><b>2</b><strong>Vision comparison</strong><span>GLM-like path vs direct patches</span><small>single-seed pilot</small></article>
-  <article><b>3</b><strong>Vision integration</strong><span>image tokens through all 12 LM layers</span><small>40-update pilot</small></article>
-  <article><b>4</b><strong>Executable RL</strong><span>before vs after RLOO training</span><small>1,536 rollouts</small></article>
-  <article><b>5</b><strong>RL replication</strong><span>change one choice, then retest</span><small>8-arm screen · 3 fresh seeds</small></article>
+  <article><b>2</b><strong>Data diversity</strong><span>repeat 8 vs expose 88 structures</span><small>3 durations · 10 seeds</small></article>
+  <article><b>3</b><strong>Data ordering</strong><span>blocked vs interleaved examples</span><small>same 4,800 examples · 10 seeds</small></article>
+  <article><b>4</b><strong>Curriculum</strong><span>start narrow, then expand</span><small>8 → 88 structures · 10 seeds</small></article>
+  <article><b>5</b><strong>Vision comparison</strong><span>GLM-like path vs direct patches</span><small>single-seed pilot</small></article>
+  <article><b>6</b><strong>Vision integration</strong><span>image tokens through all 12 LM layers</span><small>40-update pilot</small></article>
+  <article><b>7</b><strong>Executable RL</strong><span>before vs after RLOO training</span><small>1,536 rollouts</small></article>
+  <article><b>8</b><strong>RL replication</strong><span>change one choice, then retest</span><small>8-arm screen · 3 fresh seeds</small></article>
 </div>
-<p class="slide-why">Experiments 2 and 3 are bounded vision pilots. Experiment 4 is the main before-and-after result. Experiment 5 tests whether an apparent RL winner replicates.</p></div>
+<p class="slide-why">The pre-training studies use 10 paired seeds. The vision studies are bounded pilots. The RL section contains both a before-and-after result and a failed replication.</p></div>
 <div data-slide-id="research-results-preview" class="slide title research-preview-slide"><h1>We will measure every claim</h1>
 <p>These are the real training and held-out results we will reproduce and explain.</p>
 <div class="research-preview-grid">
@@ -513,6 +516,83 @@ self.attention = (
 </div>
 <p class="compact-explanation"><b>Why RL starts at step 100:</b> the model has learned Python-like structure but is still wrong, leaving measurable room for post-training. Step 200 had seen 691,022 training bytes.</p>
 <small class="source-note">Exact greedy outputs from GPU checkpoints 0, 100, and 200 · same prompt · same run</small></div>
+<div data-slide-id="pretraining-research-setup" class="slide title pretraining-research-setup"><small class="stage-kicker">PRE-TRAINING RESEARCH · SHARED SETUP</small><h1>What exactly did we test?</h1>
+<p>Three controlled experiments ask how data diversity, order, and curriculum change learning.</p>
+<div class="research-setup-grid">
+  <article><small>MODEL</small><strong>248,412 parameters</strong><span>3-layer byte model · miniature GLM-style attention + MoE</span></article>
+  <article><small>TRAINING TASK</small><strong>compose three operations</strong><code>add → multiply → absolute value</code></article>
+  <article><small>HELD-OUT TEST</small><strong>32 unseen structures</strong><span>10 paired seeds · identical initialization inside each pair</span></article>
+</div>
+<div class="research-example-flow"><span><small>INSTRUCTION</small>add 3 · multiply by 4 · take absolute value</span><b>→</b><code>abs((x + 3) * 4)</code></div>
+<div class="metric-explainer"><strong>METRIC · TARGET-BYTE ACCURACY</strong><span>Give the correct prefix → predict the next byte → repeat across the answer</span><em>Measures partial learning, not complete free generation.</em></div></div>
+<div data-slide-id="pretraining-diversity-design" class="slide title pretraining-diversity-design"><small class="stage-kicker">PRE-TRAINING RESEARCH · EXPERIMENT 1</small><h1>Does more diverse data always help?</h1>
+<p>For every seed, two identically initialized models receive the same number of updates.</p>
+<div class="diversity-design-grid">
+  <article><small>REPEAT A NARROW SET</small><strong>8 structures</strong><div class="structure-loop"><span>A</span><span>B</span><span>C</span><span>A</span><span>B</span><span>C</span></div><em>each structure appears often</em></article>
+  <b>VS</b>
+  <article class="diverse"><small>EXPLORE A WIDE SET</small><strong>88 structures</strong><div class="structure-loop"><span>A</span><span>J</span><span>R</span><span>Z</span><span>Q</span><span>M</span></div><em>more combinations, less repetition</em></article>
+</div>
+<div class="research-timeline"><span><b>50 updates</b>early</span><i>→</i><span><b>100 updates</b>middle</span><i>→</i><span><b>200 updates</b>later</span></div></div>
+<div data-slide-id="pretraining-diversity-over-time" class="slide title pretraining-research-slide"><small class="stage-kicker">PRE-TRAINING RESEARCH · EXPERIMENT 1</small><h1>When does more diverse data begin to help?</h1>
+<p>Same 248K-parameter model, optimizer, batch size, evaluation, and paired seeds. Only the number of unique program structures changes.</p>
+<div class="diversity-line-chart">
+  <div class="diversity-legend"><span class="repeat">8 repeated structures</span><span class="diverse">88 unique structures</span></div>
+  <svg viewBox="0 0 900 360" preserveAspectRatio="none" role="img" aria-label="Eight repeated structures lead at 50 updates, while 88 unique structures lead at 100 and 200 updates">
+    <line x1="70" y1="300" x2="850" y2="300"/><line x1="70" y1="45" x2="70" y2="300"/>
+    <line x1="70" y1="244" x2="850" y2="244"/><line x1="70" y1="188" x2="850" y2="188"/><line x1="70" y1="132" x2="850" y2="132"/><line x1="70" y1="76" x2="850" y2="76"/>
+    <polyline class="repeat-line" points="100,256 450,168 800,93"/><polyline class="diverse-line" points="100,267 450,156 800,75"/>
+    <circle class="repeat-point" cx="100" cy="256" r="8"/><circle class="repeat-point" cx="450" cy="168" r="8"/><circle class="repeat-point" cx="800" cy="93" r="8"/>
+    <circle class="diverse-point" cx="100" cy="267" r="8"/><circle class="diverse-point" cx="450" cy="156" r="8"/><circle class="diverse-point" cx="800" cy="75" r="8"/>
+  </svg>
+  <div class="diversity-y"><span>60%</span><span>50%</span><span>40%</span><span>30%</span></div>
+  <div class="diversity-x"><span>50 updates</span><span>100 updates</span><span>200 updates</span></div>
+</div>
+<p class="compact-explanation"><b>Result:</b> diversity was not useful at 50 updates. At 200 updates, 88 structures reached <strong>60.2%</strong> versus <strong>57.0%</strong>, a paired +3.2 point gain.</p>
+<small class="source-note">10 paired seeds · 32 unseen structures · exact paired permutation p = 0.0137 at 200 updates · exact-expression accuracy remained 0%</small></div>
+<div data-slide-id="pretraining-order-experiment" class="slide title pretraining-order-design"><small class="stage-kicker">PRE-TRAINING RESEARCH · EXPERIMENT 2</small><h1>Can presentation order change learning?</h1>
+<p>Both models see the exact same 4,800 examples. We change only when each example appears.</p>
+<div class="order-compare">
+  <article><small>BLOCKED</small><div class="order-token-row blocked"><span>A</span><span>A</span><span>A</span><span>B</span><span>B</span><span>B</span><span>C</span><span>C</span><span>C</span></div><strong>many similar examples in a row</strong><em>structure A → structure B → structure C</em></article>
+  <b>VS</b>
+  <article class="interleaved"><small>INTERLEAVED</small><div class="order-token-row"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span><span>A</span></div><strong>switch structure every example</strong><em>A → B → C → … → A</em></article>
+</div>
+<div class="order-controls"><span>same examples</span><span>same initialization</span><span>same 200 updates</span><span>same held-out test</span></div>
+<small class="source-note">This isolates data order. Dataset size, contents, model, and compute are identical.</small></div>
+<div data-slide-id="pretraining-order-result" class="slide title pretraining-order-result"><h1>Interleaving the same data improved generalization</h1>
+<div class="order-result-bars">
+  <article><small>BLOCKED</small><div><i style="--score:50.5%"></i></div><strong>50.5%</strong></article>
+  <b>+9.7 points</b>
+  <article class="winner"><small>INTERLEAVED</small><div><i style="--score:60.2%"></i></div><strong>60.2%</strong></article>
+</div>
+<div class="seed-result-strip" aria-label="Interleaved minus blocked accuracy for ten paired seeds"><span>+14.9</span><span>+3.8</span><span>+9.7</span><span>+12.1</span><span>+10.3</span><span>+7.5</span><span>+6.0</span><span>+9.7</span><span>+14.4</span><span>+8.2</span></div>
+<p class="compact-explanation"><b>All 10 paired seeds favored interleaving in the matched ordering run.</b> Long homogeneous blocks likely increase recency bias or forgetting, but this experiment measures the effect, not the internal mechanism.</p>
+<small class="source-note">Bootstrap 95% interval: +7.6 to +11.7 points · exact paired permutation p = 0.00195 · held-out target-byte accuracy</small></div>
+<div data-slide-id="pretraining-curriculum-design" class="slide title pretraining-curriculum-design"><small class="stage-kicker">PRE-TRAINING RESEARCH · EXPERIMENT 3</small><h1>Should training begin narrow, then expand?</h1>
+<p>The curriculum hypothesis: repetition may teach basic patterns before the model faces more combinations.</p>
+<div class="curriculum-design-grid">
+  <article><small>REPEAT 8</small><div><span>8 structures</span><span>8 structures</span></div><strong>narrow for all 200 updates</strong></article>
+  <article class="curriculum"><small>CURRICULUM 8 → 88</small><div><span>8 structures</span><span>88 structures</span></div><strong>expand after update 100</strong></article>
+  <article class="diverse"><small>DIVERSE FROM START</small><div><span>88 structures</span><span>88 structures</span></div><strong>wide for all 200 updates</strong></article>
+</div>
+<div class="curriculum-axis"><span>update 0</span><span>update 100</span><span>update 200</span></div>
+<p class="compact-explanation">If the curriculum creates a useful foundation, it should beat diverse interleaving from the beginning.</p></div>
+<div data-slide-id="pretraining-curriculum-result" class="slide title pretraining-curriculum-result"><small class="stage-kicker">PRE-TRAINING RESEARCH · EXPERIMENT 3</small><h1>Does starting narrow create a better curriculum?</h1>
+<p>The curriculum repeats 8 structures for 100 updates, then expands to 88 for the final 100.</p>
+<div class="curriculum-bars">
+  <article><small>REPEAT 8</small><div><i style="--score:57%"></i></div><strong>57.0%</strong></article>
+  <article class="curriculum"><small>8 → 88 CURRICULUM</small><div><i style="--score:59.6%"></i></div><strong>59.6%</strong></article>
+  <article class="winner"><small>88 FROM START</small><div><i style="--score:60.2%"></i></div><strong>60.2%</strong></article>
+</div>
+<p class="compact-explanation"><b>The curriculum beat repeating only 8 structures by +2.6 points, but it did not beat diverse interleaving from the start.</b> Delaying diversity produced no reliable advantage.</p>
+<small class="source-note">10 paired seeds · curriculum vs repeat p = 0.0117 · curriculum vs diverse p = 0.2148 · no reliable curriculum advantage</small></div>
+<div data-slide-id="pretraining-research-conclusions" class="slide title pretraining-research-conclusions"><small class="stage-kicker">PRE-TRAINING RESEARCH · CONCLUSION</small><h1>What can we honestly conclude?</h1>
+<div class="research-conclusion-grid">
+  <article><b>1</b><strong>Diversity needs compute</strong><span>88 structures helped only after enough updates.</span></article>
+  <article><b>2</b><strong>Order changed learning</strong><span>The exact same data worked better when interleaved.</span></article>
+  <article><b>3</b><strong>This curriculum did not win</strong><span>Starting narrow delayed diversity without a reliable benefit.</span></article>
+</div>
+<div class="research-limit"><strong>THE LIMIT</strong><span>Every condition remained at <b>0% exact-expression accuracy.</b> These experiments show partial next-byte learning on synthetic code, not reliable program generation or a frontier-scale architecture ranking.</span></div>
+<p class="compact-explanation"><b>Strongest result:</b> with identical data and compute, interleaving improved held-out accuracy from 50.5% to 60.2% and won across all 10 paired seeds.</p></div>
 <div data-slide-id="checkpoint-100-branches-into-two-experiments" class="slide title checkpoint-branch-slide"><h1>Checkpoint 100 branches into two experiments</h1>
 <div class="checkpoint-branch"><article class="checkpoint"><small>LANGUAGE PRE-TRAINING</small><strong>checkpoint 100</strong><span>345,995 bytes seen</span></article><i>→</i><div><article><b>VISION PILOT</b><span>attach image encoder and test synthetic digits</span></article><article><b>CODING RL</b><span>reward complete programs with executable tests</span></article></div></div>
 <p class="slide-why">Both branches reuse the same partially trained language model. They answer different questions and are not one combined multimodal-RL run.</p></div>
@@ -1407,16 +1487,68 @@ optimizer.step()</pre>
     justify-content:space-between; color:var(--muted); font:600 11px/1 Arial,sans-serif; }
   .native-rl-progress .native-line-chart { height:44vh; margin-bottom:18px; }
   .native-rl-progress .source-note { margin-top:8px; }
-  .experiment-map-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; width:min(1220px,92vw); margin:5vh auto 3vh; }
-  .experiment-map-grid article { display:grid; grid-template-rows:auto auto 1fr auto; gap:11px; min-height:235px; padding:21px;
+  .experiment-map-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; width:min(1280px,93vw); margin:3vh auto 2vh; }
+  .experiment-map-grid article { display:grid; min-width:0; overflow:hidden; grid-template-rows:auto auto 1fr auto; gap:7px; min-height:150px; padding:15px clamp(9px,1.3vw,18px);
     background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
-  .experiment-map-grid article:nth-child(2),.experiment-map-grid article:nth-child(3) { border-top-color:#9b7d6e; }
-  .experiment-map-grid article:nth-child(4) { border-top-color:var(--olive); }
-  .experiment-map-grid article:nth-child(5) { border-top-color:#d7ddb5; }
+  .experiment-map-grid article:nth-child(2),.experiment-map-grid article:nth-child(3) { border-top-color:var(--olive); }
+  .experiment-map-grid article:nth-child(4) { border-top-color:#9b7d6e; }
+  .experiment-map-grid article:nth-child(5),.experiment-map-grid article:nth-child(6) { border-top-color:#9b7d6e; }
+  .experiment-map-grid article:nth-child(7),.experiment-map-grid article:nth-child(8) { border-top-color:#d7ddb5; }
   .experiment-map-grid b { color:var(--accent) !important; font:700 15px/1 Arial,sans-serif; }
-  .experiment-map-grid strong { color:var(--ink) !important; font:700 22px/1.15 Georgia,serif; }
-  .experiment-map-grid span { color:var(--muted); font-size:15px; line-height:1.35; }
+  .experiment-map-grid strong { overflow-wrap:anywhere; color:var(--ink) !important; font:700 clamp(15px,2vw,20px)/1.1 Georgia,serif; }
+  .experiment-map-grid span { color:var(--muted); font-size:clamp(11px,1.35vw,14px); line-height:1.25; }
   .experiment-map-grid small { color:#bcc39c; font:700 11px/1.25 Arial,sans-serif; }
+  .pretraining-research-setup,.pretraining-diversity-design,.pretraining-research-slide,.pretraining-order-design,.pretraining-order-result,.pretraining-curriculum-design,.pretraining-curriculum-result,.pretraining-research-conclusions { padding-top:3vh !important; }
+  .pretraining-research-setup h1,.pretraining-diversity-design h1,.pretraining-research-slide h1,.pretraining-order-design h1,.pretraining-order-result h1,.pretraining-curriculum-design h1,.pretraining-curriculum-result h1,.pretraining-research-conclusions h1 { margin-bottom:.2em; }
+  .research-setup-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; width:min(1120px,90vw); margin:3vh auto 2vh; }
+  .research-setup-grid article { display:grid; gap:10px; min-height:150px; padding:20px; text-align:left; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
+  .research-setup-grid article:nth-child(2) { border-top-color:var(--olive); }.research-setup-grid article:nth-child(3) { border-top-color:#9b7d6e; }
+  .research-setup-grid small,.diversity-design-grid small,.curriculum-design-grid small { color:var(--muted); font:800 11px/1 Arial,sans-serif; letter-spacing:.12em; }
+  .research-setup-grid strong { color:var(--ink) !important; font:700 clamp(22px,2.6vw,31px)/1.05 Georgia,serif; }
+  .research-setup-grid span { color:var(--muted); font-size:14px; line-height:1.35; }.research-setup-grid code { color:#d7ddb5; font-size:16px; }
+  .research-example-flow { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,.7fr); align-items:center; gap:18px; width:min(1000px,86vw); margin:0 auto 2vh; }
+  .research-example-flow span,.research-example-flow code { padding:15px 18px; background:#181817; border:1px solid var(--line); text-align:left; }
+  .research-example-flow span { color:var(--muted); font-size:14px; }.research-example-flow small { display:block; margin-bottom:7px; color:var(--accent); font-weight:800; letter-spacing:.1em; }
+  .research-example-flow>b { color:var(--accent); font-size:27px; }.research-example-flow code { color:#d7ddb5; font-size:18px; }
+  .metric-explainer { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:16px; width:min(1120px,90vw); margin:auto; padding:14px 18px; background:#303324; border:1px solid var(--olive); text-align:left; }
+  .metric-explainer strong { color:#d7ddb5 !important; font:800 11px/1 Arial,sans-serif; letter-spacing:.1em; }.metric-explainer span { color:var(--ink); font-size:14px; }.metric-explainer em { color:var(--muted); font-size:13px; }
+  .diversity-design-grid { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:24px; width:min(1000px,88vw); margin:4vh auto 2vh; }
+  .diversity-design-grid article { display:grid; gap:13px; min-height:245px; align-content:center; padding:24px; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
+  .diversity-design-grid article.diverse { border-top-color:var(--olive); }.diversity-design-grid>b { color:var(--muted); font-size:24px; }.diversity-design-grid strong { color:var(--ink) !important; font:700 38px/1 Georgia,serif; }.diversity-design-grid em { color:var(--muted); font-size:14px; }
+  .structure-loop { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; }.structure-loop span { display:grid; place-items:center; aspect-ratio:1; background:#342824; border:1px solid var(--accent); color:#efb19a; font-weight:800; }.diverse .structure-loop span { background:#303324; border-color:var(--olive); color:#d7ddb5; }
+  .research-timeline { display:flex; align-items:center; justify-content:center; gap:14px; margin:2vh auto; }.research-timeline span { display:grid; gap:4px; min-width:150px; padding:12px; background:#181817; border:1px solid var(--line); color:var(--muted); }.research-timeline b { color:var(--ink) !important; }.research-timeline i { color:var(--accent); font-style:normal; }
+  .diversity-line-chart { position:relative; width:min(1060px,86vw); height:42vh; margin:1vh auto 0; }
+  .diversity-line-chart svg { width:100%; height:100%; overflow:visible; }
+  .diversity-line-chart svg line { stroke:var(--line); stroke-width:2; }.diversity-line-chart polyline { fill:none; stroke-width:7; stroke-linecap:round; stroke-linejoin:round; }
+  .repeat-line { stroke:var(--accent); }.diverse-line { stroke:var(--olive); }.repeat-point { fill:var(--accent); }.diverse-point { fill:var(--olive); }
+  .diversity-legend { position:absolute; right:2%; top:0; z-index:2; display:flex; gap:18px; color:var(--muted); font-size:14px; }
+  .diversity-legend span::before { content:''; display:inline-block; width:28px; height:4px; margin:0 8px 3px 0; background:var(--accent); }.diversity-legend .diverse::before { background:var(--olive); }
+  .diversity-y { position:absolute; left:-10px; top:20%; bottom:24%; display:flex; flex-direction:column; justify-content:space-between; color:var(--muted); font-size:13px; }
+  .diversity-x { position:absolute; left:8%; right:6%; bottom:-3px; display:flex; justify-content:space-between; color:var(--muted); font-size:14px; }
+  .pretraining-research-slide .compact-explanation strong { color:#526045 !important; }
+  .order-compare { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:clamp(10px,2vw,26px); width:min(1200px,92vw); margin:5vh auto 3vh; }
+  .order-compare article { display:grid; gap:15px; min-width:0; min-height:245px; align-content:center; overflow:hidden; padding:clamp(15px,2.2vw,27px); background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
+  .order-compare article.interleaved { border-top-color:var(--olive); }.order-compare>b { color:var(--muted); font-size:26px; }.order-compare small { color:var(--muted); font-weight:800; letter-spacing:.12em; }
+  .order-compare strong { color:var(--ink) !important; font:700 24px/1.2 Georgia,serif; }.order-compare em { color:var(--muted); font-size:15px; }
+  .order-token-row { display:grid; grid-template-columns:repeat(9,minmax(0,1fr)); gap:clamp(2px,.5vw,6px); }.order-token-row span { display:grid; min-width:0; place-items:center; aspect-ratio:1; background:#303324; border:1px solid var(--olive); color:#d7ddb5; font-weight:800; }
+  .order-token-row.blocked span:nth-child(-n+3) { background:#342824; border-color:var(--accent); color:#efb19a; }.order-token-row.blocked span:nth-child(n+4):nth-child(-n+6) { background:#302925; border-color:#9b7d6e; }
+  .order-controls { display:flex; justify-content:center; gap:13px; }.order-controls span { padding:11px 16px; background:var(--soft); border:1px solid var(--line); color:var(--muted); font-size:14px; }
+  .order-result-bars,.curriculum-bars { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:end; gap:clamp(12px,4vw,55px); width:min(760px,90vw); height:46vh; margin:2vh auto 1vh; }
+  .order-result-bars article,.curriculum-bars article { display:grid; min-width:0; grid-template-rows:auto 1fr auto; gap:10px; height:100%; align-items:end; }.order-result-bars article>div,.curriculum-bars article>div { position:relative; min-width:0; height:100%; border-bottom:2px solid var(--line); }
+  .order-result-bars i,.curriculum-bars i { position:absolute; left:25px; right:25px; bottom:0; height:var(--score); background:#342824; border-top:5px solid var(--accent); }.order-result-bars .winner i,.curriculum-bars .winner i { background:#303324; border-color:var(--olive); }
+  .order-result-bars small,.curriculum-bars small { color:var(--muted); font-weight:800; letter-spacing:.11em; }.order-result-bars strong,.curriculum-bars strong { color:var(--ink) !important; font:700 clamp(30px,4vw,42px)/1 Georgia,serif; }
+  .order-result-bars>b { align-self:center; color:#bcc39c; font:700 clamp(20px,3vw,28px)/1.1 Georgia,serif; }.seed-result-strip { display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); gap:4px; width:min(900px,92vw); margin:0 auto 10px; }
+  .seed-result-strip span { min-width:0; padding:7px 2px; background:#303324; border:1px solid var(--olive); color:#d7ddb5; font-size:clamp(9px,1.2vw,13px); }.seed-result-strip .negative { background:#342824; border-color:var(--accent); color:#efb19a; }
+  .curriculum-bars { grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(10px,3vw,55px); width:min(800px,92vw); }.curriculum-bars .curriculum i { background:#302925; border-color:#9b7d6e; }
+  .curriculum-design-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; width:min(1120px,91vw); margin:5vh auto 0; }
+  .curriculum-design-grid article { display:grid; gap:14px; min-height:250px; align-content:center; padding:22px; background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); text-align:left; }
+  .curriculum-design-grid article.curriculum { border-top-color:#9b7d6e; }.curriculum-design-grid article.diverse { border-top-color:var(--olive); }
+  .curriculum-design-grid article>div { display:grid; grid-template-columns:1fr 1fr; gap:4px; }.curriculum-design-grid article>div span { display:grid; place-items:center; min-height:72px; padding:8px; background:#342824; color:#efb19a; font-weight:800; text-align:center; }.curriculum-design-grid .curriculum div span:last-child,.curriculum-design-grid .diverse div span { background:#303324; color:#d7ddb5; }
+  .curriculum-design-grid strong { color:var(--ink) !important; font-size:16px; }.curriculum-axis { display:flex; justify-content:space-between; width:min(1050px,85vw); margin:9px auto 2vh; color:var(--muted); font:700 12px/1 Arial,sans-serif; }
+  .research-conclusion-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; width:min(1120px,91vw); margin:4vh auto 3vh; }
+  .research-conclusion-grid article { display:grid; grid-template-columns:auto 1fr; gap:8px 13px; min-height:155px; align-content:start; padding:20px; background:var(--soft); border:1px solid var(--line); text-align:left; }
+  .research-conclusion-grid article>b { grid-row:1/3; display:grid; place-items:center; width:38px; height:38px; background:#303324; border:1px solid var(--olive); color:#d7ddb5; border-radius:50%; }.research-conclusion-grid strong { color:var(--ink) !important; font:700 22px/1.1 Georgia,serif; }.research-conclusion-grid span { color:var(--muted); font-size:14px; line-height:1.35; }
+  .research-limit { display:grid; grid-template-columns:auto 1fr; gap:18px; width:min(1080px,88vw); margin:0 auto 2vh; padding:17px 20px; background:#342824; border:1px solid var(--accent); text-align:left; }.research-limit>strong { color:#efb19a !important; font:800 11px/1.2 Arial,sans-serif; letter-spacing:.12em; }.research-limit span { color:var(--muted); font-size:15px; line-height:1.4; }.research-limit span b { color:var(--ink) !important; }
   .pretrain-evidence-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; width:min(1120px,88vw); margin:3vh auto 1vh; }
   .pretrain-evidence-grid figure { display:grid; grid-template-rows:auto 1fr; height:45vh; margin:0; padding:22px;
     background:var(--soft); border:1px solid var(--line); border-top:4px solid var(--accent); }
@@ -1494,6 +1626,12 @@ optimizer.step()</pre>
   #slide-feedback-input:focus { border-color:var(--accent); }
   #slide-feedback-input::placeholder { color:#777168; }
   #feedback-collapse:hover { border-color:var(--accent); }
+  #mode-toggle { position:fixed; z-index:500; right:82px; bottom:9px; width:50px; height:26px; padding:0;
+    border:1px solid rgba(240,236,227,.32); background:rgba(21,21,19,.78); color:rgba(240,236,227,.86);
+    font:800 10px/1 Arial,sans-serif; letter-spacing:.09em; cursor:pointer; opacity:.58;
+    transition:opacity .16s, background .16s, border-color .16s; }
+  #mode-toggle:hover,#mode-toggle:focus-visible { opacity:.92; background:rgba(21,21,19,.9); border-color:var(--accent); outline:0; }
+  body:not(.presentation-mode) .slide:not(.thumb-canvas) { height:calc(100vh - 44px); }
   #slide-feedback-panel.collapsed { width:auto; padding:8px 9px; opacity:.72; top:auto; bottom:54px; }
   #slide-feedback-panel.collapsed header { margin:0; }
   #slide-feedback-panel.collapsed #feedback-save-state,
@@ -1502,8 +1640,9 @@ optimizer.step()</pre>
   #slide-feedback-panel.collapsed footer { display:none; }
   .film-thumb.has-feedback::after { content:''; position:absolute; z-index:7; top:6px; left:6px;
     width:10px; height:10px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 2px #151513; }
-  @media print { #slide-feedback-panel { display:none !important; } }
+  @media print { #slide-feedback-panel,#mode-toggle { display:none !important; } }
 </style>
+<button id="mode-toggle" type="button" aria-label="Show developer controls" title="Toggle developer controls (P)">DEV</button>
 <div id="n"></div>
 <div class="nav">
   <button onclick="go(-1)" aria-label="previous">←</button>
@@ -1533,6 +1672,7 @@ optimizer.step()</pre>
   const TEXT_EDITS_KEY = 'glm53-slide-text-edits-v1';
   const PRESENTATION_KEY = 'glm53-recording-mode-v1';
   const CURRENT_LOCATION_KEY = 'glm53-current-slide-v1';
+  const modeToggle = document.getElementById('mode-toggle');
   const filmstripPanel = document.getElementById('filmstrip-panel');
   const filmstrip = document.getElementById('filmstrip');
   const thumbToggle = document.getElementById('thumb-toggle');
@@ -1711,6 +1851,44 @@ optimizer.step()</pre>
       moveAfter(['sources-code-and-fidelity'], 'want-to-join-the-real-ai-research-lab');
       localStorage.setItem(ORDER_KEY, JSON.stringify(ordered.map(slide => slide.dataset.slideId)));
       localStorage.setItem(chronologyKey, '1');
+    }
+    const pretrainingResearchKey = 'glm53-pretraining-research-order-v1';
+    if (localStorage.getItem(pretrainingResearchKey) !== '1') {
+      const researchIds = [
+        'pretraining-diversity-over-time',
+        'pretraining-order-experiment',
+        'pretraining-order-result',
+        'pretraining-curriculum-result'
+      ];
+      const researchSlides = researchIds.map(id => byId.get(id)).filter(Boolean);
+      const researchSet = new Set(researchSlides);
+      const withoutResearch = ordered.filter(slide => !researchSet.has(slide));
+      const anchorIndex = withoutResearch.findIndex(slide => slide.dataset.slideId === 'pretraining-makes-code-shaped-text');
+      withoutResearch.splice(anchorIndex >= 0 ? anchorIndex + 1 : withoutResearch.length, 0, ...researchSlides);
+      ordered.splice(0, ordered.length, ...withoutResearch);
+      localStorage.setItem(ORDER_KEY, JSON.stringify(ordered.map(slide => slide.dataset.slideId)));
+      localStorage.setItem(pretrainingResearchKey, '1');
+    }
+    const expandedPretrainingResearchKey = 'glm53-pretraining-research-order-v2';
+    if (localStorage.getItem(expandedPretrainingResearchKey) !== '1') {
+      const researchIds = [
+        'pretraining-research-setup',
+        'pretraining-diversity-design',
+        'pretraining-diversity-over-time',
+        'pretraining-order-experiment',
+        'pretraining-order-result',
+        'pretraining-curriculum-design',
+        'pretraining-curriculum-result',
+        'pretraining-research-conclusions'
+      ];
+      const researchSlides = researchIds.map(id => byId.get(id)).filter(Boolean);
+      const researchSet = new Set(researchSlides);
+      const withoutResearch = ordered.filter(slide => !researchSet.has(slide));
+      const anchorIndex = withoutResearch.findIndex(slide => slide.dataset.slideId === 'pretraining-makes-code-shaped-text');
+      withoutResearch.splice(anchorIndex >= 0 ? anchorIndex + 1 : withoutResearch.length, 0, ...researchSlides);
+      ordered.splice(0, ordered.length, ...withoutResearch);
+      localStorage.setItem(ORDER_KEY, JSON.stringify(ordered.map(slide => slide.dataset.slideId)));
+      localStorage.setItem(expandedPretrainingResearchKey, '1');
     }
     ordered.forEach(el => filmstripPanel.before(el));
     s = ordered;
@@ -2139,6 +2317,15 @@ optimizer.step()</pre>
     if (persist) try { localStorage.setItem(THUMBS_KEY, pinned ? '1' : '0'); } catch (_) {}
   }
 
+  function setPresentationMode(recording, persist = true, notify = true) {
+    document.body.classList.toggle('presentation-mode', recording);
+    modeToggle.textContent = recording ? 'DEV' : 'VIEW';
+    modeToggle.setAttribute('aria-label', recording ? 'Show developer controls' : 'Hide developer controls');
+    if (persist) try { localStorage.setItem(PRESENTATION_KEY, recording ? '1' : '0'); } catch (_) {}
+    clearElementHover();
+    if (notify) showEditToast(recording ? 'Recording mode on' : 'Editing mode on');
+  }
+
   function showSaved() {
     const toast = document.getElementById('save-toast');
     toast.classList.add('on');
@@ -2309,10 +2496,7 @@ optimizer.step()</pre>
     if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key.toLowerCase() === 'p') {
       e.preventDefault();
       const recording = !document.body.classList.contains('presentation-mode');
-      document.body.classList.toggle('presentation-mode', recording);
-      try { localStorage.setItem(PRESENTATION_KEY, recording ? '1' : '0'); } catch (_) {}
-      clearElementHover();
-      showEditToast(recording ? 'Recording mode on' : 'Editing mode on');
+      setPresentationMode(recording);
       return;
     }
     if (e.target.closest('#slide-feedback-panel')) return;
@@ -2463,15 +2647,21 @@ optimizer.step()</pre>
       if (savedRecordingMode === null) localStorage.setItem(PRESENTATION_KEY, '1');
     } catch (_) {}
   }
-  document.body.classList.toggle('presentation-mode', recordingMode);
+  setPresentationMode(recordingMode, false, false);
   var START = Math.max(0, Number.parseInt(reviewParams.get('slide') || '0', 10) || 0);
   var STEP = Math.max(0, Number.parseInt(reviewParams.get('step') || '0', 10) || 0);
   let savedLocation = null;
   if (!reviewParams.has('slide')) {
     try { savedLocation = JSON.parse(localStorage.getItem(CURRENT_LOCATION_KEY) || 'null'); } catch (_) {}
   }
-  thumbToggle.addEventListener('click', () =>
-    setThumbnailsPinned(!document.body.classList.contains('thumbnails-pinned')));
+  thumbToggle.addEventListener('click', () => {
+    setThumbnailsPinned(!document.body.classList.contains('thumbnails-pinned'));
+    thumbToggle.blur();
+  });
+  modeToggle.addEventListener('click', () => {
+    setPresentationMode(!document.body.classList.contains('presentation-mode'));
+    modeToggle.blur();
+  });
   let initialThumbs = reviewParams.get('thumbs') === '1';
   if (!reviewParams.has('thumbs')) {
     try { initialThumbs = localStorage.getItem(THUMBS_KEY) === '1'; } catch (_) {}
