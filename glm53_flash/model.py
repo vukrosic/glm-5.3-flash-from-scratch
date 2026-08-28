@@ -158,10 +158,10 @@ class SparseMoE(nn.Module):
         original_shape = x.shape
         flat = x.reshape(-1, original_shape[-1])
         logits = self.router(flat)
+        router_probabilities = torch.softmax(logits.float(), dim=-1)
         top_values, top_indices = logits.topk(self.top_k, dim=-1)
         top_weights = torch.softmax(top_values.float(), dim=-1).to(flat.dtype)
         output = self.shared(flat)
-        usage = torch.zeros(len(self.experts), device=x.device, dtype=torch.float32)
         for expert_id, expert in enumerate(self.experts):
             positions, slots = torch.where(top_indices == expert_id)
             if positions.numel() == 0:
@@ -169,8 +169,7 @@ class SparseMoE(nn.Module):
             contribution = expert(flat[positions])
             contribution = contribution * top_weights[positions, slots, None].to(contribution.dtype)
             output.index_add_(0, positions, contribution)
-            usage[expert_id] = positions.numel()
-        usage = usage / max(1, flat.shape[0] * self.top_k)
+        usage = router_probabilities.mean(dim=0)
         return output.view(original_shape), usage
 
 
